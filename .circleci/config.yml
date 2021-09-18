@@ -44,8 +44,8 @@ jobs:
           name: Build front-end
           command: |
             cd frontend
-            npm i --force
-            npm run --force build
+            npm install
+            npm run build
             cd dist
             ls -la
           # exit 1
