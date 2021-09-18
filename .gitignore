@@ -11,13 +11,13 @@ npm-debug.log*
 
 .idea/
 .ionic/
-.sourcemaps/
+#.sourcemaps/
 .sass-cache/
 .tmp/
 .versions/
 coverage/
 dist/
-node_modules/
+#node_modules/
 tmp/
 temp/
 platforms/
@@ -31,7 +31,7 @@ logfile
 .DS_Store
 Thumbs.db
 UserInterfaceState.xcuserstate
-node_modules
+#node_modules
 venv/
 *~
 *.sw[mnpcod]
@@ -52,7 +52,7 @@ npm-debug.log*
 .versions/
 coverage/
 www/
-node_modules/
+#node_modules/
 tmp/
 temp/
 platforms/
@@ -64,7 +64,7 @@ $RECYCLE.BIN/
 .DS_Store
 Thumbs.db
 UserInterfaceState.xcuserstate
-node_modules
+#node_modules
 
 .env
 dist
