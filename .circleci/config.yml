@@ -44,7 +44,10 @@ jobs:
           name: Build front-end
           command: |
             cd frontend
-            npm install
+            npm i
+            npm i webpack-sources
+            npm i webpack
+            npm i webpack-cli
             npm run build
             cd dist
             ls -la
@@ -65,7 +68,6 @@ jobs:
           name: Back-end build
           command: |
             cd backend
-            pwd
             npm i --force
             npm run --force build
             cd dist
