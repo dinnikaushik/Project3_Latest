@@ -45,13 +45,14 @@ jobs:
           command: |
             cd frontend
             npm i
-            npm i webpack-sources
-            npm i webpack
-            npm i webpack-cli
-            npm i yargs
             npm run build
             cd dist
             ls -la
+          # npm i webpack-sources
+          # npm i webpack
+          # npm i webpack-cli
+          # npm i yargs
+            
           # exit 1
       - save_cache:
           paths: [frontend/node_modules]
@@ -293,11 +294,11 @@ workflows:
   default:
     jobs:
       - build-frontend
-      # - build-backend
-      # - test-frontend:
-      #     requires: [build-frontend]
-      # - test-backend:
-      #     requires: [build-backend]
+      - build-backend
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
       # - scan-backend:
       #     requires: [build-backend]
       # - scan-frontend:
