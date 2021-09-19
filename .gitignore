@@ -1,20 +1,7 @@
 
-*.log
-*.tmp
-*.tmp.*
-log.txt
 *.sublime-project
 *.sublime-workspace
-*.sw[mnpcod]
 
-
-.idea/
-.ionic/
-
-tmp/
-temp/
-platforms/
-plugins/
 plugins/android.json
 plugins/ios.json
 $RECYCLE.BIN/
