@@ -111,6 +111,7 @@ jobs:
             npm install --save-dev jest
             npm run test
   scan-frontend:
+    parallelism: 2
     docker:
       - image: cimg/node:lts
     steps:
@@ -124,6 +125,7 @@ jobs:
             npm audit --audit-level=critical
         
   scan-backend:
+    parallelism: 2
     docker:
       - image: cimg/node:lts
     steps:
