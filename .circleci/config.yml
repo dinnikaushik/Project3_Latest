@@ -80,7 +80,7 @@ jobs:
           key: backend-build
   
   test-frontend:
-
+    parallelism: 2
     docker:
       - image: cimg/node:lts
     steps:
@@ -96,7 +96,7 @@ jobs:
             npm run test
                 
   test-backend:
-    
+    parallelism: 2
     docker:
       - image: cimg/node:lts
     steps:
@@ -122,7 +122,7 @@ jobs:
           name: Vulnerability scan front-end
           command: |
             cd frontend
-            npm audit --audit-level=critical
+            npm audit --audit-level=critical --force
         
   scan-backend:
     parallelism: 2
@@ -133,7 +133,7 @@ jobs:
       - restore_cache:
           keys: [backend-build]
       - run:
-          name: Vulnerability scan back-end
+          name: Vulnerability scan back-end --force
           command: |
             cd backend
             npm audit --audit-level=critical
