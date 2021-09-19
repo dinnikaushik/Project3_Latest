@@ -92,7 +92,6 @@ jobs:
           command: |
             cd frontend
             npm i
-            npm install --save-dev jest
             npm run test
                 
   test-backend:
@@ -133,10 +132,10 @@ jobs:
       - restore_cache:
           keys: [backend-build]
       - run:
-          name: Vulnerability scan back-end --force
+          name: Vulnerability scan back-end 
           command: |
             cd backend
-            npm audit --audit-level=critical
+            npm audit --audit-level=critical --force
 
 #   deploy-infrastructure:
 #     docker:
