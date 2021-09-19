@@ -92,7 +92,7 @@ jobs:
           command: |
             cd frontend
             npm i
-            npm install jest
+            ls -la
             npm run test
                 
   test-backend:
