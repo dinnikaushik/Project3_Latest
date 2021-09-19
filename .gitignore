@@ -11,8 +11,6 @@ log.txt
 .idea/
 .ionic/
 
-coverage/
-www/
 tmp/
 temp/
 platforms/
