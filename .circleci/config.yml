@@ -92,7 +92,8 @@ jobs:
           command: |
             cd frontend
             npm i
-            ls -la
+            ls -la && cat coverage && cat tsconfig
+            cat package.json
             npm run test
                 
   test-backend:
