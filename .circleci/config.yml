@@ -80,7 +80,7 @@ jobs:
           key: backend-build
   
   test-frontend:
-    parallelism: 2
+    parallelism: 4
     docker:
       - image: cimg/node:lts
     steps:
