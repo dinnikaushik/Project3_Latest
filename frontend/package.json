@@ -134,6 +134,7 @@
     ],
     "testRegex": ".*(spec|test)\\.(ts|tsx|js)$",
     "setupFilesAfterEnv":["<rootDir>/setupTests.ts"],
+
     "snapshotSerializers": [
       "enzyme-to-json"
     ],
