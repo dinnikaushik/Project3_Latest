@@ -142,8 +142,6 @@ jobs:
   deploy-infrastructure:
     docker:
       - image: amazon/aws-cli
-    branches:
-      only: master
     steps:
       - checkout
       - run:
