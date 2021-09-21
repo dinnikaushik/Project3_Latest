@@ -1,17 +1,32 @@
 version: 2.1
+# orbs:
+# Good for AWS CLI
+#  
+# aws-cli: circleci/aws-cli@2.0.3
+
+
+defaults: &defaults-node
+  docker:
+    - image: cimg/node:lts
+  working_directory: ~/project
+  
+
 
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
-    # parameters: 
-    # Add parameter here   
+    parameters: 
+      workflow_id:
+        type: string
+           
     steps:
       - run:
           name: Destroy environments
           when: on_fail
           command: |
-            # Your code here
-            exit 1
+            aws cloudformation delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
+            aws cloudformation delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
+            
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -34,8 +49,7 @@ commands:
             
 jobs:
   build-frontend:
-    docker:
-      - image: cimg/node:lts
+    <<: *defaults-node
     steps:
       - checkout
       - restore_cache:
@@ -60,8 +74,7 @@ jobs:
 
 
   build-backend:
-    docker:
-      - image: cimg/node:lts
+    <<: *defaults-node
     steps:
       - checkout
       - restore_cache:
@@ -81,8 +94,7 @@ jobs:
   
   test-frontend:
     parallelism: 4
-    docker:
-      - image: cimg/node:lts
+    <<: *defaults-node
     steps:
       - checkout
       - restore_cache:
@@ -98,8 +110,7 @@ jobs:
                 
   test-backend:
     parallelism: 2
-    docker:
-      - image: cimg/node:lts
+    <<: *defaults-node
     steps:
       - checkout
       - restore_cache:
@@ -113,8 +124,7 @@ jobs:
             npm run test
   scan-frontend:
     parallelism: 2
-    docker:
-      - image: cimg/node:lts
+    <<: *defaults-node
     steps:
       - checkout
       - restore_cache:
@@ -127,8 +137,7 @@ jobs:
         
   scan-backend:
     parallelism: 2
-    docker:
-      - image: cimg/node:lts
+    <<: *defaults-node
     steps:
       - checkout
       - restore_cache:
@@ -159,7 +168,7 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
               --tags project=udapeople \
-              --stack-name  "udapeople-front-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --stack-name  "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"   
               exit 1
       - run:
