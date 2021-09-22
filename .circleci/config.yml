@@ -194,9 +194,9 @@ jobs:
             --output text >> .circleci/ansible/urls.txt 
             # exit 1
       - persist_to_workspace:
-          root: ~/
+          root: ~/project
           paths:
-            - /.circleci/ansible/inventory.txt
+            - /ansible/inventory.txt
             - /.circleci/ansible/urls.txt
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
