@@ -199,6 +199,12 @@ jobs:
           paths:
             - ./ansible/inventory.txt
             - ./.circleci/ansible/urls.txt
+      - run:
+          name: Check files
+          command: |
+            pwd
+            ls -la  
+
       # Here's where you will add some code to rollback on failure  
       # - destroy-environment:
       #     workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
