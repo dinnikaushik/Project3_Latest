@@ -3,16 +3,16 @@ Description: >
 
 Parameters:
   ID: 
-    Description: 058213536462
+    Description: Unique ID
     Type: String
-    Default: 058213536462
+    Default: ${CIRCLE_WORKFLOW_ID:0:7}
 
 Resources:
   
   InstanceSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: !Sub UdaPeople-${ID}
+      GroupName: !Sub UdaPeopleSecurity-${ID}
       GroupDescription: Allow port 22 and port 3030.
       SecurityGroupIngress:
         - IpProtocol: tcp
