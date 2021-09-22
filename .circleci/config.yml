@@ -191,6 +191,8 @@ jobs:
             --filters "Name=tag:Name.Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
             --query "Reservations[*].Instanses[*].PublicIpAddress" \
             --output text >> .circleci/ansible/inventory.txt \
+            aws ec2 describe-instances \
+            --filters "Name=tag:Name.Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
             --query "Reservations[*].Instanses[*].PublicDnsName" \
             --output text >> .circleci/ansible/urls.txt 
             # exit 1
@@ -206,7 +208,7 @@ jobs:
             ls -la 
             cd .circleci/
             ls -la
-            cd .ansible
+            cd ansible
             ls -la
             cat inventory.txt 
 
