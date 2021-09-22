@@ -171,8 +171,7 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
               # --tags project=udapeople \
-              --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
-              
+              --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
               # exit 1
       - run:
@@ -345,14 +344,14 @@ workflows:
       - build-backend
       # - test-frontend:
           # requires: [build-frontend]
-      - test-backend:
-          requires: [build-backend]
+      # - test-backend:
+      #     requires: [build-backend]
       # - scan-backend:
       #     requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
+      # - scan-frontend:
+      #     requires: [build-frontend]
       - deploy-infrastructure:
-          requires: [test-backend, scan-frontend]
+          requires: [build-backend, build-frontend]
           filters:
             branches:
               only: [master]
