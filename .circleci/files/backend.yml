@@ -5,7 +5,7 @@ Parameters:
   ID: 
     Description: Unique ID
     Type: String
-    
+    Default: "${CIRCLE_WORKFLOW_ID:0:7}"
 Resources:
   
   InstanceSecurityGroup:
@@ -35,4 +35,4 @@ Resources:
       ImageId: ami-0d382e80be7ffdae5
       Tags:
         - Key: Name
-          Value: !Sub 'backend-${CIRCLE_WORKFLOW_ID:0:7}'
+          Value: !Sub "backend-${CIRCLE_WORKFLOW_ID:0:7}"
