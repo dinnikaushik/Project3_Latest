@@ -13,6 +13,16 @@ defaults: &defaults-node
 
 
 commands:
+  gets-id:
+    description: Gets CIRCLE WORKFLOW_ID
+    parameters:
+        workflow_id:
+         type: string
+    steps:
+      - run: echo << parameters.id >>
+      - run: echo ${CIRCLE_WORKFLOW_ID:0:7}
+
+
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters: 
