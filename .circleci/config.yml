@@ -193,6 +193,8 @@ jobs:
             --output text >> .circleci/ansible/inventory.txt && "ls -la" && cat .circleci/ansible/inventory.txt \
             --query "Reservations[*].Instanses[*].PublicDnsName" \
             --output text >> .circleci/ansible/urls.txt && "ls -la" && cat .circleci/ansible/inventory.txt
+      - gets-id:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
             # exit 1
       - persist_to_workspace:
           root: ~/
