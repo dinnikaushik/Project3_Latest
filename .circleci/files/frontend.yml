@@ -5,14 +5,13 @@ Parameters:
   ID: 
     Description: Unique ID
     Type: String
-    Default:  ${CIRCLE_WORKFLOW_ID:0:7}
 
 
 Resources:
   WebsiteBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "udapeople-S3-${ID}"
+      BucketName: !Sub udapeople-S3-058213536462
       AccessControl: PublicRead
       WebsiteConfiguration:
         IndexDocument: index.html
