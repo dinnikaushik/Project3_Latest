@@ -193,8 +193,7 @@ jobs:
             --query "InstanceStatuses[*].InstanceState.Code" \
             --output text >> state.txt
             pwd
-            la -la 
-            cat state.txt
+            ls -la 
       - run:
           name: Add back-end ip and URL to ansible inventory
           command: |
