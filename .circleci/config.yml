@@ -202,8 +202,8 @@ jobs:
           command: |
             # aws ec2 wait instance-running --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}"
             aws ec2 describe-instances --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-            --query "InstanceStatuses[].InstanceStatus[].Status"
-            --output json
+            --query "InstanceStatuses[].InstanceStatus[].Status" 
+        
             
             aws ec2 describe-instances \ 
             --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
