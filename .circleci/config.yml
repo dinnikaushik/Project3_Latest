@@ -191,13 +191,8 @@ jobs:
             --filters "Name=instance-state-name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
             --query "InstanceStatuses[*].InstanceState.Code" \
             --output text >> state.txt
-            # status_code = $(cat state.txt)
-            # echo ${status_code}
-       #      while [ $STATUS -ne "16" ]; do \
-            #   wait(20) \
-            #   echo $STATUS \
-            # done \
-
+            cat state.txt
+            
       # - run:
       #     name: Add back-end ip and URL to ansible inventory
       #     command: |
@@ -221,12 +216,14 @@ jobs:
           paths:
             - .circleci/ansible/inventory.txt
             - .circleci/ansible/urls.txt
+            - .circleci/ansible/state.txt
       - run:
           name: Check files
           command: |
             cd .circleci/ansible
             cat inventory.txt 
-            cat urls.txt
+            # cat urls.txt
+            cat state.txt
 
       # Here's where you will add some code to rollback on failure  
       # - destroy-environment:
