@@ -184,22 +184,24 @@ jobs:
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" 
               # --tags project=udapeople \  
               # exit 1
-      - run:
-          name: Check status of instance 
-          command: |
-            aws ec2 describe-instance-status \
-            --filters "Name=tag:Name.Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-            --query "InstanceStatuses[*].InstanceState[*].Code"
-            --output text >> state.txt
-            STATUS = $(cat state.txt)
+      # - run:
+      #     name: Check status of instance 
+      #     command: |
+      #       aws ec2 describe-instance-status \
+      #       --filters "Name=tag:Name.Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+      #       --query "InstanceStatuses[*].InstanceState[*].Code"
+      #       --output text >> state.txt
+      #       STATUS = $(cat state.txt)
 
       - run:
           name: Add back-end ip and URL to ansible inventory
           command: |
-            while [ $STATUS -ne "16" ]; do \
-              wait(20) \
-              echo $STATUS \
-            done \
+            # while [ $STATUS -ne "16" ]; do \
+            #   wait(20) \
+            #   echo $STATUS \
+            # done \
+            aws ec2 wait instance-running \
+            --filters [tag:Name.Values=backend-${CIRCLE_WORKFLOW_ID:0:7}"]
             aws ec2 describe-instances \ 
             --filters "Name=tag:Name.Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
             --query "Reservations[*].Instanses[*].PublicIpAddress" \
@@ -221,7 +223,7 @@ jobs:
             cd .circleci/ansible
             cat inventory.txt 
             cat urls.txt
-            
+
       # Here's where you will add some code to rollback on failure  
       # - destroy-environment:
       #     workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
