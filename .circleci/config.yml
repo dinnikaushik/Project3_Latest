@@ -175,6 +175,12 @@ jobs:
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" 
               # --tags project=udapeople \ 
               # exit 1
+      # - run:
+      #     name: Add back-end ip and URL to ansible inventory
+      #     command: |
+      #       aws ec2 wait instance-running 
+      #       --instance-ids [${!Ref "AWS::EC2InstanceID"}]
+
       - run:
           name: Ensure front-end infrastructure exist 
           command: |
@@ -198,7 +204,7 @@ jobs:
           name: Add back-end ip and URL to ansible inventory
           command: |
             # aws ec2 wait instance-running 
-            # --instance-ids "!Ref AWS::EC2InstanceID"
+            # --instance-ids ${{EC2InstanceID}}
             # # --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}"
           
             aws ec2 describe-instances \ 
@@ -208,7 +214,7 @@ jobs:
             
             aws ec2 describe-instances \
             --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-            --query "Reservations[*].Instances[*].PublicDnsName" \
+            --query "Reservations[].Instances[].PublicDnsName" \
             --output text >> .circleci/ansible/urls.txt 
           
             # exit 1
@@ -217,14 +223,14 @@ jobs:
           paths:
             - .circleci/ansible/inventory.txt
             - .circleci/ansible/urls.txt
-            - .circleci/ansible/state.txt
+            
       - run:
           name: Check files
           command: |
             cd .circleci/ansible
             cat inventory.txt 
             cat urls.txt
-            # cat state.txt
+            
 
       # Here's where you will add some code to rollback on failure  
       # - destroy-environment:
