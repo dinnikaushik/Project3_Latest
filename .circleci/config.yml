@@ -185,9 +185,22 @@ jobs:
               # --tags project=udapeople \  
               # exit 1
       - run:
+          name: Check status of instance 
+          command: |
+            aws ec2 describe-instance-status \
+            --filters "Name=tag:Name.Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+            --query "InstanceStatuses[*].InstanceState[*].Code"
+            --output text >> state.txt
+            STATUS = $(cat state.txt)
+
+      - run:
           name: Add back-end ip and URL to ansible inventory
           command: |
-            aws ec2 describe-instances \
+            while [ $STATUS -ne "16" ]; do \
+              wait(20) \
+              echo $STATUS \
+            done \
+            aws ec2 describe-instances \ 
             --filters "Name=tag:Name.Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
             --query "Reservations[*].Instanses[*].PublicIpAddress" \
             --output text >> .circleci/ansible/inventory.txt \
@@ -195,23 +208,20 @@ jobs:
             --filters "Name=tag:Name.Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
             --query "Reservations[*].Instanses[*].PublicDnsName" \
             --output text >> .circleci/ansible/urls.txt 
+          
             # exit 1
       - persist_to_workspace:
           root: ~/project
           paths:
-            - ./ansible/inventory.txt
-            - ./.circleci/ansible/urls.txt
+            - .circleci/ansible/inventory.txt
+            - .circleci/ansible/urls.txt
       - run:
           name: Check files
           command: |
-            pwd
-            ls -la 
-            cd .circleci/
-            ls -la
-            cd ansible
-            ls -la
+            cd .circleci/ansible
             cat inventory.txt 
-
+            cat urls.txt
+            
       # Here's where you will add some code to rollback on failure  
       # - destroy-environment:
       #     workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
