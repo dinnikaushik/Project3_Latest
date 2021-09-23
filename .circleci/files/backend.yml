@@ -47,7 +47,7 @@ Outputs:
     Description: Public EC2Instance IP for references
     Value: !GetAtt EC2Instance.PublicIp
 
-  # EC2InstanceID:
-  #   Description: EC2Instance ID
-  #   Value: !GetAtt EC2Instance.
+  EC2InstanceID:
+    Description: EC2Instance ID
+    Value: !GetAtt EC2Instance.PhysicalId
      
