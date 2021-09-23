@@ -40,5 +40,8 @@ Resources:
 
 Outputs:
   EC2InstanceID:
-    Value: !GetAtt EC2Instance.PublicIp
-    Description: Public EC2Instance IP for references
+    Values:
+      - !GetAtt EC2Instance.PublicIp
+      - Description: Public EC2Instance IP for references
+      - Value: !Ref Id
+      - Description: EC2InstanceID for references
