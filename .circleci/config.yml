@@ -192,16 +192,16 @@ jobs:
       #       --query "InstanceStatuses[*].InstanceState[*].Code"
       #       --output text >> state.txt
       #       STATUS = $(cat state.txt)
+       #      while [ $STATUS -ne "16" ]; do \
+            #   wait(20) \
+            #   echo $STATUS \
+            # done \
 
       - run:
           name: Add back-end ip and URL to ansible inventory
           command: |
-            # while [ $STATUS -ne "16" ]; do \
-            #   wait(20) \
-            #   echo $STATUS \
-            # done \
             aws ec2 wait instance-running \
-            --filters [tag:Name.Values=backend-${CIRCLE_WORKFLOW_ID:0:7}]
+            --filters "Name=tag:Name.Values=backend-${CIRCLE_WORKFLOW_ID:0:7}"
             aws ec2 describe-instances \ 
             --filters "Name=tag:Name.Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
             --query "Reservations[*].Instanses[*].PublicIpAddress" \
