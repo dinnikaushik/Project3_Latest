@@ -40,5 +40,5 @@ Resources:
 
 Outputs:
   EC2InstanceID:
-    Value: !GetAtt EC2Instance.InstanceId
+    Value: !GetAtt EC2Instance.Id
     Description: EC2InstanceID for references
