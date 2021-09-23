@@ -184,35 +184,36 @@ jobs:
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" 
               # --tags project=udapeople \  
               # exit 1
-      # - run:
-      #     name: Check status of instance 
-      #     command: |
-      #       aws ec2 describe-instance-status \
-      #       --filters "Name=tag:Name.Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-      #       --query "InstanceStatuses[*].InstanceState[*].Code"
-      #       --output text >> state.txt
-      #       STATUS = $(cat state.txt)
+      - run:
+          name: Check status of instance 
+          command: |
+            aws ec2 describe-instance-status \
+            --filters "Name=tag:Name.Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+            --query "InstanceStatuses[*].InstanceState[*].Code" \
+            --output text >> state.txt
+            STATUS = $(cat state.txt)
+            echo ${STATUS}
        #      while [ $STATUS -ne "16" ]; do \
             #   wait(20) \
             #   echo $STATUS \
             # done \
 
-      - run:
-          name: Add back-end ip and URL to ansible inventory
-          command: |
-            aws ec2 wait instance-running 
-            #--instance-ids
-            # --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}"
+      # - run:
+      #     name: Add back-end ip and URL to ansible inventory
+      #     command: |
+      #       aws ec2 wait instance-running 
+      #       #--instance-ids
+      #       # --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}"
           
-            aws ec2 describe-instances \ 
-            --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-            --query "Reservations[].Instances[].PublicIpAddress" \
-            --output text >> .circleci/ansible/inventory.txt 
+      #       aws ec2 describe-instances \ 
+      #       --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+      #       --query "Reservations[].Instances[].PublicIpAddress" \
+      #       --output text >> .circleci/ansible/inventory.txt 
             
-            aws ec2 describe-instances \
-            --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-            --query "Reservations[*].Instances[*].PublicDnsName" \
-            --output text >> .circleci/ansible/urls.txt 
+      #       aws ec2 describe-instances \
+      #       --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+      #       --query "Reservations[*].Instances[*].PublicDnsName" \
+      #       --output text >> .circleci/ansible/urls.txt 
           
             # exit 1
       - persist_to_workspace:
@@ -228,9 +229,9 @@ jobs:
             cat urls.txt
 
       # Here's where you will add some code to rollback on failure  
-      - destroy-environment:
-          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-          event: on_fail
+      # - destroy-environment:
+      #     workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+      #     event: on_fail
           
 
   # configure-infrastructure:
