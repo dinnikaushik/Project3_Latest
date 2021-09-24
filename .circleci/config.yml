@@ -8,7 +8,7 @@ version: 2.1
 defaults: &defaults-node
   docker:
     - image: cimg/node:lts
-  working_directory: ~/
+  working_directory: ~/project
   
 
 
@@ -154,6 +154,9 @@ jobs:
   deploy-infrastructure:
     docker:
       - image: amazon/aws-cli
+    
+    working_directory: ~/project
+    
     steps:
       - checkout
       - run: yum install -y tar gzip
@@ -163,8 +166,8 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" 
-              # --tags project=udapeople \ 
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"\
+              --tags project=udapeople  
               # exit 1
       # - run:
       #     name: Add back-end ip and URL to ansible inventory
@@ -178,18 +181,18 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
               --stack-name  "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" 
-              # --tags project=udapeople \  
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
+              --tags project=udapeople   
               # exit 1
-      # - run:
-      #     name: Check status of instance 
-      #     command: |
-      #       aws ec2 describe-instance-status \
-      #       --no-include-all-instances \
-      #       # --filters "Name=instance-state-name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-      #       --query "InstanceStatuses[*].InstanceState.Code" \
-      #       --output text >> state.txt
-      #       return
+      - run:
+          name: Check status of instance 
+          command: |
+            aws ec2 describe-instance-status \
+            --no-include-all-instances \
+            # --filters 'Name=instance-state-name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
+            --query "InstanceStatuses[*].InstanceState.Code" \
+            --output text >> ./state.txt
+      
       
       - run:
           name: Add back-end ip and URL to ansible inventory
@@ -204,7 +207,8 @@ jobs:
             aws ec2 describe-instances \
             --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
             --query 'Reservations[*].Instances[*].PublicDnsName' \
-            --output text >> .circleci/ansible/urls.txt  
+            --output text >> .circleci/ansible/urls.txt 
+            cd .circleci/ansible/ 
             ls -la
           
            
