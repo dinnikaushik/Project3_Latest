@@ -206,7 +206,7 @@ jobs:
           
            
       - persist_to_workspace:
-          root: ~/
+          root: ~/project
           paths:
             - .circleci/ansible/inventory.txt
             - .circleci/ansible/urls.txt
