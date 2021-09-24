@@ -8,20 +8,11 @@ version: 2.1
 defaults: &defaults-node
   docker:
     - image: cimg/node:lts
-  working_directory: ~/project
+  working_directory: ~/
   
 
 
 commands:
-  gets-id:
-    description: Gets CIRCLE WORKFLOW_ID
-    parameters:
-        workflow_id:
-         type: string
-    steps:
-      - run: echo << parameters.id >>
-      - run: echo ${CIRCLE_WORKFLOW_ID:0:7}
-
 
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
@@ -215,7 +206,7 @@ jobs:
           
            
       - persist_to_workspace:
-          root: ~/project
+          root: ~/
           paths:
             - .circleci/ansible/inventory.txt
             - .circleci/ansible/urls.txt
