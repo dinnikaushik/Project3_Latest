@@ -204,7 +204,7 @@ jobs:
           name: Add back-end ip and URL to ansible inventory
           command: |
             aws ec2 describe-instances \
-            --filters 'Name=tag:Name ,Value="backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+            --filters 'Name=tag:Name ,Value="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
             --query 'Reservations[*]'
             --output text >> .circleci/ansible/instances.txt 
            
