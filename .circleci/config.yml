@@ -211,20 +211,20 @@ jobs:
             - .circleci/ansible/inventory.txt
             - .circleci/ansible/urls.txt
             
-      - run:
-          name: Check files
-          command: |
-            cd .circleci/ansible
-            cat inventory.txt 
-            cat urls.txt
-            
-            
-
+      
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
           event: on_fail
-          
+    
+    download_file:
+      docker:
+        - image: circleci/node:13.8.0
+      steps:
+        - attach_workspace:
+            at: ~/project
+        - run: cat .circleci/ansible/inventory.txt  
+        - run: cat .circleci/ansible/urls.txt     
 
   # configure-infrastructure:
   #   docker:
@@ -376,6 +376,9 @@ workflows:
           filters:
             branches:
               only: [master]
+      
+      - download_file:
+          requires: [deploy-infrastructure]
       # - configure-infrastructure:
       #     requires: [deploy-infrastructure]
       # - run-migrations:
