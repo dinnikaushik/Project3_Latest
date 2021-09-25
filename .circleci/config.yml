@@ -191,20 +191,24 @@ jobs:
             pwd
             aws ec2 describe-instances \
             --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
-            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --query 'Reservations[*].Instances[].PublicIpAddress' \
             --output text >> inventory.txt 
            
             ls -la
             aws ec2 describe-instances \
             --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
-            --query 'Reservations[*].Instances[*].PublicDnsName' \
+            --query 'Reservations[*].Instances[].PublicDnsName' \
             --output text >> urls.txt 
             cd .circleci/
             ls -la
-            cat urls.txt
-            cat inventory.txt
-          
-           
+            
+       
+      - run: echo "THIS IS A SAMPLE 1 TEXT in ~/" > ~/output.txt 
+      - run: echo "THIS IS A SAMPLE 2 TEXT in ~/project" > ~/project/output.txt     
+      - run: echo "THIS IS A SAMPLE 3 TEXT in ~/project" > ~/project/.circleci/output.txt      
+      - run: echo "THIS IS A SAMPLE 4 TEXT in ~/project" > ~/project/.circleci/ansible/output.txt
+      - run: echo "THIS IS A SAMPLE 5 TEXT in ~/project" > ~/.circleci/ansible/output.txt
+      
       - persist_to_workspace:
           root: ~/project
           paths:
