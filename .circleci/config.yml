@@ -189,10 +189,10 @@ jobs:
           name: Add back-end ip and URL to ansible inventory
           command: |
             pwd
-            aws ec2 describe-instances \
-            --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
-            --query 'Reservations[*].Instances[].PublicIpAddress' \
-            --output text >> ~/project/.circleci/ansible/inventory.txt 
+            aws ec2 describe-instances > output1.txt 
+            # --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
+            # --query 'Reservations[*].Instances[].PublicIpAddress' \
+            # --output text >> ~/project/.circleci/ansible/inventory.txt 
            
             ls -la
             aws ec2 describe-instances \
@@ -203,19 +203,20 @@ jobs:
             ls -la
             
        
-      - run: echo "THIS IS A SAMPLE 1 TEXT in ~/" > ~/output1.txt 
-      - run: echo "THIS IS A SAMPLE 2 TEXT in ~/project" > ~/project/output2.txt     
-      - run: echo "THIS IS A SAMPLE 3 TEXT in ~/project" > ~/project/.circleci/output3.txt      
-      - run: echo "THIS IS A SAMPLE 4 TEXT in ~/project" > ~/project/.circleci/ansible/output4.txt
+      - run: echo "THIS IS A SAMPLE 1 TEXT in " > output1.txt 
+      - run: echo "THIS IS A SAMPLE 2 TEXT in /project" > /output2.txt     
+      - run: echo "THIS IS A SAMPLE 3 TEXT in /project" > .circleci/output3.txt      
+      - run: echo "THIS IS A SAMPLE 4 TEXT in /project" > .circleci/ansible/output4.txt
       
       
       - persist_to_workspace:
-          root: ~/project
+          root: .
           paths:
+            - .
             - .circleci/ansible/inventory.txt
             - .circleci/ansible/urls.txt
-            - output.txt
-            - output2.txt 
+            - output1.txt
+            - /output2.txt 
             - .circleci/output3.txt 
             - .circleci/ansible/output4.txt   
       
@@ -229,12 +230,14 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - attach_workspace:
-          at: ~/project
+          at: .
       - run: pwd && ls -la
-      - run: cat .circleci/ansible/inventory.txt 
-      - run: cd .circleci && ls -la 
+      - run: cat output1.txt
+      # - run: cat .circleci/ansible/inventory.txt 
+      - run: ls -la 
+      - run: cat .circleci/output3.txt 
       - run: cat .circleci/ansible/output4.txt  
-      - run: cd ansible && ls -la    
+       
       
   # configure-infrastructure:
   #   docker:
