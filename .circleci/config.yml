@@ -192,14 +192,14 @@ jobs:
             aws ec2 describe-instances \
             --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
             --query 'Reservations[*].Instances[].PublicIpAddress' \
-            --output text >> inventory.txt 
+            --output text >> ~/project/.circleci/ansible/inventory.txt 
            
             ls -la
             aws ec2 describe-instances \
             --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
             --query 'Reservations[*].Instances[].PublicDnsName' \
-            --output text >> urls.txt 
-            cd .circleci/
+            --output text >> ~/project/.circleci/ansible/urls.txt 
+            cd .circleci/ansible/
             ls -la
             
        
@@ -233,7 +233,7 @@ jobs:
       - run: pwd && ls -la
       - run: cat .circleci/ansible/inventory.txt 
       - run: cd .circleci && ls -la 
-      - run: cat .circleci/ansible/urls.txt  
+      - run: cat .circleci/ansible/output4.txt  
       - run: cd ansible && ls -la    
       
   # configure-infrastructure:
