@@ -217,14 +217,14 @@ jobs:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
           event: on_fail
     
-    download_file:
-      docker:
-        - image: circleci/node:13.8.0
-      steps:
-        - attach_workspace:
-            at: ~/project
-        - run: cat .circleci/ansible/inventory.txt  
-        - run: cat .circleci/ansible/urls.txt     
+  download_file:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run: cat .circleci/ansible/inventory.txt  
+      - run: cat .circleci/ansible/urls.txt     
 
   # configure-infrastructure:
   #   docker:
