@@ -230,9 +230,12 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/project
-      - run: cat .circleci/ansible/inventory.txt  
-      - run: cat .circleci/ansible/urls.txt     
       - run: pwd && ls -la
+      - run: cat .circleci/ansible/inventory.txt 
+      - run: cd .circleci && ls -la 
+      - run: cat .circleci/ansible/urls.txt  
+      - run: cd ansible && ls -la    
+      
   # configure-infrastructure:
   #   docker:
   #     # Docker image here that supports Ansible
