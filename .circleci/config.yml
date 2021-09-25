@@ -204,21 +204,21 @@ jobs:
             
        
       - run: echo "THIS IS A SAMPLE 1 TEXT in " > output1.txt 
-      - run: echo "THIS IS A SAMPLE 2 TEXT in /project" > /output2.txt     
-      - run: echo "THIS IS A SAMPLE 3 TEXT in /project" > .circleci/output3.txt      
-      - run: echo "THIS IS A SAMPLE 4 TEXT in /project" > .circleci/ansible/output4.txt
+      - run: echo "THIS IS A SAMPLE 2 TEXT in /project" > ./output2.txt     
+      - run: echo "THIS IS A SAMPLE 3 TEXT in /project" > ./.circleci/output3.txt      
+      - run: echo "THIS IS A SAMPLE 4 TEXT in /project" > ./.circleci/ansible/output4.txt
       
       
       - persist_to_workspace:
           root: .
           paths:
             - .
-            - .circleci/ansible/inventory.txt
-            - .circleci/ansible/urls.txt
-            - output1.txt
-            - /output2.txt 
-            - .circleci/output3.txt 
-            - .circleci/ansible/output4.txt   
+            # - .circleci/ansible/inventory.txt
+            # - .circleci/ansible/urls.txt
+            # - output1.txt
+            # - /output2.txt 
+            # - .circleci/output3.txt 
+            # - .circleci/ansible/output4.txt   
       
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
