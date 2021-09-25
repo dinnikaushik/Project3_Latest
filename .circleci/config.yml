@@ -215,9 +215,9 @@ jobs:
             - .circleci/ansible/inventory.txt
             - .circleci/ansible/urls.txt
             - output.txt
-            - /output2.txt 
-            - /.circleci/output3.txt 
-            - /.circleci/ansible/output4.txt   
+            - output2.txt 
+            - .circleci/output3.txt 
+            - .circleci/ansible/output4.txt   
       
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
@@ -232,7 +232,7 @@ jobs:
           at: ~/project
       - run: cat .circleci/ansible/inventory.txt  
       - run: cat .circleci/ansible/urls.txt     
-
+      - run: pwd && ls -la
   # configure-infrastructure:
   #   docker:
   #     # Docker image here that supports Ansible
