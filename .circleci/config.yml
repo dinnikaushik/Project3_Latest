@@ -190,36 +190,32 @@ jobs:
           command: |
             pwd
             aws ec2 describe-instances > output1.txt 
-            # --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
-            # --query 'Reservations[*].Instances[].PublicIpAddress' \
-            # --output text >> ~/project/.circleci/ansible/inventory.txt 
-           
+            --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
+            --query 'Reservations[*].Instances[].PublicIpAddress' \
+            --output text >> ./.circleci/ansible/inventory.txt 
+            cat ./.circleci/ansible/inventory.txt
+            cd .circleci/ansible/
             ls -la
+            cat inventory.txt
+            
             aws ec2 describe-instances \
             --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
             --query 'Reservations[*].Instances[].PublicDnsName' \
-            --output text >> ~/project/.circleci/ansible/urls.txt 
+            --output text >> ./.circleci/ansible/urls.txt 
             cd .circleci/ansible/
             ls -la
-            
+            cat urls.txt
        
-      - run: echo "THIS IS A SAMPLE 1 TEXT in " > output1.txt 
-      - run: echo "THIS IS A SAMPLE 2 TEXT in /project" > ./output2.txt     
-      - run: echo "THIS IS A SAMPLE 3 TEXT in /project" > ./.circleci/output3.txt      
-      - run: echo "THIS IS A SAMPLE 4 TEXT in /project" > ./.circleci/ansible/output4.txt
+       
+      - run: echo "THIS IS A SAMPLE 3 TEXT in /project" >> ./.circleci/output3.txt      
+      - run: echo "THIS IS A SAMPLE 4 TEXT in /project" >> ./.circleci/ansible/output4.txt
       
       
       - persist_to_workspace:
           root: .
           paths:
             - .
-            # - .circleci/ansible/inventory.txt
-            # - .circleci/ansible/urls.txt
-            # - output1.txt
-            # - /output2.txt 
-            # - .circleci/output3.txt 
-            # - .circleci/ansible/output4.txt   
-      
+            
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
@@ -231,12 +227,18 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - run: pwd && ls -la
-      - run: cat output1.txt
-      # - run: cat .circleci/ansible/inventory.txt 
-      - run: ls -la 
-      - run: cat .circleci/output3.txt 
-      - run: cat .circleci/ansible/output4.txt  
+      - run: 
+          command: 
+            pwd && ls -la
+            cat output1.txt
+            cat .circleci/ansible/inventory.txt
+            cd .circleci/ansible/
+            cat urls.txt
+            cat .circleci/ansible/urls.txt  
+            cd ..
+            ls -la 
+            cat output3.txt 
+            cat .circleci/ansible/output4.txt  
        
       
   # configure-infrastructure:
