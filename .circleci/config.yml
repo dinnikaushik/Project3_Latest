@@ -216,7 +216,7 @@ jobs:
       - attach_workspace:
           at: .
       - run: 
-          command: 
+          command: |
             pwd && ls -la
             cat output1.txt
             cat .circleci/ansible/inventory.txt
@@ -378,8 +378,7 @@ workflows:
           # requires: [build-backend, build-frontend]
           filters:
             branches:
-              only: [master]
-      
+              only: [master]     
       - download_file:
           requires: [deploy-infrastructure]
       # - configure-infrastructure:
