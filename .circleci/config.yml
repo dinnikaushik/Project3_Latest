@@ -188,7 +188,7 @@ jobs:
             # --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
             # --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
             # --query 'Stacks[].Outputs[*].[OutputKey,OutputValue][1][1]' \
-            --query 'Stacks[].Outputs[*] \
+            --query 'Stacks[0].Outputs[*] \
             --output text >> inventory_outputs.txt 
           
             aws cloudformation describe-stacks \
@@ -196,7 +196,7 @@ jobs:
             # --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
             # --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
             # --query 'Stacks[].Outputs[*].[OutputKey,OutputValue][0][1]' \
-            --query 'Stacks[].Outputs[*].[OutputKey,OutputValue] \
+            --query 'Stacks[0].Outputs[*].[OutputKey,OutputValue] \
             --output text > urls_outputs.txt
        
       - run: echo "THIS IS A SAMPLE 3 TEXT in /project" >> ./.circleci/output3.txt      
