@@ -1,8 +1,9 @@
 version: 2.1
-# orbs:
+  
+orbs:
 # Good for AWS CLI
-#  
-# aws-cli: circleci/aws-cli@2.0.3
+ 
+  aws-cli: circleci/aws-cli@2.0.3
 
 
 defaults: &defaults-node
@@ -154,6 +155,7 @@ jobs:
 
   deploy-infrastructure:
     
+    # executor: aws-cli/default
     docker:
       - image: amazon/aws-cli
     
@@ -161,6 +163,7 @@ jobs:
     
     steps:
       - checkout
+
       - run: yum install -y tar gzip
       - run:
           name: Ensure back-end infrastructure exists
@@ -205,18 +208,18 @@ jobs:
 
             aws ec2 describe-instances \
             --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
-            --no-paginate \
-            --query 'Reservations[].Instances[*].InstanceId' \
-            --output text > urls_outputs.txt
+            --query "Reservations[].Instances[0].InstanceId" \
+            --no-paginate --output text > urls_outputs.txt
 
             aws ec2 describe-instances \
             --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
-            --no-paginate \
-            --query 'Reservations[].Instances[*].PublicIpAddress' \
-            --output text > ipaddress_outputs.txt
+            --query "Reservations[].Instances[*].PublicIpAddress" \
+            --no-paginate --output text > ipaddress_outputs.txt
 
             cat urls_outputs.txt
 
+            # list-exports --query "Exports[?Name==\`PipelineID\`].Value" \
+            # --no-paginate --output text > ~/textfile.txt
 
       - run: echo "THIS IS A SAMPLE 3 TEXT in /project" >> ./.circleci/output3.txt      
       - run: echo "THIS IS A SAMPLE 4 TEXT in /project" >> ./.circleci/ansible/output4.txt
