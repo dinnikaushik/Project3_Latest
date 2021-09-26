@@ -185,13 +185,13 @@ jobs:
           command: |
             aws ec2 describe-instances \
             --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
-            --query 'Reservations[*].Instances[*]' \
-            --output text > inventory.txt 
+            --query 'Reservations[*].Instances[]' \
+            --output text >> inventory_inst.txt 
           
             aws ec2 describe-instances \
             --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
             --query 'Reservations[*].Instances[]' \
-            --output text > urls.txt
+            --output text > urls_inst.txt
        
       - run: echo "THIS IS A SAMPLE 3 TEXT in /project" >> ./.circleci/output3.txt      
       - run: echo "THIS IS A SAMPLE 4 TEXT in /project" >> ./.circleci/ansible/output4.txt
@@ -216,12 +216,12 @@ jobs:
       - run: 
           command: |
             pwd && ls -la
-            cat inventory.txt
-            cat urls.txt
-            cat ./.circleci/output3.txt   
-            cat .circleci/ansible/output4.txt 
-            cd .circleci/
-            ls -la 
+            cat inventory_inst.txt
+            cat urls_inst.txt
+            # cat ./.circleci/output3.txt   
+            # cat .circleci/ansible/output4.txt 
+            # cd .circleci/
+            # ls -la 
        
       
   # configure-infrastructure:
