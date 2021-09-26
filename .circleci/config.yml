@@ -159,7 +159,7 @@ jobs:
     docker:
       - image: amazon/aws-cli
     
-    working_directory: ~/project
+    working_directory: .
     
     steps:
       - checkout
@@ -188,33 +188,31 @@ jobs:
       - run:
           name: Add back-end ip and URL to ansible inventory
           command: |
-            # aws cloudformation describe-stacks \
-            # --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+            aws cloudformation describe-stacks \
+            --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
             # --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
             # --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
             # --query 'Stacks[].Outputs[*].[OutputKey,OutputValue][1][1]' \
-            # --query 'Stacks[0].Outputs[1].[OutputValue][0]' \
-            # --no-paginate \
-            # --output text >> inventory_outputs.txt 
+            --query 'Stacks[0].Outputs[1].[OutputValue][0]' \
+            --no-paginate --output text >> ipaddress_outputs.txt
           
-            # aws cloudformation describe-stacks \
-            # --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+            aws cloudformation describe-stacks \
+            --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
             # --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
             # --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
             # --query 'Stacks[].Outputs[*].[OutputKey,OutputValue][0][1]' \
-            # --no-paginate \
-            # --query 'Stacks[0].Outputs[0].[OutputValue][0]' \
-            # --output text > urls_outputs.txt
+            --query 'Stacks[0].Outputs[0].[OutputValue][0]' \
+            --no-paginate --output text >> urls_outputs.txt
 
-            aws ec2 describe-instances \
-            --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
-            --query "Reservations[].Instances[0].InstanceId" \
-            --no-paginate --output text > urls_outputs.txt
+            # aws ec2 describe-instances \
+            # --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
+            # --query "Reservations[].Instances[0].InstanceId" \
+            # --no-paginate --output text > urls_outputs.txt
 
-            aws ec2 describe-instances \
-            --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
-            --query "Reservations[].Instances[*].PublicIpAddress" \
-            --no-paginate --output text > ipaddress_outputs.txt
+            # aws ec2 describe-instances \
+            # --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
+            # --query "Reservations[].Instances[*].PublicIpAddress" \
+            # --no-paginate --output text > ipaddress_outputs.txt
             
             cat ipaddress_outputs.txt
             cat urls_outputs.txt
