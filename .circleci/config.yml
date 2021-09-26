@@ -185,17 +185,19 @@ jobs:
           command: |
             aws cloudformation describe-stacks \
             --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-            --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
+            # --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
             # --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
-            --query 'Stacks[].Outputs[*].[OutputKey,OutputValue][1][1]' \
-            --output text >> inventory_inst.txt 
+            # --query 'Stacks[].Outputs[*].[OutputKey,OutputValue][1][1]' \
+            --query 'Stacks[].Outputs[*] \
+            --output text >> inventory_outputs.txt 
           
             aws cloudformation describe-stacks \
             --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
             # --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
-            --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
-            --query 'Stacks[].Outputs[*].[OutputKey,OutputValue][0][1]' \
-            --output text > urls_inst.txt
+            # --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
+            # --query 'Stacks[].Outputs[*].[OutputKey,OutputValue][0][1]' \
+            --query 'Stacks[].Outputs[*].[OutputKey,OutputValue] \
+            --output text > urls_outputs.txt
        
       - run: echo "THIS IS A SAMPLE 3 TEXT in /project" >> ./.circleci/output3.txt      
       - run: echo "THIS IS A SAMPLE 4 TEXT in /project" >> ./.circleci/ansible/output4.txt
