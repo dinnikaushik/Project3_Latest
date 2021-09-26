@@ -206,7 +206,7 @@ jobs:
             aws ec2 describe-instances \
             --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
             --no-paginate \
-            --query "Reservations[].Instances[*].PublicDnsName' \
+            --query 'Reservations[].Instances[*].PublicDnsName' \
             --output text >> urls_outputs.txt
 
             aws ec2 describe-instances \
