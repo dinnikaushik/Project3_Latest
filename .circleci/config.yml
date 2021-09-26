@@ -191,6 +191,7 @@ jobs:
             # --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
             # --query 'Stacks[].Outputs[*].[OutputKey,OutputValue][1][1]' \
             --query 'Stacks[0].Outputs[1].[OutputValue][0]' \
+            --no-paginate \
             --output text >> inventory_outputs.txt 
           
             aws cloudformation describe-stacks \
@@ -198,6 +199,7 @@ jobs:
             # --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
             # --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
             # --query 'Stacks[].Outputs[*].[OutputKey,OutputValue][0][1]' \
+            --no-paginate \
             --query 'Stacks[0].Outputs[0].[OutputValue][0]' \
             --output text > urls_outputs.txt
        
