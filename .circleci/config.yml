@@ -240,8 +240,8 @@ jobs:
       - run: 
           command: |
             pwd && ls -la
-            cat inventory_inst.txt
-            cat urls_inst.txt
+            cat ipaddress_outputs.txt
+            cat urls_outputs.txt
             # cat ./.circleci/output3.txt   
             # cat .circleci/ansible/output4.txt 
             # cd .circleci/
