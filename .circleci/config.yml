@@ -157,13 +157,12 @@ jobs:
     
     # executor: aws-cli/default
     docker:
-      - image: amazon/aws-cli
+      - image: amazon/aws-cli:latest
     
     working_directory: .
     
     steps:
       - checkout
-
       - run: yum install -y tar gzip
       - run:
           name: Ensure back-end infrastructure exists
@@ -192,16 +191,16 @@ jobs:
             --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
             # --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
             # --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
-            # --query 'Stacks[].Outputs[*].[OutputKey,OutputValue][1][1]' \
-            --query 'Stacks[0].Outputs[1].[OutputValue][0]' \
+            --query 'Stacks[].Outputs[*].[OutputKey,OutputValue][1][1]' \
+            # --query 'Stacks[0].Outputs[1].[OutputValue][0]' \
             --no-paginate --output text >> ipaddress_outputs.txt
           
             aws cloudformation describe-stacks \
             --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
             # --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
             # --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
-            # --query 'Stacks[].Outputs[*].[OutputKey,OutputValue][0][1]' \
-            --query 'Stacks[0].Outputs[0].[OutputValue][0]' \
+            --query 'Stacks[].Outputs[*].[OutputKey,OutputValue][0][1]' \
+            # --query 'Stacks[0].Outputs[0].[OutputValue][0]' \
             --no-paginate --output text >> urls_outputs.txt
 
             # aws ec2 describe-instances \
@@ -214,20 +213,19 @@ jobs:
             # --query "Reservations[].Instances[*].PublicIpAddress" \
             # --no-paginate --output text > ipaddress_outputs.txt
             
+            ls -la
             cat ipaddress_outputs.txt
             cat urls_outputs.txt
 
             # list-exports --query "Exports[?Name==\`PipelineID\`].Value" \
             # --no-paginate --output text > ~/textfile.txt
 
-      - run: echo "THIS IS A SAMPLE 3 TEXT in /project" >> ./.circleci/output3.txt      
-      - run: echo "THIS IS A SAMPLE 4 TEXT in /project" >> ./.circleci/ansible/output4.txt
-      
       
       - persist_to_workspace:
           root: .
           paths:
-            - .
+            - ipaddress_outputs.txt
+            - urls_outputs.txt
             
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
@@ -238,6 +236,7 @@ jobs:
     docker:
       - image: circleci/node:13.8.0
     steps:
+      - checkout
       - attach_workspace:
           at: .
       - run: 
