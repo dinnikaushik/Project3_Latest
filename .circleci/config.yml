@@ -152,6 +152,7 @@ jobs:
             npm audit --audit-level=critical --force
 
   deploy-infrastructure:
+    parallelism: 4
     docker:
       - image: amazon/aws-cli
     
