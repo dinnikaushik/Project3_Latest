@@ -183,14 +183,14 @@ jobs:
       - run:
           name: Add back-end ip and URL to ansible inventory
           command: |
-            aws ec2 describe-instances \
-            --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
-            --query 'Reservations[*].Instances[]' \
+            aws cloudformation describe-stacks --stack-name 'udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}' \
+            # --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
+            --query 'Stacks[].Outputs[].[OutputKey,OutputValue][1][1]' \
             --output text >> inventory_inst.txt 
           
             aws ec2 describe-instances \
             --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
-            --query 'Reservations[*].Instances[]' \
+            --query 'Stacks[].Outputs[].[OutputKey,OutputValue][0][1]' \
             --output text > urls_inst.txt
        
       - run: echo "THIS IS A SAMPLE 3 TEXT in /project" >> ./.circleci/output3.txt      
