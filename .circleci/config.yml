@@ -10,7 +10,8 @@ defaults: &defaults-node
     - image: cimg/node:lts
   working_directory: ~/project
   
-
+environment:
+  AWS_PAGER: ""
 
 commands:
 
