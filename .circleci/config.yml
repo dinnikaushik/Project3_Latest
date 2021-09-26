@@ -215,7 +215,8 @@ jobs:
             --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
             --query "Reservations[].Instances[*].PublicIpAddress" \
             --no-paginate --output text > ipaddress_outputs.txt
-
+            
+            cat ipaddress_outputs.txt
             cat urls_outputs.txt
 
             # list-exports --query "Exports[?Name==\`PipelineID\`].Value" \
