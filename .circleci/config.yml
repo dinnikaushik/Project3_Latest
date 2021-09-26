@@ -206,15 +206,16 @@ jobs:
             aws ec2 describe-instances \
             --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
             --no-paginate \
-            --query 'Reservations[].Instances[*].PublicDnsName' \
-            --output text >> urls_outputs.txt
+            --query 'Reservations[].Instances[*].InstanceId' \
+            --output text > urls_outputs.txt
 
             aws ec2 describe-instances \
             --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
             --no-paginate \
             --query 'Reservations[].Instances[*].PublicIpAddress' \
-            --output text >> ipaddress_outputs.txt
+            --output text > ipaddress_outputs.txt
 
+            cat urls_outputs.txt
 
 
       - run: echo "THIS IS A SAMPLE 3 TEXT in /project" >> ./.circleci/output3.txt      
