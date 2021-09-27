@@ -42,12 +42,17 @@ Outputs:
   EC2PublicDNS:
     Description: 'Public DNS of EC2 instance'
     Value: !GetAtt EC2Instance.PublicDnsName
+
   
   EC2PublicIP:
     Description: Public EC2Instance IP for references
     Value: !GetAtt EC2Instance.PublicIp
+    Export:
+      Name: !Sub "${AWS::EC2PublicIP}"
 
   EC2InstanceID:
     Description: EC2Instance ID
     Value: !Ref EC2Instance
+    Export:
+      Name: !Sub "${AWS::EC2InstanceID}"
      
