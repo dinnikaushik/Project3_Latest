@@ -204,8 +204,13 @@ jobs:
             # --no-paginate --output text >> urls_outputs.txt
 
             aws ec2 describe-instances \
+            --filters "Name=instance-type,Values=t2.micro" \
+            --query 'Reservations[*].Instances[*].{Instance:InstanceId}' \
+            --output json
+
+            aws ec2 describe-instances \
             --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
-            --query "Reservations[].Instances[0].InstanceId" \
+            --query "Reservations[].Instances[0].EC2PublicDNS" \
             --no-paginate --output text > urls_outputs.txt
 
             aws ec2 describe-instances \
@@ -215,14 +220,11 @@ jobs:
             
             ls -la
             which aws
-            
+
             cat ipaddress_outputs.txt
             cat urls_outputs.txt
 
-            # list-exports --query "Exports[?Name==\`PipelineID\`].Value" \
-            # --no-paginate --output text > ~/textfile.txt
-
-      
+            
       - persist_to_workspace:
           root: .
           paths:
