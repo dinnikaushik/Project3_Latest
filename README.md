@@ -1,3 +1,4 @@
+[![CircleCI](https://circleci.com/gh/serglit72/Devops-p3-starter/tree/master.svg?style=svg)](https://circleci.com/gh/serglit72/Devops-p3-starter/tree/master)
 ## Give your Application Auto-Deploy Superpowers
 
 In this project, you will prove your mastery of the following learning objectives:
