@@ -204,13 +204,18 @@ jobs:
             # --no-paginate --output text >> urls_outputs.txt
 
             aws ec2 describe-instances \
-            --filters "Name=instance-type,Values=t2.micro Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
-            --query 'Reservations[*].Instances[*].EC2PublicDNS' \
-            --output text
+            --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
+            --query 'Reservations[*].Instances[*].InstanceId' \
+             --output text
+            
+            aws ec2 describe-instances \
+            --filters "Name=instance-type,Values=t2.micro" \
+            --query "Reservations[].Instances[].InstanceId"
+            --output text >> instance_id.txt
 
             aws ec2 describe-instances \
             --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
-            --query "Reservations[*].Instances[0].EC2PublicDNS" \
+            --query "Reservations[*].Instances[*].EC2PublicDNS" \
             --no-paginate --output text > urls_outputs.txt
 
             aws ec2 describe-instances \
