@@ -164,6 +164,7 @@ jobs:
     steps:
       - checkout
       - run: yum install -y tar gzip
+      - run: apt install tree
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -187,6 +188,7 @@ jobs:
       - run:
           name: Add back-end instance ID to file 
           command: |
+            tree
             aws ec2 describe-instances \
             --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
             --query 'Reservations[*].Instances[*].InstanceId' \
@@ -196,6 +198,7 @@ jobs:
       - run:
           name: Add back-end IP to file 
           command: |
+            tree
             cd .circleci/
             echo [all] > inventory.txt
             ls -la
