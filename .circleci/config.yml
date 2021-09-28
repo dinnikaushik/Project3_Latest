@@ -271,7 +271,7 @@ jobs:
             # Your code here
             pwd && ls -la
             cd ansible && ls -la
-            ansible-playbook -i inventory.txt main.yml
+            # ansible-playbook -i inventory.txt main.yml
             # exit 1
       # Here's where you will add some code to rollback on failure      
 
