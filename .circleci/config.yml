@@ -190,7 +190,7 @@ jobs:
             aws ec2 describe-instances \
             --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
             --query 'Reservations[*].Instances[*].InstanceId' \
-            --no-paginate --output text >> instance_id.txt
+            --no-paginate --output text >> .circleci/ansible/instance_id.txt
             ls -la
       
       - run:
@@ -199,8 +199,10 @@ jobs:
             aws ec2 describe-instances \
             --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --no-paginate --output text >> ipaddress_outputs.txt
+            --no-paginate --output text >> .circleci/ansible/inventory.txt
             ls -la
+            cd .circleci/ansible/
+            cat inventory.txt
       
       - run:
           name: Add back-end PublicDNS address to file 
@@ -208,19 +210,17 @@ jobs:
             aws ec2 describe-instances \
             --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
             --query 'Reservations[*].Instances[*].PublicDnsName' \
-            --no-paginate --output text >> urls_outputs.txt
+            --no-paginate --output text >> .circleci/ansible/urls_outputs.txt
             ls -la
-            aws --version
-            cat ipaddress_outputs.txt
+            cd .circleci/ansible/
             cat urls_outputs.txt
-            cat instance_id.txt
+            
             
       - persist_to_workspace:
           root: .
           paths:
-            - ipaddress_outputs.txt
-            - urls_outputs.txt
-            - instance_id.txt
+            - .circleci/ansible/inventory.txt
+            - .circleci/ansible/urls_outputs.txt
             
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
@@ -237,14 +237,9 @@ jobs:
       - run: 
           command: |
             pwd && ls -la
-            cat ipaddress_outputs.txt
-            cat urls_outputs.txt
-            # cat ./.circleci/output3.txt   
-            # cat .circleci/ansible/output4.txt 
-            # cd .circleci/
-            # ls -la 
-       
-      
+            cat .circleci/ansible/inventory.txt
+            cat .circleci/ansible/urls_outputs.txt
+               
   configure-infrastructure:
     docker:
       # Docker image here that supports Ansible
