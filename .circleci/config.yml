@@ -190,7 +190,7 @@ jobs:
             aws ec2 describe-instances \
             --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
             --query 'Reservations[*].Instances[*].InstanceId' \
-            --no-paginate --output text >> .circleci/ansible/instance_id.txt
+            --no-paginate --output text >> ./ansible/instance_id.txt
             ls -la
       
       - run:
@@ -199,9 +199,10 @@ jobs:
             aws ec2 describe-instances \
             --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --no-paginate --output text >> .circleci/ansible/inventory.txt
+            --no-paginate --output text > ./ansible/inventory.txt
             ls -la
-            cd .circleci/ansible/
+            cd ./ansible/
+            ls -la
             cat inventory.txt
       
       - run:
@@ -210,17 +211,18 @@ jobs:
             aws ec2 describe-instances \
             --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
             --query 'Reservations[*].Instances[*].PublicDnsName' \
-            --no-paginate --output text >> .circleci/ansible/urls_outputs.txt
+            --no-paginate --output text >> ./ansible/urls_outputs.txt
             ls -la
-            cd .circleci/ansible/
+            cd ./ansible/
+            ls -la
             cat urls_outputs.txt
             
             
       - persist_to_workspace:
           root: .
           paths:
-            - .circleci/ansible/inventory.txt
-            - .circleci/ansible/urls_outputs.txt
+            - /ansible/inventory.txt
+            - /ansible/urls_outputs.txt
             
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
@@ -237,13 +239,17 @@ jobs:
       - run: 
           command: |
             pwd && ls -la
-            cat .circleci/ansible/inventory.txt
-            cat .circleci/ansible/urls_outputs.txt
+            cd .circleci/
+            ls -la
+            cd ansible/
+            ls -la
+            cat inventory.txt
+            cat urls_outputs.txt
                
   configure-infrastructure:
     docker:
       # Docker image here that supports Ansible
-      - image: python:3.7-alpine3.11
+      - image: python:3.8-alpine3.14
     steps:
       - checkout
       - add_ssh_keys:
@@ -261,7 +267,9 @@ jobs:
           name: Configure server
           command: |
             # Your code here
-            ansible-playbook -i inventory.txt main.yml
+            pwd && ls -la
+          
+            # ansible-playbook -i inventory.txt main.yml
             # exit 1
       # Here's where you will add some code to rollback on failure      
 
