@@ -185,44 +185,30 @@ jobs:
               # exit 1
       
       - run:
-          name: Add back-end ip and URL to ansible inventory
+          name: Add back-end instance ID to file 
           command: |
-            # aws cloudformation describe-stacks \
-            # --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-            # # --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
-            # # --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
-            # --query 'Stacks[].Outputs[*].[OutputKey,OutputValue][1][1]' \
-            # # --query 'Stacks[0].Outputs[1].[OutputValue][0]' \
-            # --no-paginate --output text >> ipaddress_outputs.txt
-          
-            # aws cloudformation describe-stacks \
-            # --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-            # # --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
-            # # --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
-            # --query 'Stacks[].Outputs[*].[OutputKey,OutputValue][0][1]' \
-            # # --query 'Stacks[0].Outputs[0].[OutputValue][0]' \
-            # --no-paginate --output text >> urls_outputs.txt
-
             aws ec2 describe-instances \
             --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
             --query 'Reservations[*].Instances[*].InstanceId' \
-             --output text
-            
-            aws ec2 describe-instances \
-            --filters "Name=instance-type,Values=t2.micro" \
-            --query "Reservations[].Instances[].InstanceId"
-            --output text >> instance_id.txt
-
-            aws ec2 describe-instances \
-            --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
-            --query "Reservations[*].Instances[*].EC2PublicDNS" \
-            --no-paginate --output text > urls_outputs.txt
-
+            --no-paginate --output text >> instance_id.txt
+            ls -la
+      
+      - run:
+          name: Add back-end IP to file 
+          command: |
             aws ec2 describe-instances \
             --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
             --query "Reservations[*].Instances[*].PublicIpAddress" \
-            --no-paginate --output json >> ipaddress_outputs.json
-            
+            --no-paginate --output text >> ipaddress_outputs.txt
+            ls -la
+      
+      - run:
+          name: Add back-end PublicDNS address to file 
+          command: |
+            aws ec2 describe-instances \
+            --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
+            --query 'Reservations[*].Instances[*].EC2PublicDNS' \
+            --no-paginate --output text >> urls_outputs.txt
             ls -la
             aws --version
 
