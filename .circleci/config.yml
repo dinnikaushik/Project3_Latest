@@ -219,7 +219,7 @@ jobs:
             --no-paginate --output json >> ipaddress_outputs.json
             
             ls -la
-            which aws
+            aws --version
 
             cat ipaddress_outputs.txt
             cat urls_outputs.txt
