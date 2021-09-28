@@ -196,18 +196,19 @@ jobs:
             pwd
             ls -la && cd .circleci/ansible/ && ls -la
             cat instance_id.txt
+            
       - run:
           name: Add back-end IP to file 
           command: |
             pwd && ls -la 
-            cd ansible/ 
+            cd .circleci/ansible/ 
             echo [all] > inventory.txt
             ls -la
             cat inventory.txt
             aws ec2 describe-instances \
             --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --no-paginate --output text >> inventory.txt
+            --no-paginate --output text >> .circleci/ansible/inventory.txt
             pwd && ls -la
             cat inventory.txt
       
@@ -218,8 +219,8 @@ jobs:
             aws ec2 describe-instances \
             --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
             --query 'Reservations[*].Instances[*].PublicDnsName' \
-            --no-paginate --output text >> ./ansible/inventory.txt
-            cd ansible/ && ls -la 
+            --no-paginate --output text >> .circleci/ansible/inventory.txt
+            cd .circleci/ansible/ && ls -la 
             cat inventory.txt
             tree
             
@@ -227,7 +228,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - ansible/inventory.txt
+            - .circleci/ansible/inventory.txt
             
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
@@ -240,12 +241,12 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: .circleci/
+          at: .circleci/ansible/
 
       - run: 
           command: |
             pwd && ls -la
-            cd ansible/
+            cd .circleci/ansible/
             ls -la
             cat inventory.txt
             
@@ -260,7 +261,7 @@ jobs:
           fingerprints: ["67:f1:5d:1a:39:15:81:3f:8d:53:8e:3f:dc:a8:14:d4"]
       # attach workspace
       - attach_workspace:
-          at: .circleci/
+          at: .circleci/ansible/
 
       - run:
           name: Install dependencies
@@ -272,8 +273,8 @@ jobs:
           command: |
             # Your code here
             pwd && ls -la
-            cd ansible && ls -la
-            # ansible-playbook -i inventory.txt main.yml
+            cd .circleci/ansible && ls -la
+            ansible-playbook -i inventory.txt main.yml
             # exit 1
       # Here's where you will add some code to rollback on failure      
 
