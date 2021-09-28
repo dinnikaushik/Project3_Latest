@@ -197,8 +197,8 @@ jobs:
           name: Add back-end IP to file 
           command: |
             aws ec2 describe-instances \
-            --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
-            --query "Reservations[*].Instances[*].PublicIpAddress" \
+            --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --no-paginate --output text >> ipaddress_outputs.txt
             ls -la
       
@@ -207,20 +207,20 @@ jobs:
           command: |
             aws ec2 describe-instances \
             --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
-            --query 'Reservations[*].Instances[*].EC2PublicDNS' \
+            --query 'Reservations[*].Instances[*].PublicDnsName' \
             --no-paginate --output text >> urls_outputs.txt
             ls -la
             aws --version
-
             cat ipaddress_outputs.txt
             cat urls_outputs.txt
-
+            cat instance_id.txt
             
       - persist_to_workspace:
           root: .
           paths:
             - ipaddress_outputs.txt
             - urls_outputs.txt
+            - instance_id.txt
             
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
