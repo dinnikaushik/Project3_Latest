@@ -191,18 +191,19 @@ jobs:
             --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
             --query 'Reservations[*].Instances[*].InstanceId' \
             --no-paginate --output text >> .circleci/ansible/instance_id.txt
-            ls -la
-      
+            ls -la && cd .circleci/ansible/
+            cat instance_id.txt
       - run:
           name: Add back-end IP to file 
           command: |
             cd .circleci/
             echo [all] > inventory.txt
             ls -la
+            cat inventory.txt
             aws ec2 describe-instances \
             --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --no-paginate --output text >> .circleci/inventory.txt
+            --no-paginate --output text >> inventory.txt
             ls -la
             cat inventory.txt
       
@@ -212,8 +213,8 @@ jobs:
             aws ec2 describe-instances \
             --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
             --query 'Reservations[*].Instances[*].PublicDnsName' \
-            --no-paginate --output text >> .circleci/inventory.txt
-            ls -la && cd .circleci/
+            --no-paginate --output text >> inventory.txt
+            ls -la 
             cat inventory.txt
             
             
