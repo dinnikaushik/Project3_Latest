@@ -204,18 +204,18 @@ jobs:
             # --no-paginate --output text >> urls_outputs.txt
 
             aws ec2 describe-instances \
-            --filters "Name=instance-type,Values=t2.micro" \
-            --query 'Reservations[*].Instances[*].{Instance:InstanceId}' \
-            --output json
+            --filters "Name=instance-type,Values=t2.micro"  "Name=tag:Name, Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'"\
+            --query 'Reservations[*].Instances[*].EC2PublicDNS' \
+            --output text
 
             aws ec2 describe-instances \
             --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
-            --query "Reservations[].Instances[0].EC2PublicDNS" \
+            --query "Reservations[*].Instances[0].EC2PublicDNS" \
             --no-paginate --output text > urls_outputs.txt
 
             aws ec2 describe-instances \
             --filters 'Name=tag:Name, Values="backend-${CIRCLE_WORKFLOW_ID:0:7}"' \
-            --query "Reservations[].Instances[*].PublicIpAddress" \
+            --query "Reservations[*].Instances[*].PublicIpAddress" \
             --no-paginate --output json >> ipaddress_outputs.json
             
             ls -la
