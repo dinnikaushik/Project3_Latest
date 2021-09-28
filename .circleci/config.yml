@@ -159,7 +159,7 @@ jobs:
     docker:
       - image: amazon/aws-cli:latest
     
-    working_directory: ./.circleci/
+    working_directory: ./
     
     steps:
       - checkout
