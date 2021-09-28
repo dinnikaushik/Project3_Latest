@@ -159,12 +159,11 @@ jobs:
     docker:
       - image: amazon/aws-cli:latest
     
-    working_directory: ./.circleci/
+    working_directory: ~/.circleci/
     
     steps:
       - checkout
-      - run: yum install -y tar gzip
-      - run: yum install -y tree
+      - run: yum install -y tar gzip tree
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -188,18 +187,18 @@ jobs:
       - run:
           name: Add back-end instance ID to file 
           command: |
-            tree
             aws ec2 describe-instances \
             --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
             --query 'Reservations[*].Instances[*].InstanceId' \
             --no-paginate --output text >> .circleci/ansible/instance_id.txt
-            ls -la && cd /ansible/
+            pwd
+            ls -la && cd .circleci/ansible/
             cat instance_id.txt
       - run:
           name: Add back-end IP to file 
           command: |
-            tree
-            cd ansible/
+            pwd
+            cd ansible/ 
             echo [all] > inventory.txt
             ls -la
             cat inventory.txt
@@ -213,6 +212,7 @@ jobs:
       - run:
           name: Add back-end PublicDNS address to file 
           command: |
+            pwd
             aws ec2 describe-instances \
             --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
             --query 'Reservations[*].Instances[*].PublicDnsName' \
