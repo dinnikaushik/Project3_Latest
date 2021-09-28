@@ -163,8 +163,7 @@ jobs:
     
     steps:
       - checkout
-      - run: yum install -y tar gzip
-      - run: apt install tree
+      - run: yum install -y tar gzip && yum install tree
       - run:
           name: Ensure back-end infrastructure exists
           command: |
