@@ -159,12 +159,13 @@ jobs:
     docker:
       - image: amazon/aws-cli:latest
     
-    working_directory: ~/.circleci/
+    working_directory: ./.circleci/
     
     steps:
       - checkout
       - run: yum install -y tar gzip tree
-      - run:
+      - run: pwd && ls -la
+      - run: 
           name: Ensure back-end infrastructure exists
           command: |
             aws cloudformation deploy \
