@@ -198,7 +198,7 @@ jobs:
             cat instance_id.txt
             
       - run:
-          name: Add back-end IP to file 
+          name: Add back-end IP to inventory.txt
           command: |
             pwd && ls -la 
             cd .circleci/ansible/ 
@@ -211,15 +211,15 @@ jobs:
             cat inventory.txt
       
       - run:
-          name: Add back-end PublicDNS address to file 
+          name: Add back-end PublicDNS address to file - backend_url.txt
           command: |
             pwd
             aws ec2 describe-instances \
             --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
             --query 'Reservations[*].Instances[*].PublicDnsName' \
-            --no-paginate --output text >> .circleci/ansible/inventory.txt
+            --no-paginate --output text >> .circleci/ansible/backend_url.txt
             cd .circleci/ansible/ && ls -la 
-            cat inventory.txt
+            cat backend_url.txt
             tree
             
             
@@ -227,6 +227,7 @@ jobs:
           root: ./
           paths:
             - .circleci/ansible/inventory.txt
+            - .circleci/ansible/backend_url.txt
             
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
@@ -247,6 +248,7 @@ jobs:
             cd .circleci/ansible/
             ls -la
             cat inventory.txt
+            cat backend_url.txt
             
                
   configure-infrastructure:
@@ -267,14 +269,18 @@ jobs:
             apk add --update ansible
             # exit 1
       - run:
-          name: Configure server
+          name: Configure server S3
           command: |
             # Your code here
             pwd && ls -la
             cd .circleci/ansible && ls -la
             ansible-playbook -i inventory.txt main.yml
             # exit 1
-      # Here's where you will add some code to rollback on failure      
+      # Here's where you will add some code to rollback on failure   
+      - destroy-environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+          event: on_fail
+         
 
   # run-migrations:
   #   docker:
