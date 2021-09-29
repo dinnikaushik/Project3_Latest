@@ -203,12 +203,10 @@ jobs:
             pwd && ls -la 
             cd .circleci/ansible/ 
             echo [all] > inventory.txt
-            ls -la
-            cat inventory.txt
             aws ec2 describe-instances \
             --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --no-paginate --output text >> .circleci/ansible/inventory.txt
+            --no-paginate --output text >> inventory.txt
             pwd && ls -la
             cat inventory.txt
       
