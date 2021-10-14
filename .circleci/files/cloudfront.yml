@@ -5,7 +5,7 @@ Parameters:
   WorkflowID:
     Description: Unique identifier.
     Type: String
-    Default: yellowdog789123
+    # Default: yellowdog789123
 
 
 Resources:
