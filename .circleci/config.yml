@@ -317,6 +317,7 @@ jobs:
             # Your code here
             cd backend
             npm run migrations >> migration.txt
+            ls -la
             cat migration.txt
       - run:
           name: Send migration results to memstash
