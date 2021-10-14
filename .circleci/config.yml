@@ -315,7 +315,7 @@ jobs:
           name: Run migrations
           command: |
             # Your code here
-            cd backend
+            cd backend/src
             npm run migrations >> migration.txt
             ls -la
             cat migration.txt
