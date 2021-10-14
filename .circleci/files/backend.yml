@@ -47,8 +47,8 @@ Outputs:
   EC2PublicIP:
     Description: Public EC2Instance IP for references
     Value: !GetAtt EC2Instance.PublicIp
-    # Export:
-    #   Name: !Sub "${AWS::EC2PublicIP}"
+    Export:
+      Name: !Sub "${AWS::EC2PublicIP}"
 
   EC2InstanceID:
     Description: EC2Instance ID

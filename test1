@@ -1,0 +1,7 @@
+URL="http://udapeople-s3-55b61c0.s3-website-us-west-1.amazonaws.com"
+if curl -s  ${URL} 
+then
+ return 0
+else
+ return 1
+fi   
