@@ -1,0 +1,24 @@
+- name: Config for EC2 instances
+  hosts: all
+  user: ubuntu
+  roles:
+    - role: weareinteractive.environment
+      become: true
+    - role: setup
+      become: true
+    - role: deploy_backend
+      become: true
+    - role: configure_node_exporter
+      become: true
+  vars:
+    environment_config:
+      NODE_ENV: production
+      ENVIRONMENT: production
+      TYPEORM_CONNECTION: postgres
+      TYPEORM_ENTITIES: /root/backend_files/modules/domain/**/*.entity.js
+      TYPEORM_HOST: database-1.cna7f4cff3hx.us-west-1.rds.amazonaws.com
+      TYPEORM_PORT: 5432
+      TYPEORM_USERNAME: postgres
+      TYPEORM_PASSWORD: 
+      TYPEORM_DATABASE: MyFreeDB
+

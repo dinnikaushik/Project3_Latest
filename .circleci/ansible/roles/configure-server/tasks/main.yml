@@ -11,6 +11,12 @@
     state: latest
     update_cache: yes
 
+- name: "Install zip utility."
+  apt:
+    name: [ "zip", "unzip" ]
+    state: latest
+    update_cache: yes
+
 - name: "install pm2"
   become: true
   npm:
