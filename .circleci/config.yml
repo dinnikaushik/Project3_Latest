@@ -50,7 +50,7 @@ commands:
             # SUCCESS = 1
             # if(( $SUCCESS==1 )); 
             # then
-              cd ~/project/backend
+              cd ./project/backend
               npm install
             #  Add revert code here. You can find this in the Getting Started section.
               npm run migration:revert
@@ -316,7 +316,7 @@ jobs:
           command: |
             # Your code here
             npm i migrations
-            cd backend/src
+            cd backend
             npm run migrations >> migration.txt
             ls -la
             cat migration.txt
@@ -324,12 +324,16 @@ jobs:
           name: Send migration results to memstash
           command: |
             # Your code here
-            if grep -q "has been executed successfully." migration.txt
+            if grep -q "has been executed successfully." ./migration.txt
             then
               curl -H "Content-Type: text/plain" -H \
               "token: 130ac090-6749-4202-95d0-c1746a2dca81" --request PUT --data "1" \
               https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
             fi
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - project/.circleci/
      # Here's where you will add some code to rollback on failure      
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
