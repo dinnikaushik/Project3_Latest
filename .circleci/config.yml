@@ -380,13 +380,14 @@ jobs:
             # IPADDR=$EC2PublicIP
             # API_URL="http://${EC2PublicIP}:3030"
             BACKEND_IP=$(grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" inventory.txt)
-            echo 'export API_URL="http://${BACKEND_IP}:3030"'
-            echo "${API_URL}" >> inventory.txt
-            cat inventory.txt
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "${API_URL}" >> api_url.txt
+            cat api_url.txt
       - persist_to_workspace:
           root: ./
           paths: 
             - .circleci/ansible/inventory.txt
+            - .circleci/ansible/api_url.txt
       - run:
           name: Deploy frontend objects
           command: |
@@ -418,6 +419,7 @@ jobs:
           command: |
             # your code here
             cd .circleci/ansible && ls -la
+            cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
       # Here's where you will add some code to rollback on failure  
 
