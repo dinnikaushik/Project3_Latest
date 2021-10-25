@@ -10,21 +10,14 @@
     dest: "./backend_files/dist.zip"
 
 - name: "Unzip backend files to correct directory"
-  shell: |
-    ls -al
-    ./backend_files
-
-- name: "Check directory"
-  shell: 
-    cmd: ls -al
-
-- name: "Unzip backend files to correct directory"
   debugger: on-fail
   shell: |
     ./backend_files
+    ls -al
     unzip dist.zip
     rm -rf dist.zip
-    pwd & ls -al
+    pwd
+    ls -al
 
 - name: "Install dependencies for project"
   shell: |
