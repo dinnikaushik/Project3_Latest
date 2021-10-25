@@ -371,10 +371,11 @@ jobs:
             --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --no-paginate --output text >> inventory.txt
-            # API_URL="http://${EC2PublicIP}:3030"
-            # export API_DNS_URL="http://${EC2PublicDNS}:3030"
-            # echo "${API_URL}" >> inventory.txt
-            # echo "${API_DNS_URL}"
+            IPADDR=$
+            API_URL="http://${EC2PublicIP}:3030"
+            export API_DNS_URL="http://${EC2PublicDNS}:3030"
+            echo "${API_URL}" >> inventory.txt
+            echo "${API_DNS_URL}"
       - run:
           name: Deploy frontend objects
           command: |
@@ -493,7 +494,7 @@ workflows:
       - deploy-frontend:
           requires: [run-migrations]
       - deploy-backend:
-          requires: [run-migrations]
+          requires: [deploy-frontend, run-migrations]
       # - smoke-test:
       #     requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
