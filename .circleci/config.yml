@@ -369,14 +369,15 @@ jobs:
             # your code here
             cd .circleci/ansible/ && ls -la
             cat inventory.txt
-            touch textfile.txt
-            aws cloudformation \
-            list-exports --query "Exports[?Name==\`EC2PublicIP\`].Value" \
-            --no-paginate --output text > textfile.txt
-            cat textfile.txt
+            # touch textfile.txt
+            # aws cloudformation \
+            # list-exports --query "Exports[?Name==\`EC2PublicIP\`].Value" \
+            # --no-paginate --output text > textfile.txt
+            # cat textfile.txt
 
             aws ec2 describe-instances \
-            --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
+            --filters "Name=tag:Code,Values='backend-55b61c0'" \
+            # --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --no-paginate --output text >> inventory.txt
             # IPADDR=$EC2PublicIP
