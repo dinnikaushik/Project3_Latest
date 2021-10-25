@@ -361,20 +361,27 @@ jobs:
             pwd & ls -la
             # yum install -y tar gzip
             # your code here
+
       - run:
           name: Get backend url
           command: |
             # your code here
-            export API_URL="http://${BACKEND_IP}:3030"
-            echo "${API_URL}"
+            cd .circleci/ansible/
+            export API_URL="http://${EC2PublicIP}:3030"
+            export API_DNS_URL="http://${EC2PublicDNS}:3030"
+            echo "${API_URL}" >> inventory.txt
+            echo "${API_DNS_URL}"
       - run:
           name: Deploy frontend objects
           command: |
             # your code here
-            aws s3 sync . s3://udapeople-s3-55b61c0 --delete
-            # aws s3 sync . s3://mybucket-${CIRCLE_WORKFLOW_ID:0:7} --delete
+            aws s3 sync ./frontend/ s3://udapeople-s3-55b61c0 --delete
+            # aws s3 sync ./frontend/ s3://mybucket-${CIRCLE_WORKFLOW_ID:0:7} --delete
 #       # Here's where you will add some code to rollback on failure      
-                    
+      - destroy-environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+          event: on_fail
+
   deploy-backend:
     docker:
       - image: python:3.8-alpine3.14
@@ -393,8 +400,8 @@ jobs:
           name: Deploy backend
           command: |
             # your code here
-            cd .circleci/ansible && ls -la
-            ansible-playbook -i backend-url.txt deploy-backend.yml
+            cd .circleci/ansible & ls -la
+            ansible-playbook -i inventory.txt deploy-backend.yml
       # Here's where you will add some code to rollback on failure  
 
 #   smoke-test:
