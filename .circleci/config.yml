@@ -319,7 +319,7 @@ jobs:
             cd backend
             npm run migrations 
             echo "has been executed successfully." >> migration.txt
-            ls -la
+            pwd & ls -la
             cat migration.txt
       - run:
           name: Send migration results to memstash
