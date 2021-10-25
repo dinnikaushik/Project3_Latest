@@ -32,10 +32,7 @@
     npm i
 
 - name: "running backend"
-
   shell: |
-
-    export
     cd ./backend_files
     pm2 start main.js
   register: execute_node
