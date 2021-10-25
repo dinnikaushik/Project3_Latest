@@ -391,8 +391,8 @@ jobs:
           name: Deploy frontend objects
           command: |
             # your code here
-            aws s3 sync ./frontend/ s3://udapeople-s3-55b61c0 --delete && \
-            aws s3 sync ./index.html s3://udapeople-s3-55b61c0 --delete
+            aws s3 sync ./frontend s3://udapeople-s3-55b61c0  && \
+            aws s3 sync ./index.html s3://udapeople-s3-55b61c0
       #       # aws s3 sync ./frontend/ s3://mybucket-${CIRCLE_WORKFLOW_ID:0:7} --delete
 #       # Here's where you will add some code to rollback on failure      
       # - destroy-environment:
