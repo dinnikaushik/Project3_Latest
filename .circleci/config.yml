@@ -327,6 +327,8 @@ jobs:
             # Your code here
             pwd & ls -la
             cd backend
+            pwd & ls -la
+            cat migration.txt
             if grep -q "has been executed successfully." migration.txt
             then
               curl -H "Content-Type: text/plain" -H \
@@ -336,7 +338,7 @@ jobs:
       - persist_to_workspace:
           root: ./
           paths:
-            - project/.circleci/
+            - project/
      # Here's where you will add some code to rollback on failure      
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
