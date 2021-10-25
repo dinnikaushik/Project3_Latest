@@ -25,7 +25,7 @@
 
 - name: "running backend"
   shell: |
-    cd ./backend_files
+    cd ./backend_files/dist/
     pm2 start main.js
   register: execute_node
 
