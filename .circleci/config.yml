@@ -346,10 +346,10 @@ jobs:
           event: on_fail
   
   deploy-frontend:
-    docker:
-      # Docker image here that supports AWS CLI
-      - image: amazon/aws-cli:latest
-
+    # docker:
+    #   # Docker image here that supports AWS CLI
+    #   - image: amazon/aws-cli:latest
+    executor: aws-cli/default
     steps:
       # Checkout code from git
       - checkout
@@ -504,6 +504,7 @@ workflows:
       #     requires: [configure-infrastructure]
       - deploy-frontend:
           requires: [run-migrations]
+          context: aws
       - deploy-backend:
           requires: [deploy-frontend, run-migrations]
       # - smoke-test:
