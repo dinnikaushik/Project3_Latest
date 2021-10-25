@@ -374,8 +374,8 @@ jobs:
             echo "[web]" >> inventory.txt
             aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text >> inventory.txt
             BACKEND_IP=$(grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" inventory.txt)
-            export API_URL="http://${BACKEND_IP}:3030"
-            echo "${API_URL}" >> inventory.txt
+            # export API_URL="http://${BACKEND_IP}:3030"
+            # echo "${API_URL}" >> inventory.txt
             cat inventory.txt
       - persist_to_workspace:
           root: ./
