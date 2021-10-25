@@ -379,7 +379,7 @@ jobs:
             # --output text >> inventory.txt
             # IPADDR=$EC2PublicIP
             # API_URL="http://${EC2PublicIP}:3030"
-            BACKEND_IP= echo grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" inventory.txt
+            BACKEND_IP=$(grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" inventory.txt)
             echo 'export API_URL="http://${BACKEND_IP}:3030"'
             echo "${API_URL}" >> inventory.txt
             cat inventory.txt
