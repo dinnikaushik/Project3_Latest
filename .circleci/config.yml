@@ -317,7 +317,8 @@ jobs:
             # Your code here
             npm i migrations
             cd backend
-            npm run migrations >> migration.txt
+            npm run migrations 
+            echo "has been executed successfully." >> migration.txt
             ls -la
             cat migration.txt
       - run:
