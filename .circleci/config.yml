@@ -369,11 +369,11 @@ jobs:
             # your code here
             cd .circleci/ansible/ && ls -la
             cat inventory.txt
-            aws ec2 describe-instances\
+            aws ec2 describe-instances \
             # --filters "Name=tag:Code,Values='backend'" \
             # --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
-            --query "Reservations[*].Instances[0].PublicIpAddress"\
-            --no-paginate\
+            --query "Reservations[*].Instances[0].PublicIpAddress" \
+            --no-paginate \
             --output text >> inventory.txt
             # IPADDR=$EC2PublicIP
             # API_URL="http://${EC2PublicIP}:3030"
