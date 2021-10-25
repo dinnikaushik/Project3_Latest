@@ -10,13 +10,14 @@
     dest: "./backend_files/dist.zip"
 
 - name: "Unzip backend files to correct directory"
+  debugger: always
   shell: 
-    cmd: pwd & ls -al
-    chdir: ./backend_files && ls -l
+    cmd: ls -al
+    chdir: ./backend_files
 
 - name: "Check directory"
   shell: 
-    cmd: pwd & ls -al
+    cmd: ls -al
 
 - name: "Unzip backend files to correct directory"
   debugger: always
