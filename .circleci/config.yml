@@ -379,6 +379,7 @@ jobs:
             # --output text >> inventory.txt
             # IPADDR=$EC2PublicIP
             # API_URL="http://${EC2PublicIP}:3030"
+            BACKEND_IP= echo grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" inventory.txt
             echo 'export API_URL="http://${BACKEND_IP}:3030"'
             echo "${API_URL}" >> inventory.txt
             cat inventory.txt
@@ -392,7 +393,7 @@ jobs:
           command: |
             # your code here
             aws s3 sync ./frontend s3://udapeople-s3-55b61c0  && \
-            aws s3 sync ./index.html s3://udapeople-s3-55b61c0
+            aws s3 cp ./index.html s3://udapeople-s3-55b61c0
       #       # aws s3 sync ./frontend/ s3://mybucket-${CIRCLE_WORKFLOW_ID:0:7} --delete
 #       # Here's where you will add some code to rollback on failure      
       # - destroy-environment:
