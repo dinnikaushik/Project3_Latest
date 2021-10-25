@@ -325,6 +325,8 @@ jobs:
           name: Send migration results to memstash
           command: |
             # Your code here
+            pwd & ls -la
+            cd backend
             if grep -q "has been executed successfully." migration.txt
             then
               curl -H "Content-Type: text/plain" -H \
