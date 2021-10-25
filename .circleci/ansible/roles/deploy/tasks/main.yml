@@ -10,7 +10,6 @@
     dest: "./backend_files/dist.zip"
 
 - name: "Unzip backend files to correct directory"
-  debugger: on-fail
   shell: |
     ./backend_files
     ls -al
