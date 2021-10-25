@@ -278,6 +278,7 @@ jobs:
             # Your code here
             pwd && ls -la
             cd .circleci/ansible && ls -la
+            cat inventory.txt
             ansible-playbook -i inventory.txt main.yml
             # exit 1
       # Here's where you will add some code to rollback on failure 
@@ -366,26 +367,34 @@ jobs:
           name: Get backend url
           command: |
             # your code here
-            cd .circleci/ansible/
+            cd .circleci/ansible/ && ls -la
+            cat inventory.txt
+            touch textfile.txt
+            aws cloudformation \
+            list-exports --query "Exports[?Name==\`EC2PublicIP\`].Value" \
+            --no-paginate --output text > textfile.txt
+            cat textfile.txt
+
             aws ec2 describe-instances \
             --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --no-paginate --output text >> inventory.txt
-            IPADDR=$
-            API_URL="http://${EC2PublicIP}:3030"
-            export API_DNS_URL="http://${EC2PublicDNS}:3030"
-            echo "${API_URL}" >> inventory.txt
-            echo "${API_DNS_URL}"
-      - run:
-          name: Deploy frontend objects
-          command: |
-            # your code here
-            aws s3 sync ./frontend/ s3://udapeople-s3-55b61c0 --delete
-            # aws s3 sync ./frontend/ s3://mybucket-${CIRCLE_WORKFLOW_ID:0:7} --delete
+            # IPADDR=$EC2PublicIP
+            # API_URL="http://${EC2PublicIP}:3030"
+            # export API_URL="http://${BACKEND_IP}:3030"
+            # echo "${API_URL}" >> inventory.txt
+            # echo "${API_DNS_URL}"
+            cat inventory.txt
+      # - run:
+      #     name: Deploy frontend objects
+      #     command: |
+      #       # your code here
+      #       aws s3 sync ./frontend/ s3://udapeople-s3-55b61c0 --delete
+      #       # aws s3 sync ./frontend/ s3://mybucket-${CIRCLE_WORKFLOW_ID:0:7} --delete
 #       # Here's where you will add some code to rollback on failure      
-      - destroy-environment:
-          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-          event: on_fail
+      # - destroy-environment:
+      #     workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+      #     event: on_fail
 
   deploy-backend:
     docker:
