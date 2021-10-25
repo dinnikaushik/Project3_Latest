@@ -385,6 +385,11 @@ jobs:
             # echo "${API_URL}" >> inventory.txt
             # echo "${API_DNS_URL}"
             cat inventory.txt
+      - persist_to_workspace:
+          root: ./
+          paths: 
+            - .circleci/ansible/textfile.txt 
+            - .circleci/ansible/inventory.txt
       # - run:
       #     name: Deploy frontend objects
       #     command: |
