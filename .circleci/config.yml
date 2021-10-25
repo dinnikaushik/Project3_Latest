@@ -360,9 +360,7 @@ jobs:
           name: Install dependencies
           command: |
             pwd & ls -la
-            # yum install -y tar gzip
-            # your code here
-
+            
       - run:
           name: Get backend url
           command: |
@@ -377,9 +375,8 @@ jobs:
             --output text >> inventory.txt
             # IPADDR=$EC2PublicIP
             # API_URL="http://${EC2PublicIP}:3030"
-            # export API_URL="http://${BACKEND_IP}:3030"
-            # echo "${API_URL}" >> inventory.txt
-            # echo "${API_DNS_URL}"
+            echo 'export API_URL="http://${BACKEND_IP}:3030"'
+            echo "${API_URL}" >> inventory.txt
             cat inventory.txt
       - persist_to_workspace:
           root: ./
@@ -504,7 +501,6 @@ workflows:
       #     requires: [configure-infrastructure]
       - deploy-frontend:
           requires: [run-migrations]
-          context: aws
       - deploy-backend:
           requires: [deploy-frontend, run-migrations]
       # - smoke-test:
