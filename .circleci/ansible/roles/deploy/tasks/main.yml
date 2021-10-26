@@ -10,18 +10,19 @@
     src: dist.zip
     dest: /home/ubuntu/
 
+- name: "Install dependencies for project"
+  shell: |
+    cd ~/backend_files
+    npm i
+    sudo apt install unzip
+
 - name: "Unzip backend files to correct directory"
   shell: |
-    pwd
     cd /home/ubuntu/
     chmod 755 dist.zip
     unzip dist.zip
     cp -a dist/. backend_files/ 
     
-- name: "Install dependencies for project"
-  shell: |
-    cd ~/backend_files
-    npm i
 
 - name: "running backend"
   shell: |
