@@ -21,13 +21,13 @@
     cd /home/ubuntu/
     chmod 755 dist.zip
     unzip dist.zip
-    cp -a dist/. backend_files/ 
+    mv dist/. backend_files/ 
+    rm dist.zip
     
 
 - name: "running backend"
   shell: |
-    cd ./backend_files
-    cd dist
+    cd ~/backend_files
     pm2 start main.js
   register: execute_node
 
