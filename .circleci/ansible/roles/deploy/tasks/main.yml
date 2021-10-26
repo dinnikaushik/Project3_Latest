@@ -13,7 +13,7 @@
   shell: |
     ls -al
     unzip dist.zip
-    mv dist/. backend_files/
+    mv -a dist/. backend_files/
     rm -rf dist.zip
     rm -rf dist
     
@@ -24,7 +24,7 @@
 
 - name: "running backend"
   shell: |
-    cd ./backend_files/dist/
+    cd ./backend_files/
     pm2 start main.js
   register: execute_node
 
