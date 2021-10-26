@@ -16,7 +16,8 @@
     unzip dist.zip
     cp -a dist/. backend_files/
     rm -rf dist.zip
-    rm -rf dist
+    ls -la
+    
     
 - name: "Install dependencies for project"
   shell: |
@@ -25,8 +26,7 @@
 
 - name: "running backend"
   shell: |
-    cd ./backend_files/
-    pm2 start main.js
+    pm2 start ./backend_files/main.js
   register: execute_node
 
 - name: print message
