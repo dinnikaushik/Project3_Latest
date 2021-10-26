@@ -7,17 +7,16 @@
 - name: "Copy compiled backend build"
   copy:
     src: dist.zip
-    dest: "./backend_files/dist.zip"
+    dest: "./dist.zip"
 
 - name: "Unzip backend files to correct directory"
   shell: |
-    ./backend_files
     ls -al
     unzip dist.zip
+    mv dist/. backend_files/
     rm -rf dist.zip
-    pwd
-    ls -al
-
+    rm -rf dist
+    
 - name: "Install dependencies for project"
   shell: |
     cd ./backend_files
