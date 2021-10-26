@@ -8,7 +8,7 @@
   debugger: on_failed
   copy:
     src: dist.zip
-    dest: "."
+    dest: ./
 
 - name: "Unzip backend files to correct directory"
   shell: |
