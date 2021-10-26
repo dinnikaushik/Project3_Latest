@@ -5,7 +5,7 @@
     state: directory
 
 - name: "Copy compiled backend build"
-  debugger: on-failed
+  debugger: on_failed
   copy:
     src: dist.zip
     dest: .
