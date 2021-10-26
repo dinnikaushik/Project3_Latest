@@ -7,7 +7,7 @@
 - name: "Copy compiled backend build"
   copy:
     src: dist.zip
-    dest: "./dist.zip"
+    dest: "./"
 
 - name: "Unzip backend files to correct directory"
   shell: |
@@ -25,6 +25,7 @@
 - name: "running backend"
   shell: |
     cd ./backend_files/
+    ls -la
     pm2 start main.js
   register: execute_node
 
