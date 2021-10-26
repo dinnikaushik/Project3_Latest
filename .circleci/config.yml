@@ -408,7 +408,6 @@ jobs:
           command: |
             # your code here
             apk add --update ansible
-            apt install unzip
       - run:
           name: Deploy backend
           command: |
