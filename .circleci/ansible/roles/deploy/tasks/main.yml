@@ -8,7 +8,7 @@
   debugger: on_failed
   copy:
     src: dist.zip
-    dest: .
+    dest: "."
 
 - name: "Unzip backend files to correct directory"
   shell: |
@@ -21,7 +21,7 @@
     
 - name: "Install dependencies for project"
   shell: |
-    cd ./backend_files
+    cd backend_files
     npm i
 
 - name: "running backend"
