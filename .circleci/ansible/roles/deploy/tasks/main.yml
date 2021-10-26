@@ -8,16 +8,13 @@
   debugger: on_failed
   copy:
     src: dist.zip
-    dest: ~/
+    dest: /home/ubuntu/
 
 - name: "Unzip backend files to correct directory"
   shell: |
-    cd ~
+    pwd
     unzip dist.zip
-    cp -a dist/. backend_files/
-    # rm -rf dist.zip
-    # ls -la
-    
+    cp -a dist/. backend_files/ 
     
 - name: "Install dependencies for project"
   shell: |
