@@ -13,6 +13,8 @@
 - name: "Unzip backend files to correct directory"
   shell: |
     pwd
+    cd /home/ubuntu/
+    chmod 755 dist.zip
     unzip dist.zip
     cp -a dist/. backend_files/ 
     
