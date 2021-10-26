@@ -21,7 +21,7 @@
     cd /home/ubuntu/
     chmod 755 dist.zip
     unzip dist.zip
-    mv dist/. backend_files/ 
+    cp -a dist/. backend_files/ 
     rm dist.zip
     
 
@@ -37,5 +37,5 @@
 
 - name: "Configure pm2 to start as service"
   shell: |
-    # env PATH=$PATH:/usr/local/bin pm2 startup -u ubuntu
     sudo env PATH=$PATH:/usr/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
+    rm -rf dist
