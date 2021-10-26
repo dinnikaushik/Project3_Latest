@@ -5,15 +5,16 @@
     state: directory
 
 - name: "Copy compiled backend build"
+  debugger: always
   copy:
     src: dist.zip
-    dest: "./"
+    dest: .
 
 - name: "Unzip backend files to correct directory"
   shell: |
     ls -al
     unzip dist.zip
-    mv -a dist/. backend_files/
+    cp -a dist/. backend_files/
     rm -rf dist.zip
     rm -rf dist
     
@@ -25,7 +26,6 @@
 - name: "running backend"
   shell: |
     cd ./backend_files/
-    ls -la
     pm2 start main.js
   register: execute_node
 
