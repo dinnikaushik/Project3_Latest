@@ -391,8 +391,9 @@ jobs:
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
             # export API_URL="http://${BACKEND_IP}:3030"
             # echo "${API_URL}" >> inventory.txt
-            cd frontend && la -la
+            cd frontend && ls -la
             cat inventory.txt
+      
       - persist_to_workspace:
           root: ./
           paths: 
