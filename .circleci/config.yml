@@ -81,7 +81,6 @@ jobs:
           paths: [frontend/node_modules]
           key: frontend-build
 
-
   build-backend:
     <<: *defaults-node
     steps:
@@ -131,6 +130,7 @@ jobs:
             npm i 
             npm install --save-dev jest
             npm run test
+  
   scan-frontend:
     parallelism: 2
     <<: *defaults-node
@@ -142,7 +142,8 @@ jobs:
           name: Vulnerability scan front-end
           command: |
             cd frontend
-            npm audit --audit-level=critical --force
+            npm audit fix --audit-level=critical --force
+            npm audit fix --force
         
   scan-backend:
     parallelism: 2
@@ -155,7 +156,8 @@ jobs:
           name: Vulnerability scan back-end 
           command: |
             cd backend
-            npm audit --audit-level=critical --force
+            npm audit fix --audit-level=critical --force
+            npm audit fix --force
 
   deploy-infrastructure:
     
@@ -271,7 +273,7 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible
-            # exit 1
+            
       - run:
           name: Configure server S3
           command: |
@@ -280,7 +282,7 @@ jobs:
             cd .circleci/ansible && ls -la
             cat inventory.txt
             ansible-playbook -i inventory.txt main.yml
-            # exit 1
+            
       # Here's where you will add some code to rollback on failure 
   smoke_test:
     docker:
@@ -318,7 +320,7 @@ jobs:
             # Your code here
             npm i migrations
             cd backend
-            npm run migrations 
+            npm run migrations >> migration.txt
             echo "has been executed successfully." >> migration.txt
             pwd & ls -la
             cat migration.txt
@@ -372,11 +374,16 @@ jobs:
           command: |
             cd .circleci/ansible/
             echo "[web]" >> inventory.txt
-            aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text >> inventory.txt
-            BACKEND_IP=$(grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" inventory.txt)
+            # aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text >> inventory.txt
+            # BACKEND_IP=$(grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" inventory.txt)
+            export BACKEND_IP=$(aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text)
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "API_URL = ${API_URL}"
+            echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
+            cat frontend/.env
             # export API_URL="http://${BACKEND_IP}:3030"
             # echo "${API_URL}" >> inventory.txt
-            cat inventory.txt
+            # cat inventory.txt
       - persist_to_workspace:
           root: ./
           paths: 
@@ -388,6 +395,13 @@ jobs:
             # your code here
             # aws s3 sync ./frontend s3://udapeople-s3-55b61c0  && \
             # aws s3 sync index.html s3://udapeople-s3-55b61c0
+            cd frontend
+            npm install
+            npm run build
+            tar -czvf artifact-55b61c0.tar.gz dist
+            # tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+            aws s3 cp dist s3://udapeople-s3-55b61c0 --recursive
+            # aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       #       # aws s3 sync ./frontend/ s3://mybucket-${CIRCLE_WORKFLOW_ID:0:7} --delete
 #       # Here's where you will add some code to rollback on failure      
       # - destroy-environment:
@@ -399,6 +413,7 @@ jobs:
       - image: python:3.8-alpine3.14
     steps:
       - checkout
+      - run: yum install -y tar gzip
       - add_ssh_keys:
           fingerprints: ["67:f1:5d:1a:39:15:81:3f:8d:53:8e:3f:dc:a8:14:d4"]
       - attach_workspace:
@@ -412,8 +427,18 @@ jobs:
           name: Deploy backend
           command: |
             # your code here
+            cd backend
+            npm i
+            npm run build
+            cd ..
+            # Zip the directory
+            tar -C backend -czvf artifact.tar.gz .
             cd .circleci/ansible
-            ansible-playbook -i inventory.txt deploy-backend.yml
+            echo "Contents  of the inventory.txt file is -------"
+            cat inventory.txt
+            # ansible-playbook -i inventory.txt deploy-backend.yml
+            # cd .circleci/ansible
+            # ansible-playbook -i inventory.txt deploy-backend.yml
       # Here's where you will add some code to rollback on failure  
 
 #   smoke-test:
