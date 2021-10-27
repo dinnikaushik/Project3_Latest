@@ -364,11 +364,16 @@ jobs:
             pwd & ls -la
             
       - run:
-          name: cat inventory.txt
+          name: Another way to get backend IP
           command: |
             # your code here
-            cd .circleci/ansible/ && ls -la
-            cat inventory.txt
+            cd frontend
+            touch .env
+      - persist_to_workspace:
+          root: ./
+          paths: 
+            - frontend/.env
+
       - run:
           name: Get backend url
           command: |
@@ -379,8 +384,8 @@ jobs:
             export BACKEND_IP=$(aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "API_URL = ${API_URL}"
-            echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
-            cat frontend/.env
+            echo API_URL="http://${BACKEND_IP}:3030" >> ~/frontend/.env
+            cat ~/frontend/.env
             # export API_URL="http://${BACKEND_IP}:3030"
             # echo "${API_URL}" >> inventory.txt
             # cat inventory.txt
@@ -389,6 +394,7 @@ jobs:
           paths: 
             - .circleci/ansible/inventory.txt
             - .circleci/ansible/api_url.txt
+            - frontend/.env
       - run:
           name: Deploy frontend objects
           command: |
