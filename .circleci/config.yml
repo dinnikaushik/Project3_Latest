@@ -366,7 +366,7 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
-      
+      - run: yum install -y tar gzip
       - attach_workspace:
           at: ./
       - run:
@@ -418,7 +418,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: ./
-      - run: yum install -y tar gzip
+      
       - run:
           name: Build and zip frontend artifacts
           command: |
