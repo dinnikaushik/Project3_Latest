@@ -425,7 +425,7 @@ jobs:
             # your code here
             # aws s3 sync ./frontend s3://udapeople-s3-55b61c0  && \
             # aws s3 sync index.html s3://udapeople-s3-55b61c0
-            cd frontend
+            cd frontend && ls -la
             npm install
             npm run build
             npm audit fix --force
