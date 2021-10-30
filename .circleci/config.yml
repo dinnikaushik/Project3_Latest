@@ -191,17 +191,17 @@ jobs:
               --tags project=udapeople   
               # exit 1
       
-      - run:
-          name: Add back-end instance ID to file 
-          command: |
-            pwd
-            aws ec2 describe-instances \
-            --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
-            --query 'Reservations[*].Instances[*].InstanceId' \
-            --no-paginate --output text >> .circleci/ansible/instance_id.txt
-            pwd
-            ls -la && cd .circleci/ansible/ && ls -la
-            cat instance_id.txt
+      # - run:
+      #     name: Add back-end instance ID to file 
+      #     command: |
+      #       pwd
+      #       aws ec2 describe-instances \
+      #       --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
+      #       --query 'Reservations[*].Instances[*].InstanceId' \
+      #       --no-paginate --output text >> .circleci/ansible/instance_id.txt
+      #       pwd
+      #       ls -la && cd .circleci/ansible/ && ls -la
+      #       cat instance_id.txt
             
       - run:
           name: Add back-end IP to inventory.txt
@@ -227,34 +227,45 @@ jobs:
             cd .circleci/ansible/ && ls -la 
             cat backend_url.txt
             tree
-            
-            
+      - run:
+          name: Add API URL to frontend /.env
+          command: |
+            pwd
+            cd frontend
+            touch .env
+            export BACKEND_IP=$(aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text)
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo API_URL="http://${BACKEND_IP}:3030" >> .env      
+            ls -la
+            cat .env
+       
       - persist_to_workspace:
           root: ./
           paths:
             - .circleci/ansible/inventory.txt
             - .circleci/ansible/backend_url.txt
+            - frontend/.env
             
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
           event: on_fail
     
-  download_file:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ./
+  # download_file:
+  #   docker:
+  #     - image: circleci/node:13.8.0
+  #   steps:
+  #     - checkout
+  #     - attach_workspace:
+  #         at: ./
 
-      - run: 
-          command: |
-            pwd && ls -la
-            cd .circleci/ansible/
-            ls -la
-            cat inventory.txt
-            cat backend_url.txt
+  #     - run: 
+  #         command: |
+  #           pwd && ls -la
+  #           cd .circleci/ansible/
+  #           ls -la
+  #           cat inventory.txt
+  #           cat backend_url.txt
             
                
   configure-infrastructure:
@@ -364,17 +375,16 @@ jobs:
             pwd & ls -la
             
       - run:
-          name: Another way to get backend IP
+          name: Copy new build with backend URL
           command: |
             # your code here
-            cd frontend
-            touch .env
-            ls -la
-
-      - persist_to_workspace:
-          root: ./
-          paths: 
-            - frontend/.env
+            cd 
+            aws s3 cp artifact-55b61c0.tar.gz s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} 
+            # aws s3 cp dist s3://udapeople-s3-55b61c0 --recursive
+      # - persist_to_workspace:
+      #     root: ./
+      #     paths: 
+      #       - frontend/.env
 
       - run:
           name: Get backend url
@@ -400,8 +410,17 @@ jobs:
             - .circleci/ansible/inventory.txt
             - .circleci/ansible/api_url.txt
             - frontend/.env
+
+  build-new-frontend:
+    <<: *defaults-node
+    steps:
+    # Checkout code from git
+      - checkout
+      - attach_workspace:
+          at: ./
+      - run: yum install -y tar gzip
       - run:
-          name: Deploy frontend objects
+          name: Build and zip frontend artifacts
           command: |
             # your code here
             # aws s3 sync ./frontend s3://udapeople-s3-55b61c0  && \
@@ -411,7 +430,12 @@ jobs:
             npm run build
             tar -czvf artifact-55b61c0.tar.gz dist
             # tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
-            aws s3 cp dist s3://udapeople-s3-55b61c0 --recursive
+      - persist_to_workspace:
+          root: ./
+          paths: 
+            - artifact-55b61c0.tar.gz
+
+            
             # aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       #       # aws s3 sync ./frontend/ s3://mybucket-${CIRCLE_WORKFLOW_ID:0:7} --delete
 #       # Here's where you will add some code to rollback on failure      
@@ -534,8 +558,9 @@ workflows:
       #     requires: [deploy-infrastructure]
       - run-migrations
       #     requires: [configure-infrastructure]
+      - build-new-frontend
       - deploy-frontend:
-          requires: [run-migrations]
+          requires: [run-migrations, build-new-frontend]
       - deploy-backend:
           requires: [deploy-frontend, run-migrations]
       # - smoke-test:
