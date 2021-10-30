@@ -428,12 +428,13 @@ jobs:
             cd frontend
             npm install
             npm run build
+            npm audit fix --force
             tar -czvf artifact-55b61c0.tar.gz dist
             # tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
       - persist_to_workspace:
           root: ./
           paths: 
-            - artifact-55b61c0.tar.gz
+            - frontend/artifact-55b61c0.tar.gz
 
             
             # aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
