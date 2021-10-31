@@ -281,7 +281,7 @@ jobs:
             
       # Here's where you will add some code to rollback on failure 
   
-  smoke_test_web_site:
+  smoke-test-web-site:
     docker:
       - image: alpine:latest
     steps:
