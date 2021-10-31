@@ -7,7 +7,7 @@
 - name: "Copy compiled backend build"
   debugger: on_failed
   copy:
-    src: backend.tar.gz
+    src: backend-55b61c0.tar.gz
     dest: /home/ubuntu/
 
 - name: "Install dependencies for project"
@@ -18,13 +18,10 @@
     yum install -y tar gzip
     # sudo apt install unzip
 
-# - name: "Unzip backend files to correct directory"
-#   shell: |
-#     cd /home/ubuntu/
-#     chmod 755 dist.zip
-#     unzip dist.zip
-#     cp -a dist/. backend_files/ 
-#     rm dist.zip
+- name: "Unzip backend files to correct directory"
+  shell: |
+    cd /home/ubuntu/
+    tar -xzvf backend-55b61c0.tar.gz backend_files/ 
     
 
 - name: "running backend"
