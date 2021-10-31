@@ -435,10 +435,23 @@ jobs:
             tar -czvf artifact-55b61c0.tar.gz dist
             ls -la
             # tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+
+      - run:
+          name: Build backend artifacts
+          command: |
+            cd backend && ls -la
+            npm install
+            npm run build
+            # tar -czvf backend-55b61c0.tar.gz .
+            ls -la
+            # tar -czvf backend-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+
       - persist_to_workspace:
           root: ./
           paths: 
             - frontend/artifact-55b61c0.tar.gz
+            - backend/dist
+
 
             
             # aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
