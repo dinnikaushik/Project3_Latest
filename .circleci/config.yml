@@ -252,23 +252,6 @@ jobs:
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
           event: on_fail
-    
-  # download_file:
-  #   docker:
-  #     - image: circleci/node:13.8.0
-  #   steps:
-  #     - checkout
-  #     - attach_workspace:
-  #         at: ./
-
-  #     - run: 
-  #         command: |
-  #           pwd && ls -la
-  #           cd .circleci/ansible/
-  #           ls -la
-  #           cat inventory.txt
-  #           cat backend_url.txt
-            
                
   configure-infrastructure:
     docker:
@@ -297,7 +280,8 @@ jobs:
             ansible-playbook -i inventory.txt main.yml
             
       # Here's where you will add some code to rollback on failure 
-  smoke_test:
+  
+  smoke_test_web_site:
     docker:
       - image: alpine:latest
     steps:
@@ -314,11 +298,10 @@ jobs:
             else
               return 1
             fi   
-      - destroy-environment:
-          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-          event: on_fail
+      # - destroy-environment:
+      #     workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+      #     event: on_fail
          
-
   run-migrations:
     # Docker image here that supports NodeJS
     <<: *defaults-node
@@ -360,6 +343,43 @@ jobs:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
           event: on_fail
   
+  build-new-frontend-and-backend:
+    <<: *defaults-node
+    steps:
+    # Checkout code from git
+      - checkout
+      - attach_workspace:
+          at: ./
+      - run:
+          name: Build and zip frontend artifacts
+          command: |
+            cd frontend
+            pwd && ls -la
+            npm install
+            npm run build
+            tar -czvf artifact-55b61c0.tar.gz dist
+            ls -la
+            # tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+
+      - run:
+          name: Build and zip backend artifacts
+          command: |
+            cd backend 
+            pwd && ls -la
+            npm install
+            npm run build
+            cd ..
+            tar -C backend -czvf backend-55b61c0.tar.gz .
+            ls -la
+            
+      #       # tar -czvf backend-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+
+      - persist_to_workspace:
+          root: ./
+          paths: 
+            - frontend/artifact-55b61c0.tar.gz
+            - backend/
+            
   deploy-frontend:
     docker:
       # Docker image here that supports AWS CLI
@@ -368,23 +388,24 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
-      - run: yum install -y tar gzip
+      # - run: yum install -y tar gzip
       - attach_workspace:
           at: ./
       - run:
           name: Install dependencies
           command: |
-            pwd & ls -la
+            pwd && ls -la
             
       - run:
           name: Copy new build with backend URL
           command: |
             # your code here
-            cd frontend/dist
+            cd frontend
+            pwd && ls -la
             # aws s3 cp dist s3://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7} 
-            aws s3 cp artifact-55b61c0.tar.gz s3://udapeople-s3-55b61c0 
-            # aws s3 tar –xvzf artifact-55b61c0.tar.gz –C ./
-
+            aws s3 cp dist s3://udapeople-s3-55b61c0 
+  
+            
       # - persist_to_workspace:
       #     root: ./
       #     paths: 
@@ -415,47 +436,10 @@ jobs:
             - .circleci/ansible/api_url.txt
             - frontend/.env
 
-  build-new-frontend:
-    <<: *defaults-node
-    steps:
-    # Checkout code from git
-      - checkout
-      - attach_workspace:
-          at: ./
-      
-      - run:
-          name: Build and zip frontend artifacts
-          command: |
-            # your code here
-            # aws s3 sync ./frontend s3://udapeople-s3-55b61c0  && \
-            # aws s3 sync index.html s3://udapeople-s3-55b61c0
-            cd frontend && ls -la
-            npm install
-            npm run build
-            tar -czvf artifact-55b61c0.tar.gz dist
-            ls -la
-            # tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
-
-      - run:
-          name: Build backend artifacts
-          command: |
-            cd backend && ls -la
-            npm install
-            npm run build
-            # tar -czvf backend-55b61c0.tar.gz .
-            ls -la
-            # tar -czvf backend-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
-
-      - persist_to_workspace:
-          root: ./
-          paths: 
-            - frontend/artifact-55b61c0.tar.gz
-            - backend/dist
-
-
-            
+  
             # aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       #       # aws s3 sync ./frontend/ s3://mybucket-${CIRCLE_WORKFLOW_ID:0:7} --delete
+
 #       # Here's where you will add some code to rollback on failure      
       # - destroy-environment:
       #     workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
@@ -480,18 +464,17 @@ jobs:
           name: Deploy backend
           command: |
             # your code here
-            cd backend
-            npm i
-            npm run build
-            cd ..
-            # Zip the directory
-            tar -cvzf backend-55b61c0.tar.gz .
+            # cd backend
+            # npm i
+            # npm run build
+            # cd ..
+            # # Zip the directory
+            # tar -cvzf backend-55b61c0.tar.gz .
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
-            # cd .circleci/ansible
-            # ansible-playbook -i inventory.txt deploy-backend.yml
+           
       # Here's where you will add some code to rollback on failure  
 
 #   smoke-test:
@@ -582,8 +565,8 @@ workflows:
           requires: [run-migrations, build-new-frontend]
       - deploy-backend:
           requires: [deploy-frontend, run-migrations]
-      # - smoke-test:
-      #     requires: [deploy-backend, deploy-frontend]
+      - smoke-test-web-site:
+          requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
       #     requires: [smoke-test]
       # - cleanup:
