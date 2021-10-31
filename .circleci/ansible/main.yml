@@ -1,5 +1,5 @@
 ---
-- name: "configuration playbook"
+- name: "configuration server playbook"
   hosts: all
   user: ubuntu
   become: true
@@ -30,6 +30,13 @@
       become: true
       raw: test -e /usr/bin/python3 || (apt -y update && apt install -y python3)
       changed_when: false
+    - name: "Unzip frontend artifact"
+      become: true
+      raw: | 
+        yum install -y tar gzip 
+        tar -cvzf backend-55b61c0.tar.gz .
+      changed_when: false
+    
   
   roles:
     - role: setup
