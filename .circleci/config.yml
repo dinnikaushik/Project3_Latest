@@ -334,14 +334,37 @@ jobs:
               "token: 130ac090-6749-4202-95d0-c1746a2dca81" --request PUT --data "1" \
               https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
             fi
+      
+      - run:
+          name: Get backend url
+          command: |
+            cd .circleci/ansible/
+            echo "[web]" >> inventory.txt
+            # aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text >> inventory.txt
+            # BACKEND_IP=$(grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" inventory.txt)
+            export BACKEND_IP=$(aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text)
+            export API_URL="http://${BACKEND_IP}:3030"
+            cd ../.. && pwd
+            ls -la
+            # echo "API_URL = ${API_URL}"
+            echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
+            # export API_URL="http://${BACKEND_IP}:3030"
+            # echo "${API_URL}" >> inventory.txt
+            cd frontend && ls -la
+            cat .env
+      
       - persist_to_workspace:
           root: ./
-          paths:
+          paths: 
+            - .circleci/ansible/inventory.txt
+            - .circleci/ansible/api_url.txt
+            - frontend/.env
             - backend/migration.txt
+
      # Here's where you will add some code to rollback on failure      
-      - destroy-environment:
-          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-          event: on_fail
+      # - destroy-environment:
+      #     workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+      #     event: on_fail
   
   build-new-frontend-and-backend:
     <<: *defaults-node
@@ -395,7 +418,7 @@ jobs:
           name: Install dependencies
           command: |
             pwd && ls -la
-            
+            yum install -y tar gzip
       - run:
           name: Copy new build with backend URL
           command: |
@@ -404,37 +427,13 @@ jobs:
             pwd && ls -la
             # aws s3 cp dist s3://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7} 
             aws s3 cp dist s3://udapeople-s3-55b61c0 
-  
-            
+         
       # - persist_to_workspace:
       #     root: ./
       #     paths: 
       #       - frontend/.env
 
-      - run:
-          name: Get backend url
-          command: |
-            cd .circleci/ansible/
-            echo "[web]" >> inventory.txt
-            # aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text >> inventory.txt
-            # BACKEND_IP=$(grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" inventory.txt)
-            export BACKEND_IP=$(aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text)
-            export API_URL="http://${BACKEND_IP}:3030"
-            cd ../.. && pwd
-            ls -la
-            # echo "API_URL = ${API_URL}"
-            echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
-            # export API_URL="http://${BACKEND_IP}:3030"
-            # echo "${API_URL}" >> inventory.txt
-            cd frontend && ls -la
-            cat .env
       
-      - persist_to_workspace:
-          root: ./
-          paths: 
-            - .circleci/ansible/inventory.txt
-            - .circleci/ansible/api_url.txt
-            - frontend/.env
 
   
             # aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
