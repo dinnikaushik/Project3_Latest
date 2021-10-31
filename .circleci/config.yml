@@ -562,7 +562,7 @@ workflows:
       - build-new-frontend-and-backend:
           requires: [run-migrations]
       - deploy-frontend:
-          requires: [run-migrations, build-new-frontend]
+          requires: [run-migrations, build-new-frontend-and-backend]
       - deploy-backend:
           requires: [deploy-frontend, run-migrations]
       - smoke-test-web-site:
