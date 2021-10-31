@@ -95,7 +95,9 @@ jobs:
             npm run --force build
             cd dist
             ls -la
-          # exit 1
+            # Zip the directory
+            cd ..
+            tar -C backend -czvf artifact.tar.gz .
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
@@ -381,7 +383,7 @@ jobs:
             cd frontend
             # aws s3 cp artifact-55b61c0.tar.gz s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} 
             aws s3 cp artifact-55b61c0.tar.gz s3://udapeople-s3-55b61c0 
-            
+
       # - persist_to_workspace:
       #     root: ./
       #     paths: 
@@ -473,7 +475,7 @@ jobs:
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
-            # ansible-playbook -i inventory.txt deploy-backend.yml
+            ansible-playbook -i inventory.txt deploy-backend.yml
             # cd .circleci/ansible
             # ansible-playbook -i inventory.txt deploy-backend.yml
       # Here's where you will add some code to rollback on failure  
