@@ -411,22 +411,23 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
-      # - run: yum install -y tar gzip
+      - run: yum install -y tar gzip
       - attach_workspace:
           at: ./
       - run:
           name: Install dependencies
           command: |
             pwd && ls -la
-            yum install -y tar gzip
+            #yum install -y tar gzip
       - run:
           name: Copy new build with backend URL
           command: |
             # your code here
             cd frontend
             pwd && ls -la
-            # aws s3 cp dist s3://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7} 
-            aws s3 cp dist s3://udapeople-s3-55b61c0 
+            # aws s3 sync dist s3://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+            aws s3 sync dist s3://udapeople-s3-55b61c0 --recursive
+            aws s3 ls s3://udapeople-s3-55b61c0 --recursive | awk '{print $4}'
          
       # - persist_to_workspace:
       #     root: ./
