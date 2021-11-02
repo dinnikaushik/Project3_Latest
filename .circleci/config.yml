@@ -426,7 +426,7 @@ jobs:
             cd frontend
             pwd && ls -la
             # aws s3 sync dist s3://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-            aws s3 sync dist s3://udapeople-s3-55b61c0 --recursive
+            aws s3 cp dist s3://udapeople-s3-55b61c0 --recursive
             aws s3 ls s3://udapeople-s3-55b61c0 --recursive | awk '{print $4}'
          
       # - persist_to_workspace:
