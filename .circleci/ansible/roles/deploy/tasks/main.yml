@@ -2,7 +2,7 @@
 - name: "Create a directory for backend"
   
   file:
-    path: ~/backend_files
+    path: ./backend_files
     state: directory
 
 - name: "Copy compiled backend build"
@@ -14,7 +14,7 @@
 - name: "Install dependencies for project"
   become: true
   shell: |
-    # cd ~/backend_files
+    # cd ./backend_files
     npm i
     yum install -y tar gzip
     
