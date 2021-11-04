@@ -26,8 +26,10 @@
     
 
 - name: "running backend"
-  shell: pm2 start main.js
-  register: execute_node
+  shell: |
+    # cd dist/
+    pm2 start dist/main.js
+    register: execute_node
 
 - name: print message
   debug:
