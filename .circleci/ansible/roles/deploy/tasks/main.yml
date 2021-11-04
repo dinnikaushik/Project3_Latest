@@ -22,12 +22,12 @@
   shell: |
     ls -la
     cd /home/ubuntu/
-    tar -xzvf backend-55b61c0.tar.gz backend_files/ 
+    tar -xzvvf backend-55b61c0.tar.gz backend/ 
     
 
 - name: "running backend"
   shell: |
-    cd ~/backend_files
+    cd ~/backend
     pm2 start main.js
   register: execute_node
 
