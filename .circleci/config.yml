@@ -429,10 +429,10 @@ jobs:
             aws s3 cp dist s3://udapeople-s3-55b61c0 --recursive
             aws s3 ls s3://udapeople-s3-55b61c0 --recursive | awk '{print $4}'
          
-      # - persist_to_workspace:
-      #     root: ./
-      #     paths: 
-      #       - frontend/.env
+      - persist_to_workspace:
+          root: ./
+          paths: 
+            - frontend/.env
 
       
 
@@ -459,17 +459,17 @@ jobs:
           command: |
             # your code here
             apk add --update ansible
-            # yum install -y tar gzip
+            yum install -y tar gzip
       - run:
           name: Deploy backend
           command: |
             # your code here
-            # cd backend
-            # npm i
-            # npm run build
-            # cd ..
-            # # Zip the directory
-            # tar -cvzf backend-55b61c0.tar.gz .
+            cd backend
+            npm i
+            npm run build
+            cd ..
+            # Zip the directory
+            tar -cvzf backend-55b61c0.tar.gz .
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
