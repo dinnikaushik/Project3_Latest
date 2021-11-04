@@ -493,7 +493,9 @@ jobs:
             apk add --update curl
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
-            sudo ./aws/install
+            ./aws/install
+            which aws
+            aws --version
 
       - run:
           name: Get backend url
@@ -581,7 +583,7 @@ workflows:
       #     requires: [deploy-infrastructure]
       # - configure-infrastructure:
       #     requires: [deploy-infrastructure]
-      - run-migrations
+      # - run-migrations
       #     requires: [configure-infrastructure]
       # - build-new-frontend-and-backend:
       #     requires: [run-migrations]
