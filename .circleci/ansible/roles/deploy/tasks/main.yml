@@ -14,7 +14,6 @@
 - name: "Install dependencies for project"
   become: true
   shell: |
-    # cd ./backend_files
     npm i
     yum install -y tar gzip
     
