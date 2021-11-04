@@ -401,7 +401,7 @@ jobs:
           root: ./
           paths: 
             - frontend/artifact-55b61c0.tar.gz
-            - backend/
+            - backend-55b61c0.tar.gz
             
   deploy-frontend:
     docker:
@@ -450,6 +450,14 @@ jobs:
       - image: python:3.8-alpine3.14
     steps:
       - checkout
+      # - run: 
+      #     name: python installing pip, tar gzip
+      #     command: |
+      #       python get-pip.py
+      #       python -m pip install --upgrade pip
+      #       pip install tar gzip
+
+      # - run: yum install -y tar gzip
       - add_ssh_keys:
           fingerprints: ["67:f1:5d:1a:39:15:81:3f:8d:53:8e:3f:dc:a8:14:d4"]
       - attach_workspace:
@@ -459,20 +467,21 @@ jobs:
           command: |
             # your code here
             apk add --update ansible
-            yum install -y tar gzip
+            # python get-pip.py
+            # python -m pip install --upgrade pip
+            # pip install tar gzip
       - run:
           name: Deploy backend
           command: |
             # your code here
-            cd backend
-            npm i
-            npm run build
-            cd ..
-            # Zip the directory
-            tar -cvzf backend-55b61c0.tar.gz .
+            ls -la
+            cp backend-55b61c0.tar.gz ./.circleci/ansible/roles/deploy/files/
+            
+            # tar -cvzf backend-55b61c0.tar.gz .
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
+            cp backend-55b61c0.tar.gz ~/.circleci/ansible/roles/deploy/files
             ansible-playbook -i inventory.txt deploy-backend.yml
            
       # Here's where you will add some code to rollback on failure  
