@@ -1,5 +1,6 @@
 ---
 - name: "Create a directory for backend"
+  hosts: backend
   file:
     path: ~/backend_files
     state: directory
