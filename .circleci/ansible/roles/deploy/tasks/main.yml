@@ -11,11 +11,11 @@
     src: backend-55b61c0.tar.gz
     dest: /home/ubuntu/
 
-- name: "Install dependencies for project"
-  become: true
-  shell: |
-    npm i
-    yum install -y tar gzip
+# - name: "Install dependencies for project"
+#   become: true
+#   shell: |
+#     npm i
+#     yum install -y tar gzip
     
 
 - name: "Unzip backend files to correct directory"
