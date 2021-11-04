@@ -22,7 +22,7 @@
   shell: |
     ls -la
     cd /home/ubuntu/
-    tar -xzvvf backend-55b61c0.tar.gz backend/ 
+    tar -xzvvf backend-55b61c0.tar.gz 
     
 
 - name: "running backend"
