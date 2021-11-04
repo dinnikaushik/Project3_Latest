@@ -395,7 +395,7 @@ jobs:
             tar -C backend -czvf backend-55b61c0.tar.gz .
             ls -la
             pwd
-            cp backend-55b61c0.tar.gz .circleci/ansible/roles/deploy/files/
+            cp backend-55b61c0.tar.gz /.circleci/ansible/roles/deploy/files/
       #       # tar -czvf backend-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
 
       - persist_to_workspace:
