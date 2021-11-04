@@ -14,13 +14,14 @@
 - name: "Install dependencies for project"
   become: true
   shell: |
-    cd ~/backend_files
+    # cd ~/backend_files
     npm i
     yum install -y tar gzip
-    # sudo apt install unzip
+    
 
 - name: "Unzip backend files to correct directory"
   shell: |
+    ls -la
     cd /home/ubuntu/
     tar -xzvf backend-55b61c0.tar.gz backend_files/ 
     
