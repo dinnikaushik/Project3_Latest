@@ -487,6 +487,8 @@ jobs:
       - image: alpine:latest
     steps:
       - checkout
+      - attach_workspace:
+          at: ./
       - run:
           name: Install dependencies
           command: |
