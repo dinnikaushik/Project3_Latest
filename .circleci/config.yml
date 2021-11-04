@@ -395,6 +395,7 @@ jobs:
             tar -C backend -czvf backend-55b61c0.tar.gz .
             ls -la
             pwd
+            mkdir .circleci/ansible/roles/deploy/files/
             cd .circleci/ansible/roles/deploy/files/
             cp /home/circleci/project/backend-55b61c0.tar.gz .
       #       # tar -czvf backend-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
@@ -404,6 +405,7 @@ jobs:
           paths: 
             - frontend/artifact-55b61c0.tar.gz
             - backend-55b61c0.tar.gz
+            - .circleci/ansible/roles/deploy/files/backend-55b61c0.tar.gz
             
   deploy-frontend:
     docker:
