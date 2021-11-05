@@ -503,22 +503,20 @@ jobs:
           name: Get backend url
           command: |
             pwd 
-            ls -la frontend
-            cat frontend/.env
             BACKEND_IP=$(grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" .circleci/ansible/inventory.txt)
-            echo BACKEND_IP
-            # BACKEND_IP=$(cat frontend/.env)
-            export API_URL="http://${BACKEND_IP}:3030"
+            echo $BACKEND_IP
+            export API_URL="http://${BACKEND_IP}\:3030"
             echo "${API_URL}"
-      # - run:
-      #     name: Backend smoke test.
-      #     command: |
-      #       if curl "${API_URL}/api/status" | grep "ok"
-      #       then
-      #         return 0
-      #       else
-      #         return 1
-      #       fi
+      - run:
+          name: Backend smoke test.
+          command: |
+            export -p
+            if curl "${API_URL}/api/status" | grep "ok"
+            then
+              return 0
+            else
+              return 1
+            fi
       - run:
           name: Frontend smoke test.
           command: |
