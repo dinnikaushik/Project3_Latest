@@ -321,19 +321,19 @@ jobs:
             pwd & ls -la
             cat migration.txt
       - run:
-          name: Send migration results to memstash
+          name: Check migration results 
           command: |
             # Your code here
             pwd & ls -la
             cd backend
             pwd & ls -la
             cat migration.txt
-            if grep -q "has been executed successfully." migration.txt
-            then
-              curl -H "Content-Type: text/plain" -H \
-              "token: 130ac090-6749-4202-95d0-c1746a2dca81" --request PUT --data "1" \
-              https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
-            fi
+            # if grep -q "has been executed successfully." migration.txt
+            # then
+            #   curl -H "Content-Type: text/plain" -H \
+            #   "token: 130ac090-6749-4202-95d0-c1746a2dca81" --request PUT --data "1" \
+            #   https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
+            # fi
       
       - run:
           name: Get backend url
