@@ -305,7 +305,7 @@ jobs:
   run-migrations:
     # Docker image here that supports NodeJS
     docker:
-    - image: cimg/node:13.8.0
+    - image: cimg/node:lts
     # <<: *defaults-node
     steps:
     # Checkout code from git
@@ -318,7 +318,7 @@ jobs:
             # Your code here
             npm i migrations
             cd backend
-            npm run migrations >> migration_dump.txt
+            npm run migrations >> migration.txt
             # echo "has been executed successfully." >> migration.txt
             pwd & ls -la
             cat migration_dump.txt
