@@ -321,7 +321,7 @@ jobs:
             npm run migrations >> migration.txt
             # echo "has been executed successfully." >> migration.txt
             pwd & ls -la
-            cat migration_dump.txt
+            cat migration.txt
       - run:
           name: Check migration results 
           command: |
