@@ -304,7 +304,9 @@ jobs:
          
   run-migrations:
     # Docker image here that supports NodeJS
-    <<: *defaults-node
+    docker:
+    - image: cimg/node:13.8.0
+    # <<: *defaults-node
     steps:
     # Checkout code from git
       - checkout
@@ -590,18 +592,18 @@ workflows:
       #     requires: [deploy-infrastructure]
       - configure-infrastructure
       #     requires: [deploy-infrastructure]
-      - run-migrations
-          # requires: [configure-infrastructure]
-      # - build-new-frontend-and-backend:
-      #     requires: [run-migrations]
-      # - deploy-frontend:
-      #     requires: [run-migrations, build-new-frontend-and-backend]
-      # - deploy-backend:
-      #     requires: [deploy-frontend, run-migrations]
-      # - smoke-test-web-site:
-      #     requires: [deploy-backend, deploy-frontend]
-      - smoke-test
-          # requires: [deploy-backend, deploy-frontend]
+      - run-migrations:
+          requires: [configure-infrastructure]
+      - build-new-frontend-and-backend:
+          requires: [run-migrations]
+      - deploy-frontend:
+          requires: [run-migrations, build-new-frontend-and-backend]
+      - deploy-backend:
+          requires: [deploy-frontend, run-migrations]
+      - smoke-test-web-site:
+          requires: [deploy-backend, deploy-frontend]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
       #     requires: [smoke-test]
       # - cleanup:
