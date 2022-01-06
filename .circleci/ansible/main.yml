@@ -1,6 +1,6 @@
 ---
 - name: "configuration server playbook"
-  hosts: web
+  hosts: all
   user: ubuntu
   become: true
   gather_facts: false
