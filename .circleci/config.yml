@@ -8,7 +8,7 @@ orbs:
 
 defaults: &defaults-node
   docker:
-    - image: cimg/node:lts
+    - image: cimg/node:13.8.0
   working_directory: ~/project
   
 environment:
@@ -316,10 +316,10 @@ jobs:
             # Your code here
             npm i migrations
             cd backend
-            npm run migrations >> migration.txt
-            echo "has been executed successfully." >> migration.txt
+            npm run migrations >> migration_dump.txt
+            # echo "has been executed successfully." >> migration.txt
             pwd & ls -la
-            cat migration.txt
+            cat migration_dump.txt
       - run:
           name: Check migration results 
           command: |
@@ -503,8 +503,9 @@ jobs:
           name: Get backend url
           command: |
             pwd 
+
             # BACKEND_IP=$(grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" .circleci/ansible/inventory.txt)
-            API_URL=$(grep -A 1 "backend" .circleci/ansible/inventory.txt)
+            # API_URL=$(grep -A 2 "backend" .circleci/ansible/inventory.txt)
             export API_URL="http://$API_URL"
             echo $API_URL
       - run:
@@ -587,20 +588,20 @@ workflows:
       #         only: [master]     
       # - download_file:
       #     requires: [deploy-infrastructure]
-      # - configure-infrastructure:
+      - configure-infrastructure
       #     requires: [deploy-infrastructure]
       - run-migrations
           # requires: [configure-infrastructure]
-      - build-new-frontend-and-backend:
-          requires: [run-migrations]
-      - deploy-frontend:
-          requires: [run-migrations, build-new-frontend-and-backend]
-      - deploy-backend:
-          requires: [deploy-frontend, run-migrations]
-      - smoke-test-web-site:
-          requires: [deploy-backend, deploy-frontend]
-      - smoke-test:
-          requires: [deploy-backend, deploy-frontend]
+      # - build-new-frontend-and-backend:
+      #     requires: [run-migrations]
+      # - deploy-frontend:
+      #     requires: [run-migrations, build-new-frontend-and-backend]
+      # - deploy-backend:
+      #     requires: [deploy-frontend, run-migrations]
+      # - smoke-test-web-site:
+      #     requires: [deploy-backend, deploy-frontend]
+      - smoke-test
+          # requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
       #     requires: [smoke-test]
       # - cleanup:
