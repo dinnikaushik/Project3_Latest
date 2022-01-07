@@ -336,6 +336,7 @@ jobs:
             # echo "${API_URL}" >> inventory.txt
             cd frontend && ls -la
             cat .env
+            touch .circleci/ansible/api_url.txt
             cp .env .circleci/ansible/api_url.txt
            
 
