@@ -335,8 +335,9 @@ jobs:
             # export API_URL="http://${BACKEND_IP}:3030"
             # echo "${API_URL}" >> inventory.txt
             cd frontend && ls -la
-            cat .env > .circleci/ansible/api_url.txt
             cat .env
+            cp .env .circleci/ansible/api_url.txt
+           
 
       - run:
           name: Run migrations
