@@ -609,8 +609,8 @@ workflows:
           filters:
             branches:
               only: [master]     
-      - download_file:
-          requires: [deploy-infrastructure]
+      # - download_file:
+      #     requires: [deploy-infrastructure]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
       - run-migrations:
