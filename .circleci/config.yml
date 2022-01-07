@@ -88,7 +88,7 @@ jobs:
       - restore_cache:
           keys: [backend-build]
       - run:
-          name: Back-end build
+          name: Backend build
           command: |
             cd backend
             npm i --force
@@ -97,6 +97,8 @@ jobs:
             ls -la
             # Zip the directory
             cd ..
+            pwd 
+            ls -la
             tar -C backend -czvf artifact.tar.gz .
       - save_cache:
           paths: [backend/node_modules]
