@@ -339,7 +339,7 @@ jobs:
 
       - run:
           name: Run migrations
-          working_directory: ./backend
+          working_directory: ./
           command: |
             # Your code here
             npm i migrations
@@ -369,8 +369,6 @@ jobs:
             #   "token: 130ac090-6749-4202-95d0-c1746a2dca81" --request PUT --data "1" \
             #   https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
             # fi
-      
-      
       
       - persist_to_workspace:
           root: ./
