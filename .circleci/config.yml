@@ -313,15 +313,31 @@ jobs:
       - attach_workspace:
           at: ./
       - run:
+          name: Install AWS CLI dependencies
+          working_directory: ./
+          command: |
+            sudo apt-get update && sudo apt-get install -yy less
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - run:
           name: Run migrations
+          working_directory: ./backend
           command: |
             # Your code here
             npm i migrations
             cd backend
             npm run migrations >> migration.txt
-            # echo "has been executed successfully." >> migration.txt
+            export migration_status=$(cat migration.txt | grep -c "has been executed successfully")
+            tar -zcvf ~/backend.tar.gz .
             pwd & ls -la
             cat migration.txt
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - backend.tar.gz
+            - migration.txt
+      
       - run:
           name: Check migration results 
           command: |
