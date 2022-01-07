@@ -96,7 +96,7 @@ jobs:
             cd dist
             ls -la
             # Zip the directory
-            cd ..
+            cd ../..
             pwd 
             ls -la
             tar -C backend -czvf artifact.tar.gz .
