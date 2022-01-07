@@ -516,16 +516,14 @@ jobs:
             unzip awscliv2.zip
             sudo ./aws/install
             
-      
+
       - run:
           name: Get backend url
           working_directory: ./frontend
           command: |
             export BACKEND_IP=$(aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text)
             export API_URL="http://${BACKEND_IP}:3030"
-            pwd 
-            cat .env
-            API_URL=$(cat .env)
+            echo $API_URL
            
       - run:
           name: Backend smoke test.
