@@ -518,19 +518,18 @@ jobs:
             
 
       - run:
-          name: Get backend url
+          name: Get backend url 
           working_directory: ./frontend
           command: |
             export BACKEND_IP=$(aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo $API_URL
-           
+            echo "${API_URL}"
       - run:
           name: Backend smoke test.
           command: |
-
-            echo $API_URL
-            if curl "$API_URL/api/status" | grep "ok"
+            echo "${API_URL}"
+            if curl "${API_URL}/api/status" | grep "ok"
             then
               return 0
             else
