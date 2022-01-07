@@ -348,7 +348,7 @@ jobs:
             export migration_status=$(cat migration.txt | grep -c "has been executed successfully")
             tar -zcvf ~/backend.tar.gz .
             pwd & ls -la
-            cat migration.txt
+            cat ./migration.txt
       - persist_to_workspace:
           root: ~/
           paths:
