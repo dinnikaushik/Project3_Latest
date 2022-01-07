@@ -332,12 +332,10 @@ jobs:
             ls -la
             # echo "API_URL = ${API_URL}"
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
-            # export API_URL="http://${BACKEND_IP}:3030"
+            export API_URL="http://${BACKEND_IP}:3030"
             # echo "${API_URL}" >> inventory.txt
             cd frontend && ls -la
             cat .env
-            touch .circleci/ansible/api_url.txt
-            cp .env .circleci/ansible/api_url.txt
            
 
       - run:
