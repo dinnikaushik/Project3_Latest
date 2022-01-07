@@ -511,20 +511,21 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update curl
-            # curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            # unzip awscliv2.zip
-            # ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
-            # which aws
-            # aws --version
+            sudo apt-get update && sudo apt-get install -yy less
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+            
 
       - run:
           name: Get backend url
           working_directory: ./frontend
           command: |
+            export BACKEND_IP=$(aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text)
+            export API_URL="http://${BACKEND_IP}:3030"
             pwd 
             cat .env
-            API_URL=(cat .env)
+            API_URL=$(cat .env)
            
       - run:
           name: Backend smoke test.
@@ -609,18 +610,18 @@ workflows:
       #     requires: [deploy-infrastructure]
       # - configure-infrastructure
       #     requires: [deploy-infrastructure]
-      - run-migrations
+      # - run-migrations
           # requires: [configure-infrastructure]
-      - build-new-frontend-and-backend:
-          requires: [run-migrations]
-      - deploy-frontend:
-          requires: [run-migrations, build-new-frontend-and-backend]
-      - deploy-backend:
-          requires: [deploy-frontend, run-migrations]
-      - smoke-test-web-site:
-          requires: [deploy-backend, deploy-frontend]
-      - smoke-test:
-          requires: [deploy-backend, deploy-frontend]
+      # - build-new-frontend-and-backend:
+      #     requires: [run-migrations]
+      # - deploy-frontend:
+      #     requires: [run-migrations, build-new-frontend-and-backend]
+      # - deploy-backend:
+      #     requires: [deploy-frontend, run-migrations]
+      # - smoke-test-web-site:
+      #     requires: [deploy-backend, deploy-frontend]
+      - smoke-test
+          # requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
       #     requires: [smoke-test]
       # - cleanup:
