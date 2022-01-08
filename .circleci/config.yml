@@ -105,8 +105,10 @@ jobs:
           key: backend-build
   
   test-frontend:
-    parallelism: 4
-    <<: *defaults-node
+    parallelism: 8
+    # <<: *defaults-node
+    docker:
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -119,8 +121,10 @@ jobs:
             npm run test
                 
   test-backend:
-    parallelism: 2
-    <<: *defaults-node
+    parallelism: 8
+    # <<: *defaults-node
+    docker:
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
