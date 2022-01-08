@@ -144,7 +144,7 @@ jobs:
           name: Vulnerability scan front-end
           command: |
             cd frontend
-            apt-
+            npm i --force
             npm audit fix --audit-level=critical --force
             npm audit fix --force
         
