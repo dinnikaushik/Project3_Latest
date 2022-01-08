@@ -105,10 +105,12 @@ jobs:
           key: backend-build
   
   test-frontend:
-    parallelism: 8
+    parallelism: 16
     # <<: *defaults-node
     docker:
       - image: circleci/node:13.8.0
+    working_directory: frontend/node_modules
+   
     steps:
       - checkout
       - restore_cache:
@@ -116,12 +118,12 @@ jobs:
       - run:
           name: Test front-end
           command: |
-            cd frontend
             npm i --force
+            npm audit fix
             npm run test
                 
   test-backend:
-    parallelism: 8
+    parallelism: 16
     # <<: *defaults-node
     docker:
       - image: circleci/node:13.8.0
