@@ -111,9 +111,10 @@ jobs:
     <<: *defaults-node
     # docker:
     #   - image: circleci/node:13.8.0
+    working_directory: frontend/
     steps:
       - checkout
-      - work_directory: frontend/
+      
       - restore_cache:
           keys: [frontend-build]
       - run:
