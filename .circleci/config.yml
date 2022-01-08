@@ -109,8 +109,6 @@ jobs:
     # <<: *defaults-node
     docker:
       - image: circleci/node:13.8.0
-    working_directory: ./
-   
     steps:
       - checkout
       - restore_cache:
