@@ -118,7 +118,7 @@ jobs:
       - run:
           name: Test front-end
           command: |
-            # cd frontend
+            cd frontend
             npm i --force
             npm audit fix --force
             npm run test
