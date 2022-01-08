@@ -105,7 +105,7 @@ jobs:
           key: backend-build
   
   test-frontend:
-    parallelism: 16
+    parallelism: 10
     # <<: *defaults-node
     docker:
       - image: circleci/node:13.8.0
@@ -123,7 +123,7 @@ jobs:
             npm run test
                 
   test-backend:
-    parallelism: 16
+    parallelism: 10
     # <<: *defaults-node
     docker:
       - image: circleci/node:13.8.0
