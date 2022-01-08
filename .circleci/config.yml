@@ -118,7 +118,7 @@ jobs:
       - run:
           name: Test front-end
           command: |
-            cd frontend/node_modules
+            cd frontend
             npm i --force
             npm audit fix --audit-level=critical --force
             npm install --save-dev jest
