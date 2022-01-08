@@ -115,9 +115,7 @@ jobs:
           name: Test front-end
           command: |
             cd frontend
-            npm i
-            ls -la && cat coverage && cat tsconfig
-            cat package.json
+            npm i --force
             npm run test
                 
   test-backend:
@@ -146,6 +144,7 @@ jobs:
           name: Vulnerability scan front-end
           command: |
             cd frontend
+            apt-
             npm audit fix --audit-level=critical --force
             npm audit fix --force
         
@@ -547,8 +546,8 @@ jobs:
           name: Frontend smoke test.
           command: |
             # 
-            URL="http://udapeople-s3-55b61c0.s3-website-us-west-1.amazonaws.com/#/employees"
-            # URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com/#/employees"            
+            #URL="http://udapeople-s3-55b61c0.s3-website-us-west-1.amazonaws.com/#/employees"
+            URL="http://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-west-1.amazonaws.com/#/employees"            
             echo ${URL} 
             if curl -s ${URL} | grep "Welcome"
             then
@@ -600,33 +599,34 @@ workflows:
       - build-backend
       - test-frontend:
           requires: [build-frontend]
+      - scan-frontend:
+          requires: [build-frontend]
       - test-backend:
           requires: [build-backend]
       - scan-backend:
           requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
-      - deploy-infrastructure:
-          requires: [build-backend, build-frontend]
-          filters:
-            branches:
-              only: [master]     
-      # - download_file:
+
+      # - deploy-infrastructure:
+      #     requires: [build-backend, build-frontend]
+      #     filters:
+      #       branches:
+      #         only: [master]     
+      # # - download_file:
+      # #     requires: [deploy-infrastructure]
+      # - configure-infrastructure:
       #     requires: [deploy-infrastructure]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [configure-infrastructure]
-      - build-new-frontend-and-backend:
-          requires: [run-migrations]
-      - deploy-frontend:
-          requires: [run-migrations, build-new-frontend-and-backend]
-      - deploy-backend:
-          requires: [deploy-frontend, run-migrations]
-      - smoke-test-web-site:
-          requires: [deploy-backend, deploy-frontend]
-      - smoke-test:
-          requires: [deploy-backend, deploy-frontend]
+      # - run-migrations:
+      #     requires: [configure-infrastructure]
+      # - build-new-frontend-and-backend:
+      #     requires: [run-migrations]
+      # - deploy-frontend:
+      #     requires: [run-migrations, build-new-frontend-and-backend]
+      # - deploy-backend:
+      #     requires: [deploy-frontend, run-migrations]
+      # - smoke-test-web-site:
+      #     requires: [deploy-backend, deploy-frontend]
+      # - smoke-test:
+      #     requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
       #     requires: [smoke-test]
       # - cleanup:
