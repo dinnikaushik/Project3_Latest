@@ -108,9 +108,9 @@ jobs:
   
   test-frontend:
     parallelism: 10
-    # <<: *defaults-node
-    docker:
-      - image: circleci/node:13.8.0
+    <<: *defaults-node
+    # docker:
+    #   - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -121,7 +121,6 @@ jobs:
             cd frontend
             npm i --force
             npm audit fix --audit-level=critical --force
-            npm install --save-dev jest
             npm run test
                 
   test-backend:
