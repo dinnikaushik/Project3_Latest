@@ -113,14 +113,15 @@ jobs:
     #   - image: circleci/node:13.8.0
     steps:
       - checkout
+      - work_directory: frontend/
       - restore_cache:
           keys: [frontend-build]
       - run:
           name: Test front-end
           command: |
-            cd frontend
+            # cd frontend
             npm i --force
-            npm audit fix --audit-level=critical --force
+            npm audit fix --force
             npm run test
                 
   test-backend:
