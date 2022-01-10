@@ -182,7 +182,7 @@ jobs:
     
     steps:
       - checkout
-      - run: yum install -y tar gzip tree
+      - run: yum install -y tar gzip
       - run: pwd && ls -la && cd .circleci && pwd && ls -la
       - run: 
           name: Ensure back-end infrastructure exists
@@ -203,18 +203,7 @@ jobs:
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
               --tags project=udapeople   
               # exit 1
-      
-      # - run:
-      #     name: Add back-end instance ID to file 
-      #     command: |
-      #       pwd
-      #       aws ec2 describe-instances \
-      #       --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
-      #       --query 'Reservations[*].Instances[*].InstanceId' \
-      #       --no-paginate --output text >> .circleci/ansible/instance_id.txt
-      #       pwd
-      #       ls -la && cd .circleci/ansible/ && ls -la
-      #       cat instance_id.txt
+     
             
       - run:
           name: Add back-end IP to inventory.txt
@@ -459,9 +448,9 @@ jobs:
             # your code here
             cd frontend
             pwd && ls -la
-            # aws s3 sync dist s3://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-            aws s3 cp dist s3://udapeople-s3-55b61c0 --recursive
-            aws s3 ls s3://udapeople-s3-55b61c0 --recursive | awk '{print $4}'
+            aws s3 sync dist s3://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+            # aws s3 cp dist s3://udapeople-s3-55b61c0 --recursive
+            aws s3 ls s3://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7} --recursive | awk '{print $4}'
          
       - persist_to_workspace:
           root: ./
@@ -529,7 +518,7 @@ jobs:
             
 
       - run:
-          name: Get backend url 
+          name: Get backend url and test
           working_directory: ./frontend
           command: |
             export BACKEND_IP=$(aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text)
