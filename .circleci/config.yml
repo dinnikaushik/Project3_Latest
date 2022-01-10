@@ -120,7 +120,6 @@ jobs:
           command: |
             cd frontend
             npm i --force
-            npm audit fix --force
             npm run test
                 
   test-backend:
@@ -607,11 +606,11 @@ workflows:
   default:
     jobs:
       - build-frontend
-      - build-backend
+      # - build-backend
       - test-frontend:
           requires: [build-frontend]
-      - scan-frontend:
-          requires: [build-frontend]
+      # - scan-frontend:
+      #     requires: [build-frontend]
       # - test-backend:
       #     requires: [build-backend]
       # - scan-backend:
