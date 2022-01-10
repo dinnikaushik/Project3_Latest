@@ -73,10 +73,10 @@ jobs:
             npm run build
             cd dist
             ls -la
-          # npm i webpack-sources
-          # npm i webpack
-          # npm i webpack-cli
-          # npm i yargs
+            npm i webpack-sources
+            npm i webpack
+            npm i webpack-cli
+            npm i yargs
             
           # exit 1
       - save_cache:
@@ -108,9 +108,9 @@ jobs:
   
   test-frontend:
     parallelism: 10
-    <<: *defaults-node
-    # docker:
-    #   - image: circleci/node:13.8.0
+    # <<: *defaults-node
+    docker:
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
