@@ -176,14 +176,20 @@ jobs:
     
     # executor: aws-cli/default
     docker:
-      - image: amazon/aws-cli:latest
+      - image: cimg/base:2022.01
     # working_directory: ./
     
     steps:
-      - add_ssh_keys:
-          fingerprints:
-            - "68:0f:db:17:bf:25:fe:73:5d:c0:88:c4:2a:73:50:dc"
+     
       - checkout
+      - run: sudo apt-get update && sudo apt-get install -yy less
+      - run:
+          name: Install AWS CLI dependencies
+          working_directory: ./
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
       - run: 
           name: Ensure back-end infrastructure exists
           command: |
