@@ -180,6 +180,9 @@ jobs:
     # working_directory: ./
     
     steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "67:f1:5d:1a:39:15:81:3f:8d:53:8e:3f:dc:a8:14:d4"
       - checkout
       - run: 
           name: Ensure back-end infrastructure exists
@@ -258,6 +261,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ["67:f1:5d:1a:39:15:81:3f:8d:53:8e:3f:dc:a8:14:d4"]
+          
       # attach workspace
       - attach_workspace:
           at: ./
@@ -286,8 +290,8 @@ jobs:
       - run:
           name: smoke test
           command: |
-            # URL="http://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-west-1.amazonaws.com"
-            URL="http://udapeople-s3-55b61c0.s3-website-us-west-1.amazonaws.com"
+            URL="http://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-west-1.amazonaws.com"
+            # URL="http://udapeople-s3-55b61c0.s3-website-us-west-1.amazonaws.com"
             # Test if website exists
             if curl -s ${URL} 
             then
@@ -542,7 +546,7 @@ jobs:
           name: Frontend smoke test.
           command: |
             # 
-            #URL="http://udapeople-s3-55b61c0.s3-website-us-west-1.amazonaws.com/#/employees"
+            # URL="http://udapeople-s3-55b61c0.s3-website-us-west-1.amazonaws.com/#/employees"
             URL="http://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-west-1.amazonaws.com/#/employees"            
             echo ${URL} 
             if curl -s ${URL} | grep "Welcome"
