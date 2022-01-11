@@ -589,6 +589,15 @@ jobs:
             
 
 workflows:
+  aws-cli:
+    jobs:
+       - deploy-infrastructure:
+          context: aws-22
+          requires: [build-backend, build-frontend]
+          filters:
+            branches:
+              only: [master]   
+
   default:
     jobs:
       - build-frontend
@@ -601,11 +610,7 @@ workflows:
       #     requires: [build-backend]
       # - scan-backend:
       #     requires: [build-backend]
-      - deploy-infrastructure:
-          requires: [build-backend, build-frontend]
-          filters:
-            branches:
-              only: [master]     
+       
       # # - download_file:
       # #     requires: [deploy-infrastructure]
       # - configure-infrastructure:
