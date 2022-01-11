@@ -182,7 +182,7 @@ jobs:
     steps:
       - add_ssh_keys:
           fingerprints:
-            - "67:f1:5d:1a:39:15:81:3f:8d:53:8e:3f:dc:a8:14:d4"
+            - "68:0f:db:17:bf:25:fe:73:5d:c0:88:c4:2a:73:50:dc"
       - checkout
       - run: 
           name: Ensure back-end infrastructure exists
