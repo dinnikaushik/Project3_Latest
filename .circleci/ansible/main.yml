@@ -9,7 +9,7 @@
     - ansible_host_key_checking: false
     - ansible_stdout_callback: yaml
   
-  environment_config:
+  environment:
       NODE_ENV: production
       ENVIRONMENT: production
       TYPEORM_CONNECTION: postgres
@@ -34,7 +34,7 @@
       become: true
       raw: | 
         yum install -y tar gzip 
-        tar -cvzf backend-55b61c0.tar.gz .
+        tar -cvzf backend-${ID}.tar.gz .
       changed_when: false
     
   
