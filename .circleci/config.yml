@@ -174,9 +174,9 @@ jobs:
 
   deploy-infrastructure:
     
-    executor: aws-cli/default
-    # docker:
-    #   - image: amazon/aws-cli:latest
+    # executor: aws-cli/default
+    docker:
+      - image: amazon/aws-cli:latest
     # working_directory: ./
     
     steps:
@@ -602,7 +602,7 @@ workflows:
       # - scan-backend:
       #     requires: [build-backend]
       - deploy-infrastructure:
-          context: aws-22
+          # context: aws-22
           requires: [build-backend,build-frontend]
           filters:
             branches:
