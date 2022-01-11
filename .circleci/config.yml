@@ -181,8 +181,6 @@ jobs:
     
     steps:
       - checkout
-      - run: yum install -y tar gzip
-      - run: pwd && ls -la && cd .circleci && pwd && ls -la
       - run: 
           name: Ensure back-end infrastructure exists
           command: |
