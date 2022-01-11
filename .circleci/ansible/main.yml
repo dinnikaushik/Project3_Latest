@@ -39,8 +39,8 @@
     
   
   roles:
-    - role: setup
-      become: true
+    # - role: setup
+    #   become: true
     - role: configure-server
       become: true
     - role: deploy
