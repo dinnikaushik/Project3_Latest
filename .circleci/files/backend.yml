@@ -51,9 +51,4 @@ Outputs:
     # Export:
     #   Name: !Sub "${AWS::PublicIpAddress}"
 
-  # EC2InstanceID:
-  #   Description: EC2Instance ID
-  #   Value: !GetAtt EC2Instance.Id
-    # Export:
-    #   Name: !Sub "${AWS::InstanceId}"
-     
+    

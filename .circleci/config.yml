@@ -259,7 +259,8 @@ jobs:
   configure-infrastructure:
     docker:
       # Docker image here that supports Ansible
-      - image: python:3.8-alpine3.14
+      # - image: python:3.8-alpine3.14
+      - image: cimg/base:2022.01
     steps:
       - checkout
       - add_ssh_keys:
@@ -272,7 +273,8 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible
+            sudo apt-get update && sudo apt-get install ansible
+            # apk add --update ansible
             
       - run:
           name: Configure server S3
@@ -402,9 +404,8 @@ jobs:
             pwd && ls -la
             npm install
             npm run build
-            tar -czvf artifact-55b61c0.tar.gz dist
             ls -la
-            # tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+            tar -czvf artifact-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz dist
 
       - run:
           name: Build and zip backend artifacts
@@ -414,20 +415,20 @@ jobs:
             npm install
             npm run build
             cd ..
-            tar -C backend -czvf backend-55b61c0.tar.gz .
+            tar -C backend -czvf backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
             ls -la
             pwd
             mkdir .circleci/ansible/roles/deploy/files/
             cd .circleci/ansible/roles/deploy/files/
-            cp /home/circleci/project/backend-55b61c0.tar.gz .
+            cp /home/circleci/project/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
             ls -la
             
       - persist_to_workspace:
           root: ./
           paths: 
-            - frontend/artifact-55b61c0.tar.gz
-            - backend-55b61c0.tar.gz
-            - .circleci/ansible/roles/deploy/files/backend-55b61c0.tar.gz
+            - frontend/artifact-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
+            - backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
+            - .circleci/ansible/roles/deploy/files/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
             
   deploy-frontend:
     docker:
@@ -489,8 +490,8 @@ jobs:
           command: |
             # your code here
             ls -la
-            # cp backend-55b61c0.tar.gz ./.circleci/ansible/roles/deploy/files/
-            # tar -cvzf backend-55b61c0.tar.gz .
+            cp backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz ./.circleci/ansible/roles/deploy/files/
+            tar -cvzf backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
@@ -499,6 +500,9 @@ jobs:
             ansible-playbook -i inventory.txt deploy-backend.yml
            
       # Here's where you will add some code to rollback on failure  
+      - destroy-environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+          event: on_fail
 
   smoke-test:
     docker:
@@ -530,16 +534,7 @@ jobs:
             else
               return 1
             fi
-      # - run:
-      #     name: Backend smoke test.
-      #     command: |
-      #       echo "${API_URL}"
-      #       if curl "${API_URL}/api/status" | grep "ok"
-      #       then
-      #         return 0
-      #       else
-      #         return 1
-      #       fi
+
       - run:
           name: Frontend smoke test.
           command: |
@@ -554,7 +549,9 @@ jobs:
               return 1
             fi
       # Here's where you will add some code to rollback on failure  
-
+      - destroy-environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+          event: on_fail
 #   cloudfront-update:
 #     docker:
 #       # Docker image here that supports AWS CLI
@@ -595,14 +592,14 @@ workflows:
     jobs:
       - build-frontend
       - build-backend
-      - test-frontend:
-          requires: [build-frontend]
-      - scan-frontend:
-          requires: [build-frontend]
-      - test-backend:
-          requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
+      # - test-frontend:
+      #     requires: [build-frontend]
+      # - scan-frontend:
+      #     requires: [build-frontend]
+      # - test-backend:
+      #     requires: [build-backend]
+      # - scan-backend:
+      #     requires: [build-backend]
       - deploy-infrastructure:
           requires: [build-backend,build-frontend]
           filters:
@@ -610,18 +607,18 @@ workflows:
               only: [master]   
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [configure-infrastructure]
-      - build-new-frontend-and-backend:
-          requires: [run-migrations]
-      - deploy-frontend:
-          requires: [run-migrations, build-new-frontend-and-backend]
-      - deploy-backend:
-          requires: [deploy-frontend, run-migrations]
-      - smoke-test-web-site:
-          requires: [deploy-backend, deploy-frontend]
-      - smoke-test:
-          requires: [deploy-backend, deploy-frontend]
+      # - run-migrations:
+      #     requires: [configure-infrastructure]
+      # - build-new-frontend-and-backend:
+      #     requires: [run-migrations]
+      # - deploy-frontend:
+      #     requires: [run-migrations, build-new-frontend-and-backend]
+      # - deploy-backend:
+      #     requires: [deploy-frontend, run-migrations]
+      # - smoke-test-web-site:
+      #     requires: [deploy-backend, deploy-frontend]
+      # - smoke-test:
+      #     requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
       #     requires: [smoke-test]
       # - cleanup:
