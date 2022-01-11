@@ -5,6 +5,7 @@ Parameters:
   ID: 
     Description: Unique ID
     Type: String
+    Default: "333333"
 
 
 Resources:
