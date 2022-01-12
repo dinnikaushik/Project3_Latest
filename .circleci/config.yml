@@ -173,7 +173,7 @@ jobs:
             npm audit fix --force
 
   deploy-infrastructure:
-    
+    parallelism: 10
     # executor: aws-cli/default
     docker:
       - image: cimg/base:2022.01
@@ -257,6 +257,7 @@ jobs:
           event: on_fail
                
   configure-infrastructure:
+    parallelism: 10
     docker:
       # Docker image here that supports Ansible
       # - image: python:3.8-alpine3.14
@@ -277,13 +278,13 @@ jobs:
             # apk add --update ansible
             
       - run:
-          name: Configure server S3
+          name: Configure server
           command: |
             # Your code here
             pwd && ls -la
             cd .circleci/ansible && ls -la
             cat inventory.txt
-            ansible-playbook -i inventory.txt main.yml
+            ansible-playbook -i inventory.txt configure-server.yml
             
       # Here's where you will add some code to rollback on failure 
   
