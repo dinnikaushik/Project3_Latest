@@ -173,7 +173,7 @@ jobs:
             npm audit fix --force
 
   deploy-infrastructure:
-    parallelism: 10
+    # parallelism: 10
     # executor: aws-cli/default
     docker:
       - image: cimg/base:2022.01
