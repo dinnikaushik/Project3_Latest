@@ -215,7 +215,7 @@ jobs:
           name: Add back-end IP to inventory.txt
           command: |
             cd .circleci/ansible/ 
-            echo [all] > inventory.txt
+            echo [web] > inventory.txt
             aws ec2 describe-instances \
             --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
@@ -263,8 +263,8 @@ jobs:
       - image: cimg/base:2022.01
     steps:
       - checkout
-      - add_ssh_keys:
-          fingerprints: ["67:f1:5d:1a:39:15:81:3f:8d:53:8e:3f:dc:a8:14:d4"]
+      # - add_ssh_keys:
+      #     fingerprints: ["67:f1:5d:1a:39:15:81:3f:8d:53:8e:3f:dc:a8:14:d4"]
           
       # attach workspace
       - attach_workspace:
