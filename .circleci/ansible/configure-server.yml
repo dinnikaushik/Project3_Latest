@@ -19,7 +19,7 @@
     TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE')}}"
     TYPEORM_MIGRATIONS: "{{ lookup('env', 'TYPEORM_MIGRATIONS')}}"
     TYPEORM_MIGRATIONS_DIR: "{{ lookup('env', 'TYPEORM_MIGRATIONS_DIR')}}"
-    
+    ID: "{{ lookup('env', 'CIRCLE_WORKFLOW_ID:0:7')}}"
 
   pre_tasks:
     - name: "wait 60 seconds for target connection to become reachable/usable."
@@ -31,7 +31,7 @@
       changed_when: false
    
     - name: "Zip backend artifact"
-      become: true
+      # become: true
       raw: | 
         yum install -y tar gzip 
         tar -cvzf backend-${ID}.tar.gz .
@@ -39,4 +39,4 @@
     
   roles:
     - role: configure-server
-      become: true
+      # become: true
