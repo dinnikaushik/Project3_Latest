@@ -33,7 +33,8 @@
     - name: "Zip backend artifact"
       # become: true
       raw: | 
-        yum install -y tar gzip 
+        python --version
+        # yum install -y tar gzip 
         tar -cvzf backend-${ID}.tar.gz .
       changed_when: false
     
