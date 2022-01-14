@@ -30,13 +30,13 @@
       raw: test -e /usr/bin/python3 || (apt -y update && apt install -y python3)
       changed_when: false
    
-    - name: "Zip backend artifact"
-      # become: true
-      raw: | 
-        python --version
-        # yum install -y tar gzip 
-        tar -cvzf backend-${ID}.tar.gz .
-      changed_when: false
+    # - name: "Zip backend artifact"
+    #   # become: true
+    #   raw: | 
+    #     # python --version
+    #     # yum install -y tar gzip 
+    #     tar -cvzf backend-${ID}.tar.gz .
+    #   changed_when: false
     
   roles:
     - role: configure-server
