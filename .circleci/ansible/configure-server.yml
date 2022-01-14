@@ -37,7 +37,7 @@
         # yum install -y tar gzip 
         tar -cvzf backend-{ID}.tar.gz .
       changed_when: False
-      wait_for_connection:
+      
 
   roles:
     - role: configure-server
