@@ -29,15 +29,15 @@
     #   become: True
     #   raw: test -e /usr/bin/python3 || (apt -y update && apt install -y python3)
     #   changed_when: False
-    - debugger:
-        msg: "{{ID}}"
-
-    - name: workflow ID copy to folder
-      copy:
-        content: "{{config.stdout[0]}}"
-        dest: "backups/show_run_{{ID}}.txt"
     
-    # - name: Grab running version
+
+    # - name: workflow ID copy to folder
+    #   copy:
+    #     # content: "{{config.stdout[0]}}"
+    #     dest: "backups/show_run_{{ID}}.txt"
+    # - debugger:
+    #     msg: "{{ID}}"
+    # # - name: Grab running version
     #   net_command:
     #     commands:
     #       - show run
