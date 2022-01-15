@@ -2,7 +2,8 @@
 - name: "install python for Ansible."
   become: True
   shell: |
-    cat {{ ID|quote }}
+    echo {{ 'CIRCLE_WORKFLOW_ID:0:7' }}
+    echo {{ ID }}
     test -e /usr/bin/python3 
     apt -y update && apt install -y python3
 
@@ -24,10 +25,10 @@
     state: latest
     update_cache: yes
 
-- name: "Zip backend artifact"
-  become: True
-  shell: tar -cvzf backend-{{ID}}.tar.gz . 
-  changed_when: False
+# - name: "Zip backend artifact"
+#   become: True
+#   shell: tar -cvzf backend-{{ID}}.tar.gz . 
+#   changed_when: False
 
 
 - name: "install pm2"

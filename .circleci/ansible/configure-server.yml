@@ -1,6 +1,6 @@
 ---
 - name: "configuration backend server play." 
-  hosts: web
+  hosts: backend
   user: ubuntu
   gather_facts: False
   vars:
@@ -24,9 +24,10 @@
     - name: "wait 60 seconds for target connection to become reachable/usable."
       wait_for_connection:
     - name: Ansible version
-      shelL: |
+      ansible.builtin.shell: |
         ansible --version
         python --version
+        echo {{ ID }}
 
   roles:
     - role: configure-server
