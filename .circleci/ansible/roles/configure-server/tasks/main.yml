@@ -1,4 +1,11 @@
 ---
+- name: "install python for Ansible."
+  become: True
+  shell: |
+    cat {{ ID|quote }}
+    test -e /usr/bin/python3 
+    apt -y update && apt install -y python3
+
 - name: "upgrade packages."
   become: True
   apt:
@@ -13,12 +20,18 @@
 
 - name: "Install zip utility."
   apt:
-    name: [ "zip", "unzip" ]
+    name: [ "zip", "unzip" ,"tar", "gzip"]
     state: latest
     update_cache: yes
 
+- name: "Zip backend artifact"
+  become: True
+  shell: tar -cvzf backend-{{ID}}.tar.gz . 
+  changed_when: False
+
+
 - name: "install pm2"
-  become: yes
+  become: True
   npm:
     name: pm2
     global: yes
