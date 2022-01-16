@@ -237,23 +237,21 @@ jobs:
             cat backend_url.txt
            
       - run:
-          name: Add API URL to frontend /.env
+          name: Add API URL inventory.txt
           command: |
-            pwd
-            cd frontend
-            touch .env
+            cd .circleci/ansible/ 
+            echo [backend] >> inventory.txt
             export BACKEND_IP=$(aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text)
             export API_URL="http://${BACKEND_IP}:3030"
-            echo API_URL="http://${BACKEND_IP}:3030" >> .env      
-            ls -la
-            cat .env
+            echo "http://${BACKEND_IP}:3030" >> .circleci/ansible/inventory.txt      
+            cat .circleci/ansible/inventory.txt
        
       - persist_to_workspace:
           root: ./
           paths:
             - .circleci/ansible/inventory.txt
             - .circleci/ansible/backend_url.txt
-            - frontend/.env
+        
             
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:

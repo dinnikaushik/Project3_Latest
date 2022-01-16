@@ -27,7 +27,7 @@
       ansible.builtin.shell: |
         ansible --version
         python --version
-        echo {{ ID }}
+       
 
   roles:
     - role: configure-server
