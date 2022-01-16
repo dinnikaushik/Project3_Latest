@@ -22,12 +22,7 @@
 
   pre_tasks:
     - name: "wait 60 seconds for target connection to become reachable/usable."
-      wait_for_connection:
-    - name: Ansible version
-      ansible.builtin.shell: |
-        ansible --version
-        python --version
-       
+      wait_for_connection:    
 
   roles:
     - role: configure-server
