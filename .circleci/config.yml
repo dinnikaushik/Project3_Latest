@@ -240,11 +240,13 @@ jobs:
           name: Add API URL inventory.txt
           command: |
             cd .circleci/ansible/ 
+            pwd
             echo [backend] >> inventory.txt
+            cat inventory.txt
             export BACKEND_IP=$(aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text)
             export API_URL="http://${BACKEND_IP}:3030"
-            echo "http://${BACKEND_IP}:3030" >> .circleci/ansible/inventory.txt      
-            cat .circleci/ansible/inventory.txt
+            echo "http://${BACKEND_IP}:3030" >> inventory.txt      
+            cat inventory.txt
        
       - persist_to_workspace:
           root: ./
