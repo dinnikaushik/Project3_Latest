@@ -290,7 +290,7 @@ jobs:
             sudo apt install python
             sudo apt install ansible
             pwd && ls -la
-            python --vesion
+            
             
       - run:
           name: Configure server
