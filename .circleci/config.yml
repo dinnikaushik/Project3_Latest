@@ -216,19 +216,19 @@ jobs:
      
             
       - run:
-          name: Add back-end IP to inventory.txt
+          name: Add back-end IP to inventory1.txt
           command: |
             cd .circleci/ansible/ 
-            echo [backend] > inventory.txt
+            echo [backend] > inventory1.txt
             export BACKEND_IP=$(aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text)
             export API_URL="http://${BACKEND_IP}:3030"
-            echo "http://${BACKEND_IP}:3030" >> inventory.txt 
+            echo "http://${BACKEND_IP}:3030" >> inventory1.txt 
             
             # aws ec2 describe-instances \
             # --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
             # --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            # --no-paginate --output text || >> inventory.txt
-            cat inventory.txt
+            # --no-paginate --output text || >> inventory1.txt
+            cat inventory1.txt
       
       - run:
           name: Add back-end PublicDNS address to file - backend_url.txt
@@ -255,7 +255,7 @@ jobs:
       - persist_to_workspace:
           root: ./
           paths:
-            - .circleci/ansible/inventory.txt
+            - .circleci/ansible/inventory1.txt
             - .circleci/ansible/backend_url.txt
         
             
@@ -294,7 +294,7 @@ jobs:
             pwd && ls -la
             cd .circleci/ansible && ls -la
             cat inventory.txt
-            ansible-playbook -i inventory.txt configure-server.yml
+            ansible-playbook -i inventory1.txt configure-server.yml
             
       # Here's where you will add some code to rollback on failure 
       # - destroy-environment:
@@ -352,7 +352,7 @@ jobs:
             # echo "API_URL = ${API_URL}"
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
             export API_URL="http://${BACKEND_IP}:3030"
-            # echo "${API_URL}" >> inventory.txt
+            # echo "${API_URL}" >> inventory1.txt
             cd frontend && ls -la
             cat .env
            
@@ -394,7 +394,7 @@ jobs:
       - persist_to_workspace:
           root: ./
           paths: 
-            - .circleci/ansible/inventory.txt
+            - .circleci/ansible/inventory1.txt
             - .circleci/ansible/api_url.txt
             - frontend/.env
             - backend/migration.txt
@@ -511,7 +511,7 @@ jobs:
             cat inventory.txt
             ls -l roles/deploy/files
             ls -l roles/deploy/
-            ansible-playbook -i inventory.txt deploy-backend.yml
+            ansible-playbook -i inventory1.txt deploy-backend.yml
            
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
