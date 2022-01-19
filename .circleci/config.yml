@@ -216,19 +216,19 @@ jobs:
      
             
       - run:
-          name: Add back-end IP to inventory1.txt
+          name: Add back-end IP to inventory2.txt
           command: |
             cd .circleci/ansible/ 
-            echo [backend] > inventory1.txt
+            echo [backend] > inventory2.txt
             export BACKEND_IP=$(aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text)
             export API_URL="http://${BACKEND_IP}:3030"
-            echo "http://${BACKEND_IP}:3030" >> inventory1.txt 
+            echo "http://${BACKEND_IP}:3030" >> inventory2.txt 
             
             # aws ec2 describe-instances \
             # --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
             # --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            # --no-paginate --output text || >> inventory1.txt
-            cat inventory1.txt
+            # --no-paginate --output text || >> inventory2.txt
+            cat inventory2.txt
       
       - run:
           name: Add back-end PublicDNS address to file - backend_url.txt
@@ -255,7 +255,7 @@ jobs:
       - persist_to_workspace:
           root: ./
           paths:
-            - .circleci/ansible/inventory1.txt
+            - .circleci/ansible/inventory2.txt
             - .circleci/ansible/backend_url.txt
         
             
@@ -293,8 +293,8 @@ jobs:
             # Your code here
             pwd && ls -la
             cd .circleci/ansible && ls -la
-            cat inventory.txt
-            ansible-playbook -i inventory1.txt configure-server.yml
+            cat inventory2.txt
+            ansible-playbook -i inventory2.txt configure-server.yml
             
       # Here's where you will add some code to rollback on failure 
       # - destroy-environment:
