@@ -1,8 +1,7 @@
 ---
 - name: "configuration playbook"
-  hosts: all
+  hosts: backend
   user: ubuntu
-  become: true
   gather_facts: false
   vars:
     environment_config:
