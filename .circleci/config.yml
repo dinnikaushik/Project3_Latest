@@ -13,7 +13,7 @@ defaults: &defaults-node
 environment:
   AWS_PAGER: ""
   BACKEND_IP: AWS::EC2PublicIP
-  ID: CIRCLE_WORKFLOW_ID:0:7
+  # ID: CIRCLE_WORKFLOW_ID:0:7
 
 commands:
 
@@ -81,8 +81,8 @@ jobs:
       
       - run: echo ${CIRCLE_WORKFLOW_ID:0:7}
 
-      - print_workflow_id:
-          id: <<pipeline.id>>
+      # - print_workflow_id:
+      #     id: <<pipeline.id>>
 
       - run:
           name: Build front-end
@@ -119,7 +119,7 @@ jobs:
             cd ../..
             pwd 
             ls -la
-            tar -C backend -czvf artifact.tar.gz .
+            tar -C backend -czvf backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
@@ -316,9 +316,9 @@ jobs:
             ansible-playbook -i inventory3.txt configure-server.yml
             
       # Here's where you will add some code to rollback on failure 
-      # - destroy-environment:
-      #     workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-      #     event: on_fail
+      - destroy-environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+          event: on_fail
 
   smoke-test-web-site:
     docker:
@@ -350,42 +350,44 @@ jobs:
       - checkout
       - attach_workspace:
           at: ./
-      - run:
-          name: Install AWS CLI dependencies
-          working_directory: ./
-          command: |
-            sudo apt-get update && sudo apt-get install -yy less
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
-      - run:
-          name: Get backend url
-          command: |
-            cd .circleci/ansible/
-            # aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text >> inventory.txt
-            # BACKEND_IP=$(grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" inventory.txt)
-            export BACKEND_IP=$(aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text)
-            export API_URL="http://${BACKEND_IP}:3030"
-            cd ../.. && pwd
-            ls -la
-            # echo "API_URL = ${API_URL}"
-            echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
-            export API_URL="http://${BACKEND_IP}:3030"
-            # echo "${API_URL}" >> inventory1.txt
-            cd frontend && ls -la
-            cat .env
+      - restore_cache:
+          keys: [backend-build]
+      # - run:
+      #     name: Install AWS CLI dependencies
+      #     working_directory: ./
+      #     command: |
+      #       sudo apt-get update && sudo apt-get install -yy less
+      #       curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      #       unzip awscliv2.zip
+      #       sudo ./aws/install
+      # - run:
+      #     name: Get backend url
+      #     command: |
+      #       cd .circleci/ansible/
+      #       # aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text >> inventory.txt
+      #       # BACKEND_IP=$(grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" inventory.txt)
+      #       export BACKEND_IP=$(aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text)
+      #       export API_URL="http://${BACKEND_IP}:3030"
+      #       cd ../.. && pwd
+      #       ls -la
+      #       # echo "API_URL = ${API_URL}"
+      #       echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
+      #       export API_URL="http://${BACKEND_IP}:3030"
+      #       # echo "${API_URL}" >> inventory1.txt
+      #       cd frontend && ls -la
+      #       cat .env
            
 
       - run:
-          name: Run migrations
-          working_directory: ./
+          name: Run DB migrations
+          # working_directory: ./
           command: |
             # Your code here
-            npm i migrations
             cd backend
-            npm run migrations >> migration.txt
+            npm i migrations
+            npm run migrations > migration.txt
             export migration_status=$(cat migration.txt | grep -c "has been executed successfully")
-            tar -zcvf ~/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
+            # tar -zcvf ~/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
             pwd & ls -la
             cat ./migration.txt
       - persist_to_workspace:
