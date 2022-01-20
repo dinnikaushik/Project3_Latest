@@ -449,7 +449,7 @@ jobs:
           paths: 
             - home/circleci/project/frontend/artifact-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
             - home/circleci/project/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
-            - .circleci/ansible/roles/deploy/files/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
+            - home/circleci/project/.circleci/ansible/roles/deploy/files/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
             
   deploy-frontend:
     docker:
