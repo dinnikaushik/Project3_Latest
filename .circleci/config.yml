@@ -424,7 +424,7 @@ jobs:
             npm install
             npm run build
             ls -la
-            tar -czvf artifact-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz dist
+            tar -czvf frontend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz dist
 
       - run:
           name: Build and zip backend artifacts
@@ -447,9 +447,9 @@ jobs:
       - persist_to_workspace:
           root: ./
           paths: 
-            - home/circleci/project/frontend/artifact-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
-            - home/circleci/project/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
-            - home/circleci/project/.circleci/ansible/roles/deploy/files/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
+            - frontend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
+            - backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
+            
             
   deploy-frontend:
     docker:
