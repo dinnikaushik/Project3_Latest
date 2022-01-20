@@ -79,10 +79,10 @@ jobs:
       - restore_cache:
           keys: [frontend-build]
       
-      - run: echo $_env_name
+      - run: echo ${CIRCLE_WORKFLOW_ID:0:7}
 
       - print_workflow_id:
-          id: <<pipeline.id>>
+          id: <<pipeline.id:0:7>>
 
       - run:
           name: Build front-end
@@ -385,14 +385,14 @@ jobs:
             cd backend
             npm run migrations >> migration.txt
             export migration_status=$(cat migration.txt | grep -c "has been executed successfully")
-            tar -zcvf ~/backend.tar.gz .
+            tar -zcvf ~/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
             pwd & ls -la
             cat ./migration.txt
       - persist_to_workspace:
           root: ~/
           paths:
             - frontend/.env
-            - backend.tar.gz
+            - backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
             - migration.txt
       
       - run:
@@ -439,7 +439,7 @@ jobs:
             npm run build
             ls -la
             tar -czvf frontend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz dist
-
+            ls -la
       - run:
           name: Build and zip backend artifacts
           command: |
@@ -455,7 +455,9 @@ jobs:
             cd .circleci/ansible/roles/deploy/files/
             cp /home/circleci/project/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
             pwd && ls -la
-            cd ~/frontend/
+            cd ../../../../..
+            pwd && ls -la
+            cd frontend
             pwd && ls -la
             
       - persist_to_workspace:
