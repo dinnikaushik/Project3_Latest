@@ -2,7 +2,6 @@ version: 2.1
   
 orbs:
 # Good for AWS CLI
- 
   aws-cli: circleci/aws-cli@2.0.6
 
 
@@ -14,7 +13,8 @@ defaults: &defaults-node
 environment:
   AWS_PAGER: ""
   BACKEND_IP: AWS::EC2PublicIP
- 
+  ID: CIRCLE_WORKFLOW_ID:0:7
+
 commands:
 
   destroy-environment:
@@ -59,8 +59,17 @@ commands:
             #  Add revert code here. You can find this in the Getting Started section.
               npm run migration:revert
             fi
-            
+
+  print_workflow_id:
+    parameters:
+      id:
+        type: string
+    steps:
+      - run: echo << parameters.id >>    
+
+
 jobs:
+
   build-frontend:
     # <<: *defaults-node
     docker:
@@ -69,6 +78,12 @@ jobs:
       - checkout
       - restore_cache:
           keys: [frontend-build]
+      
+      - run: echo $_env_name
+
+      - print_workflow_id:
+          id: <<pipeline.id>>
+
       - run:
           name: Build front-end
           command: |
@@ -82,7 +97,6 @@ jobs:
             npm i webpack-cli
             npm i yargs
             
-          # exit 1
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -573,20 +587,22 @@ jobs:
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
           event: on_fail
-#   cloudfront-update:
-#     docker:
-#       # Docker image here that supports AWS CLI
-#     steps:
-#       # Checkout code from git
-#       - run:
-#           name: Install dependencies
-#           command: |
-#             # your code here
-#       - run:
-#           name: Update cloudfront distribution
-#           command: |
-#             # your code here
-#       # Here's where you will add some code to rollback on failure  
+  cloudfront-update:
+    docker:
+      # Docker image here that supports AWS CLI
+      - image: amazon/aws-cli 
+    steps:
+      # Checkout code from git
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            # your code here
+      - run:
+          name: Update cloudfront distribution
+          command: |
+            # your code here
+      # Here's where you will add some code to rollback on failure  
 
 # cleanup:
 #     docker:
