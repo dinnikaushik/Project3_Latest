@@ -125,7 +125,7 @@ jobs:
           key: backend-build
   
   test-frontend:
-    parallelism: 10
+    # parallelism: 10
     # <<: *defaults-node
     docker:
       - image: circleci/node:13.8.0
@@ -632,11 +632,11 @@ workflows:
       - build-frontend
       - build-backend
       - test-frontend:
-          requires: [build-frontend,scan-frontend]
+          requires: [scan-frontend]
       - scan-frontend:
           requires: [build-frontend]
       - test-backend:
-          requires: [build-backend,scan-backend]
+          requires: [scan-backend]
       - scan-backend:
           requires: [build-backend]
       - deploy-infrastructure:
