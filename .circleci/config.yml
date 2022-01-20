@@ -440,14 +440,14 @@ jobs:
             mkdir .circleci/ansible/roles/deploy/files/
             cd .circleci/ansible/roles/deploy/files/
             cp /home/circleci/project/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
-            ls -la
+            pwd && ls -la
             
       - persist_to_workspace:
           root: ./
           paths: 
             - frontend/artifact-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
             - backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
-            - .circleci/ansible/roles/deploy/files/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
+            # - .circleci/ansible/roles/deploy/files/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
             
   deploy-frontend:
     docker:

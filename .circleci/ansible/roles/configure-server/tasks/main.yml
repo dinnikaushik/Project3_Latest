@@ -25,13 +25,6 @@
     state: latest
     update_cache: yes
 
-- name: "Zip backend artifact"
-  become: True
-  shell: |
-    ID="$CIRCLE_WORKFLOW_ID:0:7"
-    tar -cvzf backend-{{ "$ID" }}.tar.gz . 
-  changed_when: False
-
 
 - name: "install pm2"
   become: True
