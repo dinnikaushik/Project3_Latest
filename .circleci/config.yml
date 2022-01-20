@@ -82,7 +82,7 @@ jobs:
       - run: echo ${CIRCLE_WORKFLOW_ID:0:7}
 
       - print_workflow_id:
-          id: <<pipeline.id:0:7>>
+          id: <<pipeline.id>>
 
       - run:
           name: Build front-end
@@ -137,7 +137,7 @@ jobs:
           name: Test front-end
           command: |
             cd frontend
-            npm i --force
+            npm i
             npm run test
                 
   test-backend:
@@ -632,15 +632,15 @@ workflows:
       - build-frontend
       - build-backend
       - test-frontend:
-          requires: [build-frontend]
+          requires: [build-frontend,scan-frontend]
       - scan-frontend:
           requires: [build-frontend]
       - test-backend:
-          requires: [build-backend]
+          requires: [build-backend,scan-backend]
       - scan-backend:
           requires: [build-backend]
       - deploy-infrastructure:
-          requires: [build-backend,build-frontend]
+          requires: [test-backend,test-frontend]
           filters:
             branches:
               only: [master]   
