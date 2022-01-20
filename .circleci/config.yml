@@ -223,7 +223,7 @@ jobs:
             export BACKEND_IP=$(aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo $BACKEND_IP >> inventory3.txt
-            echo "http://${BACKEND_IP}:3030" >> inventory3.txt 
+            # echo "http://${BACKEND_IP}:3030" >> inventory3.txt 
             
             # aws ec2 describe-instances \
             # --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
@@ -399,7 +399,7 @@ jobs:
       - persist_to_workspace:
           root: ./
           paths: 
-            - .circleci/ansible/inventory1.txt
+            - .circleci/ansible/inventory3.txt
             - .circleci/ansible/api_url.txt
             - frontend/.env
             - backend/migration.txt
