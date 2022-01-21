@@ -451,11 +451,10 @@ jobs:
             cd .circleci/ansible/roles/deploy/files/
             cp /home/circleci/project/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
             
-            
       - persist_to_workspace:
           root: ./
           paths: 
-            # - frontend/frontend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
+            - frontend/
             - backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
             
             
