@@ -383,9 +383,10 @@ jobs:
           working_directory: ./
           command: |
             # Your code here
-            cd backend
-            npm install -g npm
-            npm i migrations
+            cd backend && ls -la
+            npm -v
+            npm i
+            npm update migrations
             cd node_modules && grep "migrations.js"
             npm run migrate > migration.txt
             # export migration_status=$(cat migration.txt | grep -c "has been executed successfully")
@@ -416,9 +417,9 @@ jobs:
             - backend/migration.txt
 
      # Here's where you will add some code to rollback on failure      
-      - destroy-environment:
-          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-          event: on_fail
+      # - destroy-environment:
+      #     workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+      #     event: on_fail
   
   build-new-frontend-and-backend:
     <<: *defaults-node
