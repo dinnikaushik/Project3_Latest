@@ -380,11 +380,13 @@ jobs:
 
       - run:
           name: Run DB migrations
-          # working_directory: ./
+          working_directory: ./
           command: |
             # Your code here
             cd backend
+            npm install -g npm
             npm i migrations
+            cd node_modules && grep "migrations.js"
             npm run migrate > migration.txt
             # export migration_status=$(cat migration.txt | grep -c "has been executed successfully")
             # # tar -zcvf ~/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
@@ -411,7 +413,6 @@ jobs:
           paths: 
             - .circleci/ansible/inventory3.txt
             - .circleci/ansible/api_url.txt
-            - frontend/.env
             - backend/migration.txt
 
      # Here's where you will add some code to rollback on failure      
