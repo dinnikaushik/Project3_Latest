@@ -3,11 +3,11 @@ version: 2.1
 orbs:
 # Good for AWS CLI
   aws-cli: circleci/aws-cli@2.0.6
-
+ 
 
 defaults: &defaults-node
   docker:
-    - image: cimg/node:lts
+    - image: cimg/node:13.8.0
   working_directory: ~/project
   
 environment:
@@ -342,9 +342,9 @@ jobs:
          
   run-migrations:
     # Docker image here that supports NodeJS
-    docker:
-    - image: cimg/node:lts
-    # <<: *defaults-node
+    # docker:
+    # - image: cimg/node:lts
+    <<: *defaults-node
     steps:
     # Checkout code from git
       - checkout
@@ -384,16 +384,20 @@ jobs:
           command: |
             # Your code here
             cd backend && ls -la
-            cd node_modules && ls -la
-            # npm -v
+            # cd node_modules && ls -la
+            npm -v
             npm i
             npm i migrations
-            cd node_modules && ls -la
+            # cd node_modules && ls -la
+            # cd ..
             npm run migrations > migration.txt
             # export migration_status=$(cat migration.txt | grep -c "has been executed successfully")
-            tar -zcvf ~/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
-            pwd & ls -la
+            # tar -zcvf ~/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
+            pwd && ls -la
+            echo $migration_status > migration_status.txt
             cat migration.txt
+            echo "____________"
+            cat migration_status.txt
      
       - run:
           name: Check migration results 

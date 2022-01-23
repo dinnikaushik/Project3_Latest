@@ -1,0 +1,8 @@
+
+> glee2@1.0.0 premigrations /Users/serg/Documents/DevOps/Devops-p3-starter/backend
+> npm run build
+
+
+> glee2@1.0.0 build /Users/serg/Documents/DevOps/Devops-p3-starter/backend
+> tsc
+

@@ -30,7 +30,10 @@
     "migrations-win": "ts-node node_modules/typeorm/cli.js migration:run",
     "premigrations:revert": "npm run build",
     "migrations:revert": "ts-node -r dotenv/config node_modules/.bin/typeorm migration:revert",
-    "update:domain": "npm update @kiwihr/kiwi-domain"
+    "update:domain": "npm update @kiwihr/kiwi-domain",
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js --config src/ormconfig.ts",
+    "typeorm:migrate": "npm run typeorm migration:generate -- -n",
+    "typeorm:run": "npm run typeorm migration:run"
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
