@@ -342,9 +342,9 @@ jobs:
          
   run-migrations:
     # Docker image here that supports NodeJS
-    # docker:
-    # - image: cimg/node:lts
-    <<: *defaults-node
+    docker:
+    - image: cimg/node:lts
+    # <<: *defaults-node
     steps:
     # Checkout code from git
       - checkout
@@ -387,7 +387,8 @@ jobs:
             # cd node_modules && ls -la
             npm -v
             npm i
-            npm i migrations
+            npm install node-pg-migrate pg
+            npm audit fix
             # cd node_modules && ls -la
             # cd ..
             npm run migrations > migration.txt
