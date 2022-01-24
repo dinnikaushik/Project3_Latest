@@ -389,8 +389,11 @@ jobs:
             cat .env
             # cd node_modules && ls -la
             npm -v
-            sudo npm install -g npm@latest
-            npm -v
+            # sudo npm i @nestjs/cqrs
+            # sudo npm i @nestjs/common
+            # sudo npm i @nestjs/core
+            # sudo npm install -g npm@latest
+            # npm -v
             sudo npm i
             sudo npm i migrations
             # npm install node-pg-migrate pg
