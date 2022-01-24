@@ -386,8 +386,9 @@ jobs:
             cd backend && ls -la
             # cd node_modules && ls -la
             npm -v
-            npm i
-            npm i migrations
+            sudo npm i -g npm-upgrade
+            sudo npm i
+            sudo npm i migrations
             # npm install node-pg-migrate pg
             npm audit fix
             npm run migrations > migration.txt
