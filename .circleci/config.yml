@@ -387,9 +387,11 @@ jobs:
             # cd node_modules && ls -la
             npm -v
             npm i
-            npm install node-pg-migrate pg
+            npm i migrations
+            # npm install node-pg-migrate pg
             npm audit fix
-            npm run migrate up > migration.txt
+            npm run migrations > migration.txt
+            # npm run migrate up > migration.txt
             # export migration_status=$(cat migration.txt | grep -c "has been executed successfully")
             # tar -zcvf ~/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
             pwd && ls -la
