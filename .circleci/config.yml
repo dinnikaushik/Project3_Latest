@@ -3,7 +3,7 @@ version: 2.1
 orbs:
 # Good for AWS CLI
   aws-cli: circleci/aws-cli@2.0.6
- 
+
 
 defaults: &defaults-node
   docker:
@@ -104,7 +104,7 @@ jobs:
   build-backend:
     # <<: *defaults-node
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -386,6 +386,7 @@ jobs:
           command: |
             # Your code here
             cd backend && ls -la
+<<<<<<< HEAD
             cat .env
             # cd node_modules && ls -la
             npm -v
@@ -395,15 +396,28 @@ jobs:
             sudo npm i migrations
             # npm install node-pg-migrate pg
             npm audit fix
+=======
+            cd node_modules && ls -la
+            # npm -v
+            npm i
+            npm i migrations
+            cd node_modules && ls -la
+>>>>>>> parent of 13094ae3 (defaults: &defaults-node   docker:     - image: cimg/node:13.8.0)
             npm run migrations > migration.txt
             # npm run migrate up > migration.txt
             # export migration_status=$(cat migration.txt | grep -c "has been executed successfully")
+<<<<<<< HEAD
             # tar -zcvf ~/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
             pwd && ls -la
             # echo $migration_status > migration_status.txt
             cat migration.txt
             echo "____________"
             # cat migration_status.txt
+=======
+            tar -zcvf ~/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
+            pwd & ls -la
+            cat migration.txt
+>>>>>>> parent of 13094ae3 (defaults: &defaults-node   docker:     - image: cimg/node:13.8.0)
      
       - run:
           name: Check migration results 
