@@ -73,7 +73,7 @@ jobs:
   build-frontend:
     # <<: *defaults-node
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/node:13.8
     steps:
       - checkout
       - restore_cache:
@@ -104,7 +104,7 @@ jobs:
   build-backend:
     # <<: *defaults-node
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/node:13.8
     steps:
       - checkout
       - restore_cache:
@@ -113,7 +113,8 @@ jobs:
           name: Backend build
           command: |
             cd backend
-            npm i --force
+            npm i 
+            npm install pg
             npm run --force build
             cd dist
             ls -la
@@ -130,7 +131,7 @@ jobs:
     # parallelism: 10
     # <<: *defaults-node
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/node:13.8
     steps:
       - checkout
       - restore_cache:
@@ -146,7 +147,7 @@ jobs:
     parallelism: 10
     # <<: *defaults-node
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/node:13.8
     steps:
       - checkout
       - restore_cache:
@@ -163,7 +164,7 @@ jobs:
     parallelism: 2
     # <<: *defaults-node
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/node:13.8
     steps:
       - checkout
       - restore_cache:
@@ -180,7 +181,7 @@ jobs:
     parallelism: 2
     # <<: *defaults-node
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/node:13.8
     steps:
       - checkout
       - restore_cache:
@@ -190,7 +191,6 @@ jobs:
           command: |
             cd backend
             npm audit fix --audit-level=critical --force
-            npm audit fix --force
 
   deploy-infrastructure:
     # parallelism: 10
@@ -345,7 +345,7 @@ jobs:
   run-migrations:
     # Docker image here that supports NodeJS
     docker:
-    - image: cimg/node:lts
+    - image: cimg/node:13.8
     # <<: *defaults-node
     steps:
     # Checkout code from git
