@@ -7,7 +7,7 @@ orbs:
 
 defaults: &defaults-node
   docker:
-    - image: cimg/node:lts
+    - image: cimg/node:13.8.0
   working_directory: ~/project
   
 environment:
@@ -73,7 +73,7 @@ jobs:
   build-frontend:
     # <<: *defaults-node
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/node:13.8
     steps:
       - checkout
       - restore_cache:
@@ -83,7 +83,7 @@ jobs:
 
       # - print_workflow_id:
       #     id: <<pipeline.id>>
-
+     
       - run:
           name: Build front-end
           command: |
@@ -102,7 +102,10 @@ jobs:
           key: frontend-build
 
   build-backend:
-    <<: *defaults-node
+    # <<: *defaults-node
+    docker:
+
+      - image: cimg/node:13.8
     steps:
       - checkout
       - restore_cache:
@@ -111,7 +114,8 @@ jobs:
           name: Backend build
           command: |
             cd backend
-            npm i --force
+            npm i 
+            npm install pg
             npm run --force build
             cd dist
             ls -la
@@ -128,7 +132,7 @@ jobs:
     # parallelism: 10
     # <<: *defaults-node
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/node:13.8
     steps:
       - checkout
       - restore_cache:
@@ -144,7 +148,7 @@ jobs:
     parallelism: 10
     # <<: *defaults-node
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/node:13.8
     steps:
       - checkout
       - restore_cache:
@@ -161,7 +165,7 @@ jobs:
     parallelism: 2
     # <<: *defaults-node
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/node:13.8
     steps:
       - checkout
       - restore_cache:
@@ -178,7 +182,7 @@ jobs:
     parallelism: 2
     # <<: *defaults-node
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/node:13.8
     steps:
       - checkout
       - restore_cache:
@@ -188,7 +192,6 @@ jobs:
           command: |
             cd backend
             npm audit fix --audit-level=critical --force
-            npm audit fix --force
 
   deploy-infrastructure:
     # parallelism: 10
@@ -343,7 +346,7 @@ jobs:
   run-migrations:
     # Docker image here that supports NodeJS
     docker:
-    - image: cimg/node:lts
+    - image: cimg/node:13.8
     # <<: *defaults-node
     steps:
     # Checkout code from git
@@ -380,17 +383,25 @@ jobs:
 
       - run:
           name: Run DB migrations
-          # working_directory: ./
+          working_directory: ./
           command: |
             # Your code here
-            cd backend
+            cd backend && ls -la
+
+            cd node_modules && ls -la
+            # npm -v
+            npm i
             npm i migrations
+            cd node_modules && ls -la
             npm run migrations > migration.txt
             # export migration_status=$(cat migration.txt | grep -c "has been executed successfully")
-            # # tar -zcvf ~/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
-            pwd & ls -la
+            # tar -zcvf ~/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
+            pwd && ls -la
+            # echo $migration_status > migration_status.txt
             cat migration.txt
-     
+            echo "____________"
+            # cat migration_status.txt
+
       - run:
           name: Check migration results 
           command: |
@@ -411,13 +422,12 @@ jobs:
           paths: 
             - .circleci/ansible/inventory3.txt
             - .circleci/ansible/api_url.txt
-            - frontend/.env
             - backend/migration.txt
 
      # Here's where you will add some code to rollback on failure      
-      - destroy-environment:
-          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-          event: on_fail
+      # - destroy-environment:
+      #     workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+      #     event: on_fail
   
   build-new-frontend-and-backend:
     <<: *defaults-node
@@ -451,11 +461,10 @@ jobs:
             cd .circleci/ansible/roles/deploy/files/
             cp /home/circleci/project/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
             
-            
       - persist_to_workspace:
           root: ./
           paths: 
-            - frontend/frontend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
+            - frontend/
             - backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
             
             
