@@ -142,7 +142,8 @@ jobs:
           command: |
             cd frontend
             npm i
-            npm audit fix --audit-level=critical --force
+            npm install --save-dev jest
+            npm audit fix --force
             npm run test
                 
   test-backend:
