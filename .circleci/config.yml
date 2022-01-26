@@ -652,14 +652,14 @@ workflows:
       - build-new-frontend-and-backend:
           requires: [run-migrations]
       - deploy-frontend:
-          requires: [run-migrations, build-new-frontend-and-backend]
+          requires: [build-new-frontend-and-backend]
       - deploy-backend:
-          requires: [deploy-frontend, run-migrations]
+          requires: [build-new-frontend-and-backend]
       - smoke-test-web-site:
           requires: [deploy-backend, deploy-frontend]
       - smoke-test:
           requires: [deploy-backend, deploy-frontend]
-      # - cloudfront-update:
-      #     requires: [smoke-test]
-      # - cleanup:
-      #     requires: [cloudfront-update]
+      - cloudfront-update:
+          requires: [smoke-test]
+      - cleanup:
+          requires: [cloudfront-update]
