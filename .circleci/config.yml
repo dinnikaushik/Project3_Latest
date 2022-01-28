@@ -239,7 +239,7 @@ jobs:
           name: Add back-end IP to inventory2.txt
           command: |
             cd .circleci/ansible/ 
-            echo [backend] > inventory3.txt
+            echo [all] > inventory3.txt
             export BACKEND_IP=$(aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo $BACKEND_IP >> inventory3.txt
@@ -392,10 +392,13 @@ jobs:
             cd backend && ls -la
             cd node_modules && ls -la
             npm -v
+            node -v
+            
+            npm config get registry
             npm i
             npm i migrations
-            npm audit fix --audit-level=critical --force
-            npm audit fix --force
+            # npm audit fix --audit-level=critical --force
+            # npm audit fix --force
             npm run migrations > migration.txt
             # export migration_status=$(cat migration.txt | grep -c "has been executed successfully")
             tar -zcvf ~/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
@@ -428,9 +431,9 @@ jobs:
             - backend/migration.txt
 
      # Here's where you will add some code to rollback on failure      
-      # - destroy-environment:
-      #     workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-      #     event: on_fail
+      - destroy-environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+          event: on_fail
   
   build-new-frontend-and-backend:
     <<: *defaults-node
@@ -662,7 +665,7 @@ workflows:
           requires: [deploy-backend, deploy-frontend]
       - smoke-test:
           requires: [deploy-backend, deploy-frontend]
-      - cloudfront-update:
-          requires: [smoke-test]
+      # - cloudfront-update:
+      #     requires: [smoke-test]
       # - cleanup:
       #     requires: [cloudfront-update]
