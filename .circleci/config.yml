@@ -129,7 +129,7 @@ jobs:
           key: backend-build
   
   test-frontend:
-    # parallelism: 10
+    parallelism: 10
     # <<: *defaults-node
     docker:
       - image: cimg/node:13.8
@@ -143,7 +143,7 @@ jobs:
             cd frontend
             npm i
             npm install --save-dev jest
-            npm audit fix --force
+            # npm audit fix --force
             npm run test
                 
   test-backend:
