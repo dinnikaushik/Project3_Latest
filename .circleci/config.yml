@@ -397,9 +397,9 @@ jobs:
             # sudo npm install -g n
             # # sudo n stable upgrade
             sudo npm i -g
-            sudo npm i -g yargs
-            sudo npm i -g typescript@3.8.3
-            sudo npm i -g migrations
+            # sudo npm i -g yargs
+            # sudo npm i -g typescript@3.8.3
+            sudo npm i -g migrations@1.0
             npm -v
             node -v
             tsc -v
