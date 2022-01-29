@@ -129,7 +129,7 @@ jobs:
           key: backend-build
   
   test-frontend:
-    parallelism: 10
+    parallelism: 4
     # <<: *defaults-node
     docker:
       - image: cimg/node:13.8
