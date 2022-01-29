@@ -396,10 +396,10 @@ jobs:
             # sudo rm package-lock.json
             # sudo npm install -g n
             # # sudo n stable upgrade
-            sudo npm i 
-            # sudo npm i yargs
-            sudo npm i typescript@3.8.3
-            sudo npm i -g migrations@1.0.3
+            npm i 
+            # npm i typescript@3.8.3
+            npm audit fix
+            npm i migrations@1.0.3
             npm -v
             node -v
             tsc -v
