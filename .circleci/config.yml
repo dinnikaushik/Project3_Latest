@@ -411,8 +411,8 @@ jobs:
             pwd 
             # echo $migration_status > migration_status.txt
             # cat migration.txt
-            cd /.circleci/ansible/ && pwd
-            cat backend_url.txt
+            # cd /.circleci/ansible/ && pwd
+            # cat backend_url.txt
             # cat migration_status.txt
 
       - run:
@@ -422,7 +422,7 @@ jobs:
             pwd & ls -la
             cd backend
             pwd & ls -la
-            cat migration.txt
+            # cat migration.txt
             # if grep -q "has been executed successfully." migration.txt
             # then
             #   curl -H "Content-Type: text/plain" -H \
