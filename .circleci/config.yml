@@ -142,7 +142,7 @@ jobs:
           command: |
             cd frontend
             npm i
-            npm install --save-dev jest
+            # npm install --save-dev jest
             # npm audit fix --force
             npm run test
                 
