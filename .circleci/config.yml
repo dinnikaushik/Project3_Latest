@@ -406,7 +406,7 @@ jobs:
             ls -la ./
             echo $migration_status > migration_status.txt
             # cat migration.txt
-            # cd /.circleci/ansible/ && pwd
+            cd /.circleci/ansible/ && pwd
             cat backend_url.txt
             cat migration_status.txt
 
@@ -420,10 +420,15 @@ jobs:
             pwd & ls -la
             cat migration.txt
             if grep -q "has been executed successfully." migration.txt
+       
             then
-              curl -H "Content-Type: text/plain" -H \
-              "token: 130ac090-6749-4202-95d0-c1746a2dca81" --request PUT --data "1" \
-              https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
+              echo "0" > migr_stat
+            else
+              echo "1" > migr_stat
+              
+              # curl -H "Content-Type: text/plain" -H \
+              # "token: 130ac090-6749-4202-95d0-c1746a2dca81" --request PUT --data "1" \
+              # https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
             fi
             
       - persist_to_workspace:
@@ -432,6 +437,8 @@ jobs:
             - .circleci/ansible/inventory3.txt
             - .circleci/ansible/api_url.txt
             - backend/migration.txt
+            - backend/migration_status.txt
+            - backend/migr_stat
 
      # Here's where you will add some code to rollback on failure      
       - destroy-environment:
