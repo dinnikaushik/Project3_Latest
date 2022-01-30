@@ -142,7 +142,6 @@ jobs:
           command: |
             cd frontend
             npm i
-            # npm install --save-dev jest
             # npm audit fix --force
             npm run test
                 
@@ -236,7 +235,7 @@ jobs:
      
             
       - run:
-          name: Add back-end IP to inventory2.txt
+          name: Add back-end IP to inventory3.txt
           command: |
             cd .circleci/ansible/ 
             echo [all] > inventory3.txt
@@ -438,9 +437,9 @@ jobs:
             - backend/migration.txt
 
      # Here's where you will add some code to rollback on failure      
-      # - destroy-environment:
-      #     workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-      #     event: on_fail
+      - destroy-environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+          event: on_fail
   
   build-new-frontend-and-backend:
     <<: *defaults-node
@@ -482,10 +481,12 @@ jobs:
             
             
   deploy-frontend:
+    # <<: *defaults-node
+    # docker:
+    #   # Docker image here that supports AWS CLI
+    #   - image: amazon/aws-cli
     docker:
-      # Docker image here that supports AWS CLI
-      - image: amazon/aws-cli
-    
+      - image: cimg/base:2022.01
     steps:
       # Checkout code from git
       - checkout
@@ -495,10 +496,17 @@ jobs:
       - attach_workspace:
           at: ./
       - run:
-          name: Install dependencies
+          name: Install AWS dependencies
           command: |
+            sudo apt-get update && sudo apt-get install -yy less
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
             pwd && ls -la
-            #yum install -y tar gzip
+      - run:
+          name: Install  dependencies
+          command: yum install -y tar gzip
+            
       - run:
           name: Copy new build with backend URL
           command: |
@@ -507,7 +515,7 @@ jobs:
             pwd && ls -la
             aws s3 sync dist s3://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7} --recursive
             aws s3 ls s3://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7} --recursive | awk '{print $4}'
-         
+            # aws s3 sync ./frontend/ s3://mybucket-${CIRCLE_WORKFLOW_ID:0:7} --delete
       - persist_to_workspace:
           root: ./
           paths: 
@@ -523,7 +531,9 @@ jobs:
 
   deploy-backend:
     docker:
-      - image: python:3.8-alpine3.14
+      - image: cimg/base:2022.01
+    # docker:
+    #   - image: python:3.8-alpine3.14
     steps:
       - checkout
       - add_ssh_keys:
@@ -533,24 +543,23 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            # your code here
             apk add --update ansible
-            # python get-pip.py
-            # python -m pip install --upgrade pip
-            # pip install tar gzip
+            python get-pip.py
+            python -m pip install --upgrade pip
+            pip install tar gzip
       - run:
           name: Deploy backend
           command: |
             # your code here
-            ls -la
-            cp backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz ./.circleci/ansible/roles/deploy/files/
+            pwd & ls -la
+            cp backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz /.circleci/ansible/roles/deploy/files/
             tar -cvzf backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
-            cat inventory.txt
+            cat inventory3.txt
             ls -l roles/deploy/files
             ls -l roles/deploy/
-            ansible-playbook -i inventory1.txt deploy-backend.yml
+            ansible-playbook -i inventory3.txt deploy-backend.yml
            
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
@@ -559,7 +568,7 @@ jobs:
 
   smoke-test:
     docker:
-      - image: cimg/node:lts
+      - image: cimg/base:2022.01
     steps:
       - checkout
       - attach_workspace:
