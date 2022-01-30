@@ -402,12 +402,12 @@ jobs:
             
             sudo npm run migrations > migration.txt
             export migration_status=$(cat migration.txt | grep -c "has been executed successfully")
-            tar -zcvf ./backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
-            ls -la ./
+            # tar -zcvf ./backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
+            
             echo $migration_status > migration_status.txt
-            # cat migration.txt
-            cd /.circleci/ansible/ && pwd
-            cat backend_url.txt
+            cat migration.txt
+            # cd /.circleci/ansible/ && pwd
+            # cat backend_url.txt
             cat migration_status.txt
 
 
@@ -419,17 +419,17 @@ jobs:
             cd backend
             pwd & ls -la
             cat migration.txt
-            if grep -q "has been executed successfully." migration.txt
+            if grep -q "has been executed successfully." migration.txt;then echo "0" > migr_stat;else echo "1" > migr_stat;fi
        
-            then
-              echo "0" > migr_stat
-            else
-              echo "1" > migr_stat
+            # then
+            #   echo "0" > migr_stat
+            # else
+            #   echo "1" > migr_stat
               
               # curl -H "Content-Type: text/plain" -H \
               # "token: 130ac090-6749-4202-95d0-c1746a2dca81" --request PUT --data "1" \
               # https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
-            fi
+            # fi
             
       - persist_to_workspace:
           root: ./
