@@ -492,7 +492,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ["68:0f:db:17:bf:25:fe:73:5d:c0:88:c4:2a:73:50:dc"]
-      - run: yum install -y tar gzip
+      # - run: yum install -y tar gzip
       - attach_workspace:
           at: ./
       - run:
@@ -503,9 +503,9 @@ jobs:
             unzip awscliv2.zip
             sudo ./aws/install
             pwd && ls -la
-      - run:
-          name: Install  dependencies
-          command: yum install -y tar gzip
+      # - run:
+      #     name: Install  dependencies
+      #     command: yum install -y tar gzip
             
       - run:
           name: Copy new build with backend URL
@@ -543,7 +543,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible
+            # apk add --update ansible
             python get-pip.py
             python -m pip install --upgrade pip
             pip install tar gzip
