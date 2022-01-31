@@ -357,30 +357,27 @@ jobs:
           at: ./
       - restore_cache:
           keys: [backend-build]
-      # - run:
-      #     name: Install AWS CLI dependencies
-      #     working_directory: ./
-      #     command: |
-      #       sudo apt-get update && sudo apt-get install -yy less
-      #       curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-      #       unzip awscliv2.zip
-      #       sudo ./aws/install
-      # - run:
-      #     name: Get backend url
-      #     command: |
-      #       cd .circleci/ansible/
-      #       # aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text >> inventory.txt
-      #       # BACKEND_IP=$(grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" inventory.txt)
-      #       export BACKEND_IP=$(aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text)
-      #       export API_URL="http://${BACKEND_IP}:3030"
-      #       cd ../.. && pwd
-      #       ls -la
-      #       # echo "API_URL = ${API_URL}"
-      #       echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
-      #       export API_URL="http://${BACKEND_IP}:3030"
-      #       # echo "${API_URL}" >> inventory1.txt
-      #       cd frontend && ls -la
-      #       cat .env
+      - run:
+          name: Install AWS CLI dependencies
+          working_directory: ./
+          command: |
+            sudo apt-get update && sudo apt-get install -yy less
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - run:
+          name: Get backend DB url
+          command: |
+            # aws rds describe-db-instances \
+            #   # --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
+            #   --query 'DBInstances[0].Endpoint.Address' \
+            #   --no-paginate --output text >> .circleci/ansible/backendDB_url.txt
+    
+            export BACKEND_DB_URL=$(aws rds describe-db-instances --query 'DBInstances[0].Endpoint.Address' --no-paginate --output text)
+            export API_URL="http://${BACKEND_DB_URL}:3030"
+            echo $API_URL >> /frontend/.env
+            cd frontend && ls -la
+            cat .env
            
 
       - run:
@@ -393,7 +390,6 @@ jobs:
             npm -v
             node -v
             npm i 
-            # npm i typescript@3.8.3
             npm audit fix
             npm i migrations@1.0.3
           
@@ -406,8 +402,6 @@ jobs:
             
             echo $migration_status > migration_status.txt
             cat migration.txt
-            # cd /.circleci/ansible/ && pwd
-            # cat backend_url.txt
             cat migration_status.txt
 
 
@@ -419,7 +413,10 @@ jobs:
             cd backend
             pwd & ls -la
             cat migration.txt
-            if grep -q "has been executed successfully." migration.txt;then echo "0" > migr_stat;else echo "1" > migr_stat;fi
+            if grep -q "has been executed successfully." migration.txt;\
+            then echo "0" > migr_stat;\
+            else echo "1" > migr_stat;\
+            fi
        
             # then
             #   echo "0" > migr_stat
@@ -517,9 +514,9 @@ jobs:
             # your code here
             cd frontend
             pwd && ls -la
-            aws s3 sync dist s3://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+            aws s3 sync dist s3://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7}
             aws s3 ls s3://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7} --recursive | awk '{print $4}'
-            # aws s3 sync ./frontend/ s3://mybucket-${CIRCLE_WORKFLOW_ID:0:7} --delete
+            aws s3 sync ./frontend/ s3://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7} --delete
       - persist_to_workspace:
           root: ./
           paths: 
