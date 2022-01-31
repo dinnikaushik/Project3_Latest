@@ -7,7 +7,7 @@ orbs:
 
 defaults: &defaults-node
   docker:
-    - image: cimg/node:13.8.0
+    - image: circleci/node:13.8.0
   working_directory: ~/project
   
 environment:
@@ -71,9 +71,9 @@ commands:
 jobs:
 
   build-frontend:
-    # <<: *defaults-node
-    docker:
-      - image: cimg/node:13.8
+    <<: *defaults-node
+    # docker:
+    #   - image: cimg/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -102,10 +102,10 @@ jobs:
           key: frontend-build
 
   build-backend:
-    # <<: *defaults-node
-    docker:
+    <<: *defaults-node
+    # docker:
 
-      - image: cimg/node:13.8
+    #   - image: cimg/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -130,9 +130,9 @@ jobs:
   
   test-frontend:
     parallelism: 4
-    # <<: *defaults-node
-    docker:
-      - image: cimg/node:13.8
+    <<: *defaults-node
+    # docker:
+    #   - image: cimg/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -149,7 +149,7 @@ jobs:
     parallelism: 10
     # <<: *defaults-node
     docker:
-      - image: cimg/node:13.8
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -164,9 +164,9 @@ jobs:
   
   scan-frontend:
     parallelism: 2
-    # <<: *defaults-node
-    docker:
-      - image: cimg/node:13.8
+    <<: *defaults-node
+    # docker:
+    #   - image: cimg/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -181,9 +181,9 @@ jobs:
         
   scan-backend:
     parallelism: 2
-    # <<: *defaults-node
-    docker:
-      - image: cimg/node:13.8
+    <<: *defaults-node
+    # docker:
+    #   - image: cimg/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -375,7 +375,7 @@ jobs:
     
             export BACKEND_DB_URL=$(aws rds describe-db-instances --query 'DBInstances[0].Endpoint.Address' --no-paginate --output text)
             export API_URL="http://${BACKEND_DB_URL}:3030"
-            echo $API_URL >> /frontend/.env
+            echo $API_URL > frontend/.env
             cd frontend && ls -la
             cat .env
            
@@ -629,7 +629,11 @@ jobs:
       - run:
           name: Update cloudfront distribution
           command: |
-            # your code here
+            cd .circleci/files
+            aws cloudformation deploy \
+              --template-file cloudfront.yml \
+              --stack-name InitialStack\
+              --parameter-overrides WorkflowID=udapeople-yellowdog765123
       # Here's where you will add some code to rollback on failure  
 
 # cleanup:
