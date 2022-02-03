@@ -242,13 +242,15 @@ jobs:
           command: |
             cd .circleci/ansible/ 
             echo [all] > inventory3.txt
-            export BACKEND_IP=$(aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text)
+            unset $BACKEND_IP
+            unset $API_URL
+            export BACKEND_IP=$(aws ec2 describe-instances --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text)
             export API_URL="http://${BACKEND_IP}:3030"
-            echo "API_URL = ${API_URL}"
-            echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
-            cat frontend/.env
+            # echo "API_URL = ${API_URL}"
+            echo API_URL="http://${BACKEND_IP}:3030" >> ~/project/frontend/.env
+            cat ~/project/frontend/.env
             echo $BACKEND_IP >> inventory3.txt
-            # echo "http://${BACKEND_IP}:3030" >> inventory3.txt 
+            cat inventory3.txt
             
             # aws ec2 describe-instances \
             # --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
@@ -266,23 +268,12 @@ jobs:
             cd .circleci/ansible/ && ls -la 
             cat backend_url.txt
            
-      # - run:
-      #     name: Add API URL inventory.txt
-      #     command: |
-      #       cd .circleci/ansible/ 
-      #       pwd
-      #       echo [backend] >> inventory.txt
-      #       cat inventory.txt
-      #       export BACKEND_IP=$(aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text)
-      #       export API_URL="http://${BACKEND_IP}:3030"
-      #       echo "http://${BACKEND_IP}:3030" >> inventory.txt      
-      #       cat inventory.txt
-       
       - persist_to_workspace:
           root: ./
           paths:
             - .circleci/ansible/inventory3.txt
             - .circleci/ansible/backend_url.txt
+            - ~/project/frontend/.env
         
             
       # Here's where you will add some code to rollback on failure  
