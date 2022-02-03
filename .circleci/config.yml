@@ -244,6 +244,9 @@ jobs:
             echo [all] > inventory3.txt
             export BACKEND_IP=$(aws ec2 describe-instances --query "Reservations[*].Instances[0].PublicIpAddress" --no-paginate --output text)
             export API_URL="http://${BACKEND_IP}:3030"
+            echo "API_URL = ${API_URL}"
+            echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
+            cat frontend/.env
             echo $BACKEND_IP >> inventory3.txt
             # echo "http://${BACKEND_IP}:3030" >> inventory3.txt 
             
@@ -309,13 +312,13 @@ jobs:
             sudo apt update
             sudo apt install software-properties-common
             sudo add-apt-repository --yes --update ppa:ansible/ansible
-            sudo apt install python
+            sudo apt install python3
             sudo apt install ansible
             pwd && ls -la
             
             
       - run:
-          name: Configure server
+          name: Configure backend server
           command: |
             # Your code here
             pwd && ls -la
@@ -368,20 +371,28 @@ jobs:
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
-      - run:
-          name: Get backend DB url
-          command: |
-            # aws rds describe-db-instances \
-            #   # --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
-            #   --query 'DBInstances[0].Endpoint.Address' \
-            #   --no-paginate --output text >> .circleci/ansible/backendDB_url.txt
+      # - run:
+      #     name: Get backend DB url
+      #     command: |
+      #       # aws rds describe-db-instances \
+      #       #   # --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
+      #       #   --query 'DBInstances[0].Endpoint.Address' \
+      #       #   --no-paginate --output text >> .circleci/ansible/backendDB_url.txt
     
-            export BACKEND_DB_URL=$(aws rds describe-db-instances --query 'DBInstances[0].Endpoint.Address' --no-paginate --output text)
-            export API_URL="http://${BACKEND_DB_URL}:3030"
-            echo $API_URL > frontend/.env
-            cd frontend && ls -la
+      #       export BACKEND_DB_URL=$(aws rds describe-db-instances --query 'DBInstances[0].Endpoint.Address' --no-paginate --output text)
+      #       # export API_URL="http://${BACKEND_DB_URL}:3030"
+      #       # echo $API_URL > frontend/.env
+      #       cd frontend && ls -la
+      #       cat .env
+      - run:
+          name: check API_URL variable
+          command: |
+            pwd
+            cd backend && ls -la 
+            echo $API_URL
+            cd .. && ls -la
+            cd frontend
             cat .env
-           
 
       - run:
           name: Run DB migrations
@@ -401,7 +412,7 @@ jobs:
             
             sudo npm run migrations > migration.txt
             export migration_status=$(cat migration.txt | grep -c "has been executed successfully")
-            # tar -zcvf ./backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
+           
             
             echo $migration_status > migration_status.txt
             cat migration.txt
@@ -448,11 +459,14 @@ jobs:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
           event: on_fail
 
-  build-new-frontend-and-backend:
+  build-and-deploy-new-frontend:
     <<: *defaults-node
+    
     steps:
     # Checkout code from git
       - checkout
+      - add_ssh_keys:
+          fingerprints: ["68:0f:db:17:bf:25:fe:73:5d:c0:88:c4:2a:73:50:dc"]
       - attach_workspace:
           at: ./
       - run:
@@ -465,6 +479,47 @@ jobs:
             ls -la
             tar -czvf frontend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz dist
             ls -la
+            
+      - run:
+          name: Install AWS CLI dependencies
+          command: |
+            sudo apt-get update && sudo apt-get install -yy less
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+            aws s3 sync dist s3://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+            
+      - persist_to_workspace:
+          root: ./
+          paths: 
+            - frontend/
+            - backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
+            
+            
+  build-and-deploy-backend:
+    # <<: *defaults-node
+    # docker:
+    #   # Docker image here that supports AWS CLI
+    #   - image: amazon/aws-cli
+    docker:
+      - image: cimg/base:2022.01
+    steps:
+      # Checkout code from git
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["68:0f:db:17:bf:25:fe:73:5d:c0:88:c4:2a:73:50:dc"]
+      
+      - attach_workspace:
+          at: ./
+      - run:
+          name: Install AWS dependencies
+          command: |
+            sudo apt-get update && sudo apt-get install -yy less
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+            pwd && ls -la
+      
       - run:
           name: Build and zip backend artifacts
           command: |
@@ -478,100 +533,66 @@ jobs:
             pwd
             mkdir .circleci/ansible/roles/deploy/files/
             cd .circleci/ansible/roles/deploy/files/
-            cp /home/circleci/project/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
-            
-      - persist_to_workspace:
-          root: ./
-          paths: 
-            - frontend/
-            - backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
-            
-            
-  deploy-frontend:
-    # <<: *defaults-node
-    docker:
-      # Docker image here that supports AWS CLI
-      - image: amazon/aws-cli
-    # docker:
-    #   - image: cimg/base:2022.01
-    steps:
-      # Checkout code from git
-      - checkout
-      - add_ssh_keys:
-          fingerprints: ["68:0f:db:17:bf:25:fe:73:5d:c0:88:c4:2a:73:50:dc"]
-      # - run: yum install -y tar gzip
-      - attach_workspace:
-          at: ./
-      # - run:
-      #     name: Install AWS dependencies
-      #     command: |
-      #       sudo apt-get update && sudo apt-get install -yy less
-      #       curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-      #       unzip awscliv2.zip
-      #       sudo ./aws/install
-      #       pwd && ls -la
-      # - run:
-      #     name: Install  dependencies
-      #     command: yum install -y tar gzip
-            
+            cp /home/circleci/project/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .     
+      
       - run:
-          name: Copy new build with backend URL
+          name: deploy backend artifact to EC2 using Ansible "deploy-backend.yml"
           command: |
-            # your code here
-            cd frontend
-            pwd && ls -la
-            aws s3 sync dist s3://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7}
-            # aws s3 ls s3://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7} --recursive | awk '{print $4}'
-            aws s3 sync frontend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz s3://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7} --delete
-      - persist_to_workspace:
-          root: ./
-          paths: 
-            - frontend/.env
-
-            # aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-      #       # aws s3 sync ./frontend/ s3://mybucket-${CIRCLE_WORKFLOW_ID:0:7} --delete
-
-#       # Here's where you will add some code to rollback on failure      
-      - destroy-environment:
-          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-          event: on_fail
-
-  deploy-backend:
-    # docker:
-    #   - image: cimg/base:2022.01
-    docker:
-      - image: python:3.8-alpine3.14
-    steps:
-      - checkout
-      - add_ssh_keys:
-          fingerprints: ["68:0f:db:17:bf:25:fe:73:5d:c0:88:c4:2a:73:50:dc"]
-      - attach_workspace:
-          at: ./
-      - run:
-          name: Install dependencies
-          command: |
-            # apk add --update ansible
             python get-pip.py
             python -m pip install --upgrade pip
-            pip install tar gzip
-      - run:
-          name: Deploy backend
-          command: |
-            # your code here
-            pwd & ls -la
-            cp backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz /.circleci/ansible/roles/deploy/files/
-            tar -cvzf backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
+            pip install tar gzip ansible
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory3.txt
             ls -l roles/deploy/files
             ls -l roles/deploy/
             ansible-playbook -i inventory3.txt deploy-backend.yml
-           
-      # Here's where you will add some code to rollback on failure  
+      - persist_to_workspace:
+          root: ./
+          paths: 
+            - frontend/.env
+
+#       # Here's where you will add some code to rollback on failure      
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
           event: on_fail
+
+  # deploy-backend:
+  #   # docker:
+  #   #   - image: cimg/base:2022.01
+  #   docker:
+  #     - image: python:3.8-alpine3.14
+  #   steps:
+  #     - checkout
+  #     - add_ssh_keys:
+  #         fingerprints: ["68:0f:db:17:bf:25:fe:73:5d:c0:88:c4:2a:73:50:dc"]
+  #     - attach_workspace:
+  #         at: ./
+  #     - run:
+  #         name: Install dependencies
+  #         command: |
+  #           # apk add --update ansible
+  #           python get-pip.py
+  #           python -m pip install --upgrade pip
+  #           pip install tar gzip
+  #     - run:
+  #         name: Deploy backend
+  #         command: |
+  #           # your code here
+  #           pwd & ls -la
+  #           cp backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz /.circleci/ansible/roles/deploy/files/
+  #           tar -cvzf backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
+  #           cd .circleci/ansible
+  #           echo "Contents  of the inventory.txt file is -------"
+  #           cat inventory3.txt
+  #           ls -l roles/deploy/files
+  #           ls -l roles/deploy/
+  #           ansible-playbook -i inventory3.txt deploy-backend.yml
+           
+  #     # Here's where you will add some code to rollback on failure  
+  #     - destroy-environment:
+  #         workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+  #         event: on_fail
 
   smoke-test:
     docker:
@@ -684,16 +705,14 @@ workflows:
           requires: [deploy-infrastructure]
       - run-migrations:
           requires: [configure-infrastructure]
-      - build-new-frontend-and-backend:
+      - build-and-deploy-frontend:
           requires: [run-migrations]
-      - deploy-frontend:
-          requires: [build-new-frontend-and-backend]
-      - deploy-backend:
-          requires: [build-new-frontend-and-backend]
+      - build-and-deploy-backend:
+          requires: [build-and-deploy-frontend]
       - smoke-test-web-site:
-          requires: [deploy-backend, deploy-frontend]
+          requires: [build-and-deploy-backend, build-and-deploy-frontend]
       - smoke-test:
-          requires: [deploy-backend, deploy-frontend]
+          requires: [build-and-deploy-backend, build-and-deploy-frontend]
       # - cloudfront-update:
       #     requires: [smoke-test]
       # - cleanup:

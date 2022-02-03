@@ -2,8 +2,6 @@
 # - name: "install python for Ansible."
 #   become: True
 #   shell: |
-#     echo {{ '$CIRCLE_WORKFLOW_ID:0:7' }}
-#     echo {{ $workflow_id }}
 #     test -e /usr/bin/python3 
 #     apt -y update && apt install -y python3
 
