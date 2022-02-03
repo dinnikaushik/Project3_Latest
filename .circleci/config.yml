@@ -708,11 +708,11 @@ workflows:
       - build-and-deploy-new-frontend:
           requires: [run-migrations]
       - build-and-deploy-backend:
-          requires: [build-and-deploy-frontend]
+          requires: [build-and-deploy-new-frontend]
       - smoke-test-web-site:
-          requires: [build-and-deploy-backend, build-and-deploy-frontend]
+          requires: [build-and-deploy-backend, build-and-deploy-new-frontend]
       - smoke-test:
-          requires: [build-and-deploy-backend, build-and-deploy-frontend]
+          requires: [build-and-deploy-backend, build-and-deploy-new-frontend]
       # - cloudfront-update:
       #     requires: [smoke-test]
       # - cleanup:
