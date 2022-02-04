@@ -273,7 +273,7 @@ jobs:
           paths:
             - .circleci/ansible/inventory3.txt
             - .circleci/ansible/backend_url.txt
-            - ~/project/frontend/.env
+            - frontend/.env
         
             
       # Here's where you will add some code to rollback on failure  
