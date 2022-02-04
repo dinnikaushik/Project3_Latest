@@ -492,12 +492,12 @@ jobs:
             - backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
             
   build-and-deploy-backend:
-    # <<: *defaults-node
+    <<: *defaults-node
     # docker:
     #   # Docker image here that supports AWS CLI
     #   - image: amazon/aws-cli
-    docker:
-      - image: cimg/base:2022.01
+    # docker:
+    #   - image: cimg/base:2022.01
     steps:
       # Checkout code from git
       - checkout
@@ -507,14 +507,15 @@ jobs:
       - attach_workspace:
           at: ./
       - run:
-          name: Install AWS dependencies
+          name: Install AWS  and python dependencies
           command: |
             sudo apt-get update && sudo apt-get install -yy less
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
             pwd && ls -la
-      
+            aws --version
+            
       - run:
           name: Build and zip backend artifacts
           command: |
