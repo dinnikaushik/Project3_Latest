@@ -492,14 +492,14 @@ jobs:
             - backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
             
   build-and-deploy-backend:
-    # <<: *defaults-node
+    <<: *defaults-node
     # docker:
     #   # Docker image here that supports AWS CLI
     #   - image: amazon/aws-cli
     # docker:
     #   - image: cimg/base:2022.01
-    docker:
-      - image: python:3.7-alpine3.11
+    # docker:
+    #   - image: python:3.7-alpine3.11
     steps:
       # Checkout code from git
       - checkout
@@ -511,15 +511,18 @@ jobs:
       - run:
           name: Install AWS  and python dependencies
           command: |
-            apk add --update curl nodejs npm ansible zip
-            pip install awscli
-            # sudo apt-get update && sudo apt-get install -yy less
+            # apk add --update curl nodejs npm ansible zip
+            # pip install awscli
+            sudo apt-get update && sudo apt-get install -yy less
+            sudo apt install software-properties-common
+            sudo add-apt-repository ppa:deadsnakes/ppa
+            sudo apt update
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
             pwd && ls -la
             aws --version
-            
+            sudo apt install python3.8
       - run:
           name: Build and zip backend artifacts
           command: |
