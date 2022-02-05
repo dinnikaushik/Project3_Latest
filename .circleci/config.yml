@@ -595,19 +595,19 @@ jobs:
 
   smoke-test:
     docker:
-      # - image: cimg/base:2022.01
-      - image: amazon/aws-cli 
+      - image: cimg/base:2022.01
+      # - image: amazon/aws-cli 
     steps:
       - checkout
       - attach_workspace:
           at: ./
-      # - run:
-      #     name: Install dependencies
-      #     command: |
-      #       sudo apt-get update && sudo apt-get install -yy less
-      #       curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-      #       unzip awscliv2.zip
-      #       sudo ./aws/install
+      - run:
+          name: Install dependencies
+          command: |
+            sudo apt-get update && sudo apt-get install -yy less
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
             
 
       - run:
@@ -737,10 +737,12 @@ workflows:
           requires: [run-migrations]
       - build-and-deploy-backend:
           requires: [build-and-deploy-new-frontend]
+      - deploy-backend:
+          required: [build-and-deploy-backend]
       - smoke-test-web-site:
-          requires: [build-and-deploy-backend, build-and-deploy-new-frontend]
+          requires: [deploy-backend, build-and-deploy-new-frontend]
       - smoke-test:
-          requires: [build-and-deploy-backend, build-and-deploy-new-frontend]
+          requires: [deploy-backend, build-and-deploy-new-frontend]
       - cloudfront-update:
           requires: [smoke-test]
       - cleanup:
