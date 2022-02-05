@@ -579,8 +579,8 @@ jobs:
           command: |
             # your code here
             pwd & ls -la
-            cp backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz /.circleci/ansible/roles/deploy/files/
-            tar -cvzf backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
+            # cp backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz /.circleci/ansible/roles/deploy/files/
+            # tar -cvzf backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
             cd .circleci/ansible
             echo "Contents  of the files directory "
             ls -la roles/deploy/files
