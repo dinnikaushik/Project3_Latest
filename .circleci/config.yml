@@ -609,7 +609,6 @@ jobs:
             unzip awscliv2.zip
             sudo ./aws/install
             
-
       - run:
           name: Get backend url and test
           working_directory: ./frontend
@@ -738,7 +737,7 @@ workflows:
       - build-and-deploy-backend:
           requires: [build-and-deploy-new-frontend]
       - deploy-backend:
-          required: [build-and-deploy-backend]
+          requires: [build-and-deploy-backend]
       - smoke-test-web-site:
           requires: [deploy-backend, build-and-deploy-new-frontend]
       - smoke-test:
