@@ -504,16 +504,6 @@ jobs:
       
       - attach_workspace:
           at: ./
-      # - run:
-      #     name: Install AWS  andependencies
-      #     command: |
-          
-      #       sudo apt-get update && sudo apt-get install -yy less
-      #       curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-      #       unzip awscliv2.zip
-      #       sudo ./aws/install
-      #       pwd && ls -la
-      #       aws --version
             
       - run:
           name: Build and zip backend artifacts
@@ -523,12 +513,12 @@ jobs:
             npm install
             npm run build
             cd ..
-            tar -C backend -czvf backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
+            tar -C backend -czvf backend-artifact.tar.gz .
             ls -la
             pwd
             mkdir .circleci/ansible/roles/deploy/files/
             cd .circleci/ansible/roles/deploy/files/
-            cp /home/circleci/project/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz . 
+            cp /home/circleci/project/backend-artifact.tar.gz . 
             ls -la
        
       
@@ -577,12 +567,10 @@ jobs:
             sudo apt install python3
             sudo apt install ansible
       - run:
-          name: Deploy backend
+          name: Deploy backend ansible playbook 'deploy-backend.yml'
           command: |
             # your code here
             pwd & ls -la
-            # tar -cvzf backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
-            # cp backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz /.circleci/ansible/roles/deploy/files/
             cd .circleci/ansible
             echo "Contents  of 'ansible' files directory "
             ls -la
