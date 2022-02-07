@@ -579,8 +579,8 @@ jobs:
           command: |
             # your code here
             pwd & ls -la
-            # cp backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz /.circleci/ansible/roles/deploy/files/
-            # tar -cvzf backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
+            tar -cvzf backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
+            cp backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz /.circleci/ansible/roles/deploy/files/
             cd .circleci/ansible
             echo "Contents  of the files directory "
             ls -la roles/deploy/files
@@ -607,7 +607,7 @@ jobs:
             sudo apt install software-properties-common
             sudo add-apt-repository --yes --update ppa:ansible/ansible
             sudo apt install python3
-            sudo apt install ansible
+            # sudo apt install ansible
             sudo apt-get update && sudo apt-get install -yy less
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
@@ -631,7 +631,7 @@ jobs:
       - run:
           name: Frontend smoke test.
           command: |
-            # 
+            # http://udapeople-s3-47ffd28.s3-website-us-west-1.amazonaws.com
             # URL="http://udapeople-s3-55b61c0.s3-website-us-west-1.amazonaws.com/#/employees"
             URL="http://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-west-1.amazonaws.com/#/employees"            
             echo ${URL} 
