@@ -529,7 +529,9 @@ jobs:
             pwd
             mkdir .circleci/ansible/roles/deploy/files/
             cd .circleci/ansible/roles/deploy/files/
-            cp /home/circleci/project/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .     
+            cp /home/circleci/project/backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz . 
+            ls -la
+       
       
       # - run:
       #     name: deploy backend artifact to EC2 using Ansible "deploy-backend.yml"
@@ -547,7 +549,8 @@ jobs:
       - persist_to_workspace:
           root: ./
           paths: 
-            - .circleci/ansible/
+            - ./
+            
 
      # Here's where you will add some code to rollback on failure      
       - destroy-environment:
@@ -579,12 +582,16 @@ jobs:
           command: |
             # your code here
             pwd & ls -la
-            tar -cvzf backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
-            cp backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz /.circleci/ansible/roles/deploy/files/
+            # tar -cvzf backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz .
+            # cp backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz /.circleci/ansible/roles/deploy/files/
             cd .circleci/ansible
-            echo "Contents  of the files directory "
+            echo "Contents  of 'ansible' files directory "
+            ls -la
+            echo "Contents  of the 'roles/deploy/files' directory "
             ls -la roles/deploy/files
-            ls -l roles/deploy/
+            echo "Contents  of the 'roles/deploy/' directory "
+            ls -la roles/deploy/
+            echo "Start of the 'deploy-backend.yml' playbook"
             ansible-playbook -i inventory3.txt deploy-backend.yml
            
       # Here's where you will add some code to rollback on failure  
