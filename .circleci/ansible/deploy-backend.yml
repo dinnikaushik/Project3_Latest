@@ -1,7 +1,7 @@
 ---
 
 - name: "configuration backend play." 
-  hosts: backend
+  hosts: all
   user: ubuntu
   gather_facts: false
   vars:
