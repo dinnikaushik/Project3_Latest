@@ -6,15 +6,13 @@
 
 - name: "Check the '/home/ubuntu/' directory"
   shell: |
-    cd /home/ubuntu/
-    ls -la
-
-    tar -xzvvf backend-artifact.tar.gz 
-
+    pwd
+    ls -la .ansible
+    
 - name: "Copy compiled backend build"
   debugger: on_failed
   copy:
-    remote_src: backend-artifact.tar.gz
+    src: ./files/backend-artifact.tar.gz
     dest: /home/ubuntu/
 
 
