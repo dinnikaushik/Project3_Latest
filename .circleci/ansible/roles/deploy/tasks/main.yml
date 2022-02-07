@@ -37,7 +37,8 @@
     sudo env PATH=$PATH:/usr/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
     sudo systemctl start pm2-ubuntu
     systemctl status pm2-ubuntu
-    pm2 save
-    pm2 stop default
-    pm2 start npm -- start
+    # pm2 save
+    # pm2 stop default
+    # pm2 start npm -- start
     rm -rf dist backend-artifact.tar.gz
+    curl ip-api.com
