@@ -4,6 +4,13 @@
     path: ./backend_files
     state: directory
 
+- name: "Check the '/home/ubuntu/' directory"
+  shell: |
+    cd /home/ubuntu/
+    ls -la
+
+    # tar -xzvvf backend-{ID}.tar.gz 
+
 - name: "Copy compiled backend build"
   debugger: on_failed
   copy:
@@ -30,4 +37,3 @@
   shell: |
     env PATH=$PATH:/usr/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu/dist
     # rm -rf dist backend-{ID}.tar.gz
-    

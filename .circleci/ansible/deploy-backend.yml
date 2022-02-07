@@ -4,6 +4,10 @@
   hosts: all
   user: ubuntu
   gather_facts: false
+
+  environment:
+    # ID: "{{ lookup( 'env', 'CIRCLE_WORKFLOW_ID:0:7' )}}"
+    ID: WorkflowID
   vars:
     - ansible_python_interpreter: /usr/bin/python3
     - ansible_host_key_checking: false
