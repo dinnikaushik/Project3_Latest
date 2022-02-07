@@ -29,4 +29,5 @@
   become: True
   shell: |
     env PATH=$PATH:/usr/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu/dist
-    rm -rf dist backend-{ID}.tar.gz
+    # rm -rf dist backend-{ID}.tar.gz
+    
