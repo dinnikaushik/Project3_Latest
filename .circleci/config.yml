@@ -34,9 +34,10 @@ commands:
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
+            aws s3 rb s3://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7} --recursive
             aws cloudformation delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
             aws cloudformation delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
-            aws s3 rb s3://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+            
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -614,11 +615,10 @@ jobs:
             export BACKEND_IP=$(aws ec2 describe-instances --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" --query "Reservations[*].Instances[*].PublicIpAddress" --no-paginate --output text)
             export BACKEND_URL=$(aws ec2 describe-instances --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" --query "Reservations[*].Instances[*].PublicDnsName" --no-paginate --output text)
             export API_URL="http://${BACKEND_IP}:3030"
-            export API_URL2="http://${BACKEND_URL}:3030"
+            # export API_URL2="http://${BACKEND_URL}:3030"
             echo $API_URL
-            echo $API_URL2
-            curl "$API_URL2/api/status"
-            if curl "$API_URL2/api/status" | grep "ok"
+            curl "$API_URL/api/status"
+            if curl "$API_URL/api/status" | grep "ok"
             then
               return 0
             else
@@ -628,8 +628,6 @@ jobs:
       - run:
           name: Frontend smoke test.
           command: |
-            # http://udapeople-s3-47ffd28.s3-website-us-west-1.amazonaws.com
-            # URL="http://udapeople-s3-55b61c0.s3-website-us-west-1.amazonaws.com/#/employees"
             URL="http://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-west-1.amazonaws.com/#/employees"            
             echo ${URL} 
             if curl -s ${URL} | grep "Welcome"
