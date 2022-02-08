@@ -638,21 +638,31 @@ jobs:
               (exit 1)
             fi
       # Here's where you will add some code to rollback on failure  
-      # - destroy-environment:
-      #     workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-      #     event: on_fail
+      - destroy-environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+          event: on_fail
   
   cloudfront-update:
     docker:
-      # Docker image here that supports AWS CLI
-      - image: amazon/aws-cli 
+      - image: cimg/base:2022.01
+      # - image: amazon/aws-cli 
     steps:
-      # Checkout code from git
       - checkout
+      - attach_workspace:
+          at: ./
       - run:
           name: Install dependencies
           command: |
-            export OldWorkflowID=$(aws cloudformation list-exports --query "Exports[?Name==\'WorkflowID\'].Value" \
+            sudo apt update
+            sudo apt install software-properties-common
+            sudo apt-get update && sudo apt-get install -yy less
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - run:
+          name: Store an OldWorkflowID in "~/OldWorkflowID.txt"
+          command: |
+            export OldWorkflowID=$(aws cloudformation list-exports --query "Exports[?Name=='WorkflowID'].Value" \
             --no-paginate --output text)
             echo $OldWorflowID >> ~/OldWorkflowID.txt
             cat ~/OldWorkflowID.txt
@@ -684,7 +694,7 @@ jobs:
           command: |
             # Fetch the Old workflow ID
             export OldWorkflowID=$(aws cloudformation \
-            list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+            list-exports --query "Exports[?Name=='WorkflowID'].Value" \
             --no-paginate --output text)
             echo OldWorkflowID: "${OldWorkflowID}"
             echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
@@ -702,6 +712,7 @@ jobs:
             then
               echo "-----Delete process started---------"
               aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
+              aws s3 rb "s3://udapeople-${OldWorkflowID}"
               aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
               echo "-----Delete process finished successfully ---------"
