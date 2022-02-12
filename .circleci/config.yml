@@ -363,19 +363,7 @@ jobs:
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
-      # - run:
-      #     name: Get backend DB url
-      #     command: |
-      #       # aws rds describe-db-instances \
-      #       #   # --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" \
-      #       #   --query 'DBInstances[0].Endpoint.Address' \
-      #       #   --no-paginate --output text >> .circleci/ansible/backendDB_url.txt
-    
-      #       export BACKEND_DB_URL=$(aws rds describe-db-instances --query 'DBInstances[0].Endpoint.Address' --no-paginate --output text)
-      #       # export API_URL="http://${BACKEND_DB_URL}:3030"
-      #       # echo $API_URL > frontend/.env
-      #       cd frontend && ls -la
-      #       cat .env
+     
       - run:
           name: check API_URL variable
           command: |
@@ -494,10 +482,7 @@ jobs:
             
   build-and-deploy-backend:
     <<: *defaults-node
-    # docker:
-    #   # Docker image here that supports AWS CLI
-    #   - image: amazon/aws-cli
-
+  
     steps:
       # Checkout code from git
       - checkout
@@ -702,8 +687,8 @@ jobs:
             
             then
               echo "-----Delete(fake) process started---------"
-              # aws s3 rm s3://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-              # aws s3 rb s3://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7}
+              # aws s3 rm s3://udapeople-s3-${OldWorkflowID} --recursive
+              # aws s3 rb s3://udapeople-s3-${OldWorkflowID}
               # aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
               # aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
               echo "-----Delete process finished successfully ---------"
