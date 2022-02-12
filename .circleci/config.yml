@@ -524,19 +524,6 @@ jobs:
             ls -la
        
       
-      # - run:
-      #     name: deploy backend artifact to EC2 using Ansible "deploy-backend.yml"
-      #     command: |
-      #       # python get-pip.py
-      #       sudo apt install python3.8
-      #       python -m pip install --upgrade pip
-      #       pip install tar gzip ansible
-      #       cd .circleci/ansible
-      #       echo "Contents  of the inventory.txt file is -------"
-      #       cat inventory3.txt
-      #       ls -l roles/deploy/files
-      #       ls -l roles/deploy/
-      #       ansible-playbook -i inventory3.txt deploy-backend.yml
       - persist_to_workspace:
           root: ./
           paths: 
@@ -544,15 +531,14 @@ jobs:
             
 
      # Here's where you will add some code to rollback on failure      
-      # - destroy-environment:
-      #     workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-      #     event: on_fail
+      - destroy-environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+          event: on_fail
 
   deploy-backend:
     docker:
       - image: cimg/base:2022.01
-    # docker:
-    #   - image: python:3.8-alpine3.14
+
     steps:
       - checkout
       - add_ssh_keys:
@@ -584,9 +570,9 @@ jobs:
             ansible-playbook -i inventory3.txt deploy-backend.yml
            
       # Here's where you will add some code to rollback on failure  
-      # - destroy-environment:
-      #     workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-      #     event: on_fail
+      - destroy-environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+          event: on_fail
 
   smoke-test:
     docker:
@@ -732,11 +718,11 @@ workflows:
       - build-frontend
       - build-backend
       - test-frontend:
-          requires: [scan-frontend]
+          requires: [build-frontend]
       - scan-frontend:
           requires: [build-frontend]
       - test-backend:
-          requires: [scan-backend]
+          requires: [build-backend]
       - scan-backend:
           requires: [build-backend]
       - deploy-infrastructure:
