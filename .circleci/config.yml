@@ -240,11 +240,15 @@ jobs:
       - run:
           name: Store front-end old S3 backet name if exist 
           command: |
-            export OldWorkflowID=$(aws s3 ls | awk '{print $3}'>temper; awk -F- '{print $3}'<temper)
-            echo "OldWorkflowID: "$OldWorkflowID 
-      - save_cache:
-          paths: 
-            - ./temper
+            export OldWorkflowID=$(aws cloudformation \
+            list-exports --query "Exports[?Name=='WorkflowID'].Value" \
+            --no-paginate --output text)
+            # export OldWorkflowID=$(aws s3 ls | awk '{print $3}'>temper; awk -F- '{print $3}'<temper)
+            echo "OldWorkflowID: "$OldWorkflowID > temper
+            cat temper 
+            echo $OldWorkflowID
+      - save_cache:    
+          paths: [temper]
           key: old-workflow-id
   
       - run:
@@ -649,10 +653,10 @@ jobs:
             # export OldWorkflowID=$(aws cloudformation \
             # list-exports --query "Exports[?Name=='WorkflowID'].Value" \
             # --no-paginate --output text)
-            echo OldWorkflowID:  "${OldWorkflowID}"
-      
-      - restore_cache:
-          key: old-workflow-id    
+            cat temper
+            export OldWorkflowID=$(cat temper}
+            echo $OldWorkflowID
+       
       - run:
           name: Update cloudfront distribution
           command: |
@@ -681,6 +685,7 @@ jobs:
           name: Get old stack workflow id
           command: |
             # Fetch the Old workflow ID
+            export OldWorkflowID=$(cat temper}
             # export OldWorkflowID=$(aws cloudformation \
             # list-exports --query "Exports[?Name=='WorkflowID'].Value" \
             # --no-paginate --output text)
@@ -697,9 +702,11 @@ jobs:
           name: Remove old stacks and files
           command: |
             echo OldWorkflowID: "$OldWorkflowID"
+            export OldWorkflowID=$(cat temper}
+            echo OldWorkflowID: "$OldWorkflowID"
             echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
-            aws s3 ls > backets.txt | awk '{print $2}'
-            cat backets.txt
+            # aws s3 ls > backets.txt | awk '{print $2}'
+            # cat backets.txt
             # if [[ cat backets.txt | awk '{print $2}' ]]
             if [[ "${CIRCLE_WORKFLOW_ID:0:7}"!="$OldWorkflowID" ]] 
             
