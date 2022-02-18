@@ -240,9 +240,7 @@ jobs:
       - run:
           name: Store front-end old S3 backet name if exist 
           command: |
-            export OldWorkflowID=$(aws cloudformation \
-            list-exports --query "Exports[?Name=='WorkflowID'].Value" \
-            --no-paginate --output text)
+            export OldWorkflowID=$(aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE |jq  -c ".[]| min_by(.CreationTime)|.StackName" | cut -c 20-26)
             # export OldWorkflowID=$(aws s3 ls | awk '{print $3}'>temper; awk -F- '{print $3}'<temper)
             echo "OldWorkflowID: "$OldWorkflowID > temper
             cat temper 
@@ -654,7 +652,7 @@ jobs:
             # list-exports --query "Exports[?Name=='WorkflowID'].Value" \
             # --no-paginate --output text)
             cat temper
-            export OldWorkflowID=$(cat temper}
+            export OldWorkflowID=$(cat temper)
             echo $OldWorkflowID
        
       - run:
