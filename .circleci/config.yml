@@ -241,12 +241,12 @@ jobs:
           name: Store front-end old S3 backet name if exist 
           command: |
             export OldWorkflowID=$(aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE |jq  -c ".[]| min_by(.CreationTime)|.StackName" | cut -c 20-26)
-            # export OldWorkflowID=$(aws s3 ls | awk '{print $3}'>temper; awk -F- '{print $3}'<temper)
-            echo "OldWorkflowID: "$OldWorkflowID > temper
-            cat temper 
+            
+            echo $OldWorkflowID > old
+            cat old
             echo $OldWorkflowID
       - save_cache:    
-          paths: [temper]
+          paths: [old]
           key: old-workflow-id
   
       - run:
@@ -643,18 +643,7 @@ jobs:
             sudo ./aws/install
       - restore_cache:
           key: old-workflow-id
-      # - run:
-      #     name: Store an OldWorkflowID in "OldWorkflowID.txt"
-      #     command: |
-      #       aws --version
-      #       aws s3 ls
-      #       # export OldWorkflowID=$(aws cloudformation \
-      #       # list-exports --query "Exports[?Name=='WorkflowID'].Value" \
-      #       # --no-paginate --output text)
-      #       cat temper
-      #       export OldWorkflowID=$(cat temper)
-      #       echo $OldWorkflowID
-       
+     
       - run:
           name: Update cloudfront distribution
           command: |
@@ -665,8 +654,7 @@ jobs:
               --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
               --tags project=udapeople
 
-            # echo OldWorkflowID: "${OldWorkflowID}"
-            # echo CurrentWorkflowID: "${CIRCLE_WORKFLOW_ID:0:7}"
+
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
@@ -677,8 +665,8 @@ jobs:
       - image: cimg/base:2022.01
     steps: 
       - checkout
-      - attach_workspace:
-          at: ./
+      # - attach_workspace:
+      #     at: ./
       - run:
           name: Install dependencies
           command: |
@@ -688,31 +676,26 @@ jobs:
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
+      
       - restore_cache:
           key: old-workflow-id
       
       - run:
           name: Get old stack workflow id
           command: |
-            # Fetch the Old workflow ID
-            # export OldWorkflowID=$(cat temper)
-            # export OldWorkflowID=$(aws cloudformation \
-            # list-exports --query "Exports[?Name=='WorkflowID'].Value" \
-            # --no-paginate --output text)
-            cat temper
-            export OldWorkflowID=$(cat temper)
-            echo "OldWorkflowID: "$OldWorkflowID
-            echo OldWorkflowID: "${OldWorkflowID}"
+            ls -la
+            cat old
+            echo $OldWorkflowID
+            OldWorkflowID=$(cat old)
             echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
-         
-      - restore_cache:
-          key: old-workflow-id
+            echo $OldWorkflowID
+      # - restore_cache:
+      #     key: old-workflow-id
       - run:
           name: Remove old stacks and files
           command: |
+            cat old
             echo OldWorkflowID: "$OldWorkflowID"
-            export OldWorkflowID=$(cat temper)
-            echo "OldWorkflowID: "$OldWorkflowID
             echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
            
             if [[ "${CIRCLE_WORKFLOW_ID:0:7}"!="$OldWorkflowID" ]] 
