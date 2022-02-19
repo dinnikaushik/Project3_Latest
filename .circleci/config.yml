@@ -241,7 +241,6 @@ jobs:
           name: Store front-end old S3 backet name if exist 
           command: |
             export OldWorkflowID=$(aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE |jq  -c ".[]| min_by(.CreationTime)|.StackName" | cut -c 20-26)
-            
             echo $OldWorkflowID > old
             cat old
         
