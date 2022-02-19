@@ -204,15 +204,13 @@ jobs:
     # executor: aws-cli/default
     docker:
       - image: cimg/base:2022.01
-    working_directory: ./
     
     steps:
-     
       - checkout
       - run: sudo apt-get update && sudo apt-get install -yy less
       - run:
           name: Install AWS CLI dependencies
-          working_directory: ./
+          # working_directory: ./
           command: |
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
