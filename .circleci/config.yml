@@ -204,7 +204,7 @@ jobs:
     # executor: aws-cli/default
     docker:
       - image: cimg/base:2022.01
-    # working_directory: ./
+    working_directory: ./
     
     steps:
      
@@ -244,10 +244,10 @@ jobs:
             
             echo $OldWorkflowID > old
             cat old
-            echo $OldWorkflowID
+        
       - save_cache:    
           paths: [old]
-          key: old-workflow-id
+          key: old-workflow
   
       - run:
           name: Add back-end IP to inventory3.txt
@@ -641,8 +641,6 @@ jobs:
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
-      - restore_cache:
-          key: old-workflow-id
      
       - run:
           name: Update cloudfront distribution
@@ -665,8 +663,8 @@ jobs:
       - image: cimg/base:2022.01
     steps: 
       - checkout
-      # - attach_workspace:
-      #     at: ./
+      - attach_workspace:
+          at: ./
       - run:
           name: Install dependencies
           command: |
@@ -678,7 +676,7 @@ jobs:
             sudo ./aws/install
       
       - restore_cache:
-          key: old-workflow-id
+          keys: [old-workflow]
       
       - run:
           name: Get old stack workflow id
@@ -689,11 +687,13 @@ jobs:
             OldWorkflowID=$(cat old)
             echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
             echo $OldWorkflowID
-      # - restore_cache:
-      #     key: old-workflow-id
+      - restore_cache:
+          keys: [old-workflow]
       - run:
           name: Remove old stacks and files
           command: |
+            ls -la
+            OldWorkflowID=$(cat old)
             cat old
             echo OldWorkflowID: "$OldWorkflowID"
             echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
