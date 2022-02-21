@@ -238,12 +238,14 @@ jobs:
       - run:
           name: Store front-end old S3 backet name if exist 
           command: |
+            mkdir versions
+            old=$(date '+%m%d%Y_%H_%M')
             export OldWorkflowID=$(aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE |jq  -c ".[]| min_by(.CreationTime)|.StackName" | cut -c 20-26)
-            echo $OldWorkflowID > old
-            cat old
+            echo $OldWorkflowID > versions/$old.txt
+            cat versions/$old.txt
         
       - save_cache:    
-          paths: [old]
+          paths: [versions/]
           key: old-workflow
   
       - run:
