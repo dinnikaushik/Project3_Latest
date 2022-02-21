@@ -243,10 +243,13 @@ jobs:
             export OldWorkflowID=$(aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE |jq  -c ".[]| min_by(.CreationTime)|.StackName" | cut -c 20-26)
             echo $OldWorkflowID > versions/$old.txt
             cat versions/$old.txt
-        
-      - save_cache:    
-          paths: [versions/]
-          key: old-workflow
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - versions/ 
+      # - save_cache:    
+      #     paths: [versions/]
+      #     key: old-workflow
   
       - run:
           name: Add back-end IP to inventory3.txt
@@ -684,7 +687,8 @@ jobs:
       
       # - restore_cache:
       #     keys: [old-workflow]
-      
+      - attach_workspace:
+          at: ./
       - run:
           name: Get old stack workflow id
           command: |
