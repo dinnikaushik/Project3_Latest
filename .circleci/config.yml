@@ -239,7 +239,7 @@ jobs:
           name: Store front-end old S3 backet name if exist 
           command: |
             mkdir versions
-            old=$(date '+%m%d%Y_%H_%M')
+            export old=$(date '+%m%d%Y_%H_%M')
             export OldWorkflowID=$(aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE |jq  -c ".[]| min_by(.CreationTime)|.StackName" | cut -c 20-26)
             echo $OldWorkflowID > versions/$old.txt
             cat versions/$old.txt
@@ -247,9 +247,9 @@ jobs:
           root: ./
           paths:
             - versions/ 
-      # - save_cache:    
-      #     paths: [versions/]
-      #     key: old-workflow
+      - save_cache:    
+          paths: [versions/]
+          key: old-workflow-ID
   
       - run:
           name: Add back-end IP to inventory3.txt
@@ -685,8 +685,8 @@ jobs:
             unzip awscliv2.zip
             sudo ./aws/install
       
-      # - restore_cache:
-      #     keys: [old-workflow]
+      - restore_cache:
+          keys: [old-workflow-ID]
       - attach_workspace:
           at: ./
       - run:
@@ -698,16 +698,18 @@ jobs:
             OldWorkflowID=$(cat versions/$old.txt)
             echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
             echo $OldWorkflowID
-      # - restore_cache:
-      #     keys: [old-workflow]
+      - restore_cache:
+          keys: [old-workflow-ID]
       - run:
           name: Remove old stacks and files
           command: |
             ls -la
             ls versions/
+            
+            echo "OldWorkflowID from $old: "$old
             OldWorkflowID=$(cat versions/$old.txt)
-            cat versions/$old.txt
-            echo OldWorkflowID: "$OldWorkflowID"
+            
+            echo "OldWorkflowID from $(cat versions/$old.txt): "$OldWorkflowID
             echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
            
             if [[ "${CIRCLE_WORKFLOW_ID:0:7}"!="$OldWorkflowID" ]] 
