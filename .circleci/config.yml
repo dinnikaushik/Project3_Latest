@@ -285,6 +285,7 @@ jobs:
             - .circleci/ansible/inventory3.txt
             - .circleci/ansible/backend_url.txt
             - frontend/.env
+            - versions/$old.txt
         
             
       # Here's where you will add some code to rollback on failure  
@@ -681,26 +682,27 @@ jobs:
             unzip awscliv2.zip
             sudo ./aws/install
       
-      - restore_cache:
-          keys: [old-workflow]
+      # - restore_cache:
+      #     keys: [old-workflow]
       
       - run:
           name: Get old stack workflow id
           command: |
             ls -la
-            cat old
+            cat versions/$old.txt
             echo $OldWorkflowID
-            OldWorkflowID=$(cat old)
+            OldWorkflowID=$(cat versions/$old.txt)
             echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
             echo $OldWorkflowID
-      - restore_cache:
-          keys: [old-workflow]
+      # - restore_cache:
+      #     keys: [old-workflow]
       - run:
           name: Remove old stacks and files
           command: |
             ls -la
-            OldWorkflowID=$(cat old)
-            cat old
+            ls versions/
+            OldWorkflowID=$(cat versions/$old.txt)
+            cat versions/$old.txt
             echo OldWorkflowID: "$OldWorkflowID"
             echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
            
