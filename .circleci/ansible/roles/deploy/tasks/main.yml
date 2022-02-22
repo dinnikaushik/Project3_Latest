@@ -41,4 +41,4 @@
     pm2 stop default
     pm2 start npm -- start
     rm -rf dist backend-artifact.tar.gz
-    curl ip-api.com
+    
