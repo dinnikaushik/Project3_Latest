@@ -685,26 +685,13 @@ jobs:
             unzip awscliv2.zip
             sudo ./aws/install
       
-      - restore_cache:
-          keys: [old-workflow-ID]
-      - attach_workspace:
-          at: ./
-      # - run:
-      #     name: Get old stack workflow id
-      #     command: |
-      #       ls -la
-      #       ls versions
-      #       cd versions
-      #       echo $OldWorkflowID
-      #       OldWorkflowID=$(cat $(ls))
-      #       echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
-      #       echo $OldWorkflowID
       # - restore_cache:
       #     keys: [old-workflow-ID]
+      # - attach_workspace:
+      #     at: ./
       - run:
           name: Remove old stacks and files
           command: |
-            ls -la
             ls versions
             cd versions
             OldWorkflowID=$(cat $(ls -t | tail -n 1))
@@ -715,10 +702,10 @@ jobs:
             
             then
               echo "-----Delete process started---------"
-              aws s3 rm s3://udapeople-s3-${OldWorkflowID} --recursive
-              # aws s3 rb s3://udapeople-s3-${OldWorkflowID}
-              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
-              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
+              aws s3 rm s3://udapeople-s3-$OldWorkflowID --recursive
+              # aws s3 rb s3://udapeople-s3-$OldWorkflowID
+              aws cloudformation delete-stack --stack-name "udapeople-backend-$OldWorkflowID"
+              aws cloudformation delete-stack --stack-name "udapeople-frontend-$OldWorkflowID"
               echo "-----Delete process finished successfully ---------"
             else
               echo "-----Clean up process failed ---------"
