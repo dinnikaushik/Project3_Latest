@@ -330,7 +330,7 @@ jobs:
             pwd && ls -la
             cd .circleci/ansible && ls -la
             cat inventory3.txt
-            ansible-playbook --ask-become-pass -i inventory3.txt configure-server.yml
+            ansible-playbook -i inventory3.txt configure-server.yml
             
       # Here's where you will add some code to rollback on failure 
       - destroy-environment:
