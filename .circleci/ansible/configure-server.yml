@@ -27,5 +27,5 @@
   roles:
     - role: configure-server
       become: True
-    - role: configure-prometheus-node-exporter
-      become: True
+    # - role: configure-prometheus-node-exporter
+    #   become: True

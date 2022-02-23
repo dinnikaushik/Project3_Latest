@@ -494,7 +494,7 @@ jobs:
             - frontend/
             - backend-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz
             
-  build-and-deploy-backend:
+  build-new-backend:
     <<: *defaults-node
    
     steps:
@@ -738,10 +738,10 @@ workflows:
           requires: [configure-infrastructure]
       - build-and-deploy-new-frontend:
           requires: [run-migrations]
-      - build-and-deploy-backend:
+      - build-new-backend:
           requires: [build-and-deploy-new-frontend]
       - deploy-backend:
-          requires: [build-and-deploy-backend]
+          requires: [build-new-backend]
       - smoke-test-web-site:
           requires: [deploy-backend, build-and-deploy-new-frontend]
       - smoke-test:
