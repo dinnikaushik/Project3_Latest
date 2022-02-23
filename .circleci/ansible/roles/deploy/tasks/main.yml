@@ -1,20 +1,15 @@
 ---
-- name: "Create a directory for backend"
-  file:
-    path: ./backend_files
-    state: directory
-
-- name: "Check the '/home/ubuntu/' directory"
+- name: "Check the '/home/ubuntu/' directory and install ansible"
   shell: |
     pwd
     ls -la .ansible
-    
+    sudo apt install ansible
+
 - name: "Copy compiled backend build"
   debugger: on_failed
   copy:
-    src: ./files/backend-artifact.tar.gz
+    src: backend-artifact.tar.gz
     dest: /home/ubuntu/
-
 
 - name: "Unzip backend files to correct directory"
   shell: |
