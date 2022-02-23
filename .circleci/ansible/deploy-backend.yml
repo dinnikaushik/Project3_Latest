@@ -1,6 +1,6 @@
 ---
 
-- name: "configuration backend play." 
+- name: "base configuration backend" 
   hosts: all
   user: ubuntu
   gather_facts: false
