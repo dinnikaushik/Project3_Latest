@@ -3,7 +3,6 @@
   shell: |
     pwd
     ls -la .ansible
-    sudo apt install ansible
 
 - name: "Copy compiled backend build"
   debugger: on_failed
