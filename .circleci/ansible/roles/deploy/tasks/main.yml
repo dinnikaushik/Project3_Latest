@@ -1,8 +1,4 @@
 ---
-- name: "Check the '/home/ubuntu/' directory and install ansible"
-  shell: |
-    pwd
-    ls -la .ansible
 
 - name: "Copy compiled backend build"
   debugger: on_failed

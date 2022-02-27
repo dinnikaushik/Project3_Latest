@@ -15,13 +15,6 @@
     dest: /usr/local/bin/node_exporter
     remote_src: yes
     mode: 0755
-- name: "checking the directory"
-  become: true
-  debugger: always
-  sh: 
-    - echo $(pwd)
-    - echo $(ls -la)
-  
 
 - name: "add node exporter configuration."
   become: true
@@ -29,7 +22,6 @@
   copy:
     src: /home/circleci/project/.circleci/files/node_exporter.service
     dest: /etc/systemd/system/
-    remote_src: yes
     mode: 0755
 
 - name: service always started
