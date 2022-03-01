@@ -337,6 +337,7 @@ jobs:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
           event: on_fail
 
+
   smoke-test-web-site:
     docker:
       - image: alpine:latest
