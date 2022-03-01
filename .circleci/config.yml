@@ -561,21 +561,20 @@ jobs:
             cd .circleci/ansible
             echo "Contents  of 'ansible' files directory "
             ls -la
-            echo "Contents  of the 'roles/deploy/files' directory "
-            ls -la roles/deploy/files
-            echo "Contents  of the 'roles/deploy/' directory "
-            ls -la roles/deploy/
-             echo "Contents  of the 'roles/configure-prometheus-node-exporter/files' directory "
-            ls -la roles/configure-prometheus-node-exporter/files
+            cat inventory3.txt
+            # echo "Contents  of the 'roles/deploy/files' directory "
+            # ls -la roles/deploy/files
+            # echo "Contents  of the 'roles/deploy/' directory "
+            # ls -la roles/deploy/
+            #  echo "Contents  of the 'roles/configure-prometheus-node-exporter/files' directory "
+            # ls -la roles/configure-prometheus-node-exporter/files
             echo "Start of the 'deploy-backend.yml' playbook"
             ansible-playbook -i inventory3.txt deploy-backend.yml
-
-      # - run:
-      #     name: Configure prometheus node-exporter
-      #     command:
-      #       cd .circleci/ansible/
-      #       ansible-playbook -i inventory3.txt configure-prometheus-node-exporter.yml
- 
+      
+      - persist_to_workspace:
+          root: ./
+          paths: 
+            - ./
            
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:

@@ -1,19 +1,19 @@
 ---
 - name: "configuration playbook"
-  hosts: backend
-  user: ubuntu
+  hosts: all 
+  # user: ubuntu
   gather_facts: false
   vars:
     environment_config:
-      NODE_ENV: production
+      # NODE_ENV: production
       ENVIRONMENT: production
       TYPEORM_CONNECTION: postgres
       TYPEORM_ENTITIES: /root/backend_files/modules/domain/**/*.entity.js
       TYPEORM_HOST: database-1.cna7f4cff3hx.us-west-1.rds.amazonaws.com
       TYPEORM_PORT: 5432
       TYPEORM_USERNAME: postgres
-      TYPEORM_PASSWORD: udacity123
-      TYPEORM_DATABASE: postgres
+      TYPEORM_PASSWORD: udacity777
+      TYPEORM_DATABASE: backendDB
 
   pre_tasks:
     - name: "wait 600 seconds for target connection to become reachable/usable."
