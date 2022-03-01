@@ -27,5 +27,6 @@
   roles:
     - role: configure-server
       become: True
+    # this role is moved to deploy ansible job
     # - role: configure-prometheus-node-exporter
     #   become: True
