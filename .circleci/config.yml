@@ -686,6 +686,7 @@ jobs:
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
+            aws s3 ls
       
       # - restore_cache:
       #     keys: [old-workflow-ID]
@@ -712,6 +713,7 @@ jobs:
             else
               echo "-----Clean up process failed ---------"
             fi
+            aws s3 ls
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
           event: on_fail    
