@@ -196,7 +196,7 @@ jobs:
           name: Vulnerability scan back-end 
           command: |
             cd backend
-            run  npm install
+            npm i --force
             npm audit fix --audit-level=critical --force
             npm audit fix --force
 
@@ -632,6 +632,7 @@ jobs:
             else
               (exit 1)
             fi
+
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
@@ -662,7 +663,8 @@ jobs:
             aws cloudformation update-stack \
               --use-previous-template  \
               --stack-name InitialStack\
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
+              # --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameters ParameterKey=ID, ParameterValue=${CIRCLE_WORKFLOW_ID:0:7}
               --tags project=udapeople
         # aws cloudformation update-stack --use-previous-template --stack-name cloudfront --parameters ParameterKey=WorkflowID,ParameterValue=${CIRCLE_WORKFLOW_ID:0:7}
 
