@@ -664,7 +664,7 @@ jobs:
               --use-previous-template  \
               --stack-name InitialStack\
               # --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameters ParameterKey=WorkflowID, ParameterValue=${CIRCLE_WORKFLOW_ID:0:7}
+              --parameters ParameterKey=WorkflowID,ParameterValue=${CIRCLE_WORKFLOW_ID:0:7}
               --tags project=udapeople
         # aws cloudformation update-stack --use-previous-template --stack-name cloudfront --parameters ParameterKey=WorkflowID,ParameterValue=${CIRCLE_WORKFLOW_ID:0:7}
 
