@@ -640,21 +640,21 @@ jobs:
   
   cloudfront-update:
     docker:
-      # - image: cimg/base:2022.01
-      - image: amazon/aws-cli 
+      - image: cimg/base:2022.01
+      # - image: amazon/aws-cli 
     steps:
       - checkout
       - attach_workspace:
           at: ./
-      # - run:
-      #     name: Install dependencies
-      #     command: |
-      #       sudo apt update
-      #       sudo apt install software-properties-common
-      #       sudo apt-get update && sudo apt-get install -yy less
-      #       curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-      #       unzip awscliv2.zip
-      #       sudo ./aws/install
+      - run:
+          name: Install dependencies
+          command: |
+            sudo apt update
+            sudo apt install software-properties-common
+            sudo apt-get update && sudo apt-get install -yy less
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
      
       - run:
           name: Update cloudfront distribution
