@@ -640,21 +640,21 @@ jobs:
   
   cloudfront-update:
     docker:
-      - image: cimg/base:2022.01
-      # - image: amazon/aws-cli 
+      # - image: cimg/base:2022.01
+      - image: amazon/aws-cli 
     steps:
       - checkout
       - attach_workspace:
           at: ./
-      - run:
-          name: Install dependencies
-          command: |
-            sudo apt update
-            sudo apt install software-properties-common
-            sudo apt-get update && sudo apt-get install -yy less
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
+      # - run:
+      #     name: Install dependencies
+      #     command: |
+      #       sudo apt update
+      #       sudo apt install software-properties-common
+      #       sudo apt-get update && sudo apt-get install -yy less
+      #       curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      #       unzip awscliv2.zip
+      #       sudo ./aws/install
      
       - run:
           name: Update cloudfront distribution
@@ -664,7 +664,7 @@ jobs:
               --use-previous-template  \
               --stack-name InitialStack\
               # --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameters ParameterKey=WorkflowID,ParameterValue=${CIRCLE_WORKFLOW_ID:0:7}
+              --parameters ParameterKey=WorkflowID,ParameterValue="${CIRCLE_WORKFLOW_ID:0:7}"
               --tags project=udapeople
         # aws cloudformation update-stack --use-previous-template --stack-name cloudfront --parameters ParameterKey=WorkflowID,ParameterValue=${CIRCLE_WORKFLOW_ID:0:7}
 
