@@ -615,7 +615,7 @@ jobs:
             export BACKEND_URL=$(aws ec2 describe-instances --filters "Name=tag:Name,Values='backend-${CIRCLE_WORKFLOW_ID:0:7}'" --query "Reservations[*].Instances[*].PublicDnsName" --no-paginate --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             # export API_URL2="http://${BACKEND_URL}:3030"
-            echo $API_URL
+            echo "$API_URL/api/status"
             curl "$API_URL/api/status"
             if curl -s "$API_URL/api/status" | grep "ok"
             then
@@ -654,7 +654,15 @@ jobs:
           command: |
             sudo apt update
             sudo apt install software-properties-common
-            sudo apt-get update && sudo apt install awscli
+            sudo apt-get update
+            
+            if /usr/local/bin/aws --version
+            # if curl -s ${URL} | grep "Welcome"
+            then
+              echo "OK, awscli is installed"
+            else
+              sudo apt install awscli
+            fi
             # curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             # unzip awscliv2.zip
             # ./aws/install
