@@ -643,7 +643,7 @@ jobs:
       # - image: cimg/base:2022.01
       - image: amazon/aws-cli 
     steps:
-      - checkout
+      # - checkout
       - attach_workspace:
           at: ./
       # - run:
