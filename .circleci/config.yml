@@ -18,7 +18,7 @@ environment:
 commands:
 
   destroy-environment:
-    description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+    description: Destroy back-end and front-end cloudformation stacks << parameters.workflow_id >> a workflow ID.
     parameters: 
       workflow_id:
         type: string
@@ -30,10 +30,13 @@ commands:
           name: Destroy environments
           when: on_fail   
           command: |
-            apt-get update && apt-get install -yy less
+            sudo apt update
+            sudo apt install software-properties-common
+            sudo apt-get update && sudo apt-get install -yy less
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
-            ./aws/install
+            sudo ./aws/install
+            echo "Destroying environment: << parameters.workflow_id >> "
             aws s3 rm s3://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7} --recursive
             # aws s3 rb s3://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7}
             aws cloudformation delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
@@ -651,20 +654,22 @@ jobs:
           command: |
             sudo apt update
             sudo apt install software-properties-common
-            sudo apt-get update && sudo apt-get install -yy less
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
-     
+            sudo apt-get update && sudo apt install awscli
+            # curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            # unzip awscliv2.zip
+            # ./aws/install
+            aws --version
       - run:
           name: Update cloudfront distribution
           command: |
             cd .circleci/files
+            echo ParameterValue=${CIRCLE_WORKFLOW_ID:0:7}
+            echo ParameterValue="${CIRCLE_WORKFLOW_ID:0:7}" 
             aws cloudformation update-stack \
               --use-previous-template \
               --stack-name InitialStack \
               # --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameters ParameterKey=WorkflowID,ParameterValue="${CIRCLE_WORKFLOW_ID:0:7}" 
+              --parameters ParameterKey=WorkflowID,ParameterValue=$ParameterValue
               --tags project=udapeople
         # aws cloudformation update-stack --use-previous-template --stack-name cloudfront --parameters ParameterKey=WorkflowID,ParameterValue=${CIRCLE_WORKFLOW_ID:0:7}
 
