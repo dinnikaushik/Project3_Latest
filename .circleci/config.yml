@@ -672,12 +672,13 @@ jobs:
           command: |
             cd .circleci/files
             echo ParameterValue=${CIRCLE_WORKFLOW_ID:0:7}
-            echo ParameterValue="${CIRCLE_WORKFLOW_ID:0:7}" 
+            export ParameterValue
             aws cloudformation update-stack \
+              --template-file cloudfront.yml \
               --use-previous-template \
               --stack-name InitialStack \
-              # --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameters ParameterKey=WorkflowID,ParameterValue=$ParameterValue
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
+              # --parameters ParameterKey="WorkflowID",ParameterValue=$ParameterValue
               --tags project=udapeople
         # aws cloudformation update-stack --use-previous-template --stack-name cloudfront --parameters ParameterKey=WorkflowID,ParameterValue=${CIRCLE_WORKFLOW_ID:0:7}
 
