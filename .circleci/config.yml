@@ -679,7 +679,7 @@ jobs:
             pwd && ls -la
             cd ../.circleci/files
             echo $OldWorkflowID
-            aws cloudformation update \
+            aws cloudformation update-stack \
               # --template-file cloudfront.yml \
               --use-previous-template \
               # --stack-name "cloudfront-$OldWorkflowID \
