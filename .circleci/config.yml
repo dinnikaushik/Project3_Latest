@@ -672,19 +672,20 @@ jobs:
           command: |
             ls versions
             cd versions
-            OldWorkflowID=$(cat $(ls -t | tail -n 1))
+            export OldWorkflowID=$(cat $(ls -t | tail -n 1))
             echo "OldWorkflowID: "$OldWorkflowID
             echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
+            export CIRCLE_WORKFLOW_ID=${CIRCLE_WORKFLOW_ID:0:7}"
             pwd && ls -la
-            cd .circleci/files
+            cd ../.circleci/files
             echo $OldWorkflowID
-            aws cloudformation deploy \
-              --template-file cloudfront.yml \
-              # --use-previous-template \
+            aws cloudformation update \
+              # --template-file cloudfront.yml \
+              --use-previous-template \
               # --stack-name "cloudfront-$OldWorkflowID \
               --stack-name "cloudfront- \
-              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
-              # --parameters ParameterKey="WorkflowID",ParameterValue=$ParameterValue
+              # --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameters ParameterKey="WorkflowID",ParameterValue=$CIRCLE_WORKFLOW_ID
               --tags project=udapeople
         # aws cloudformation update-stack --use-previous-template --stack-name cloudfront --parameters ParameterKey=WorkflowID,ParameterValue=${CIRCLE_WORKFLOW_ID:0:7}
       - run:
