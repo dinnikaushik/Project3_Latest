@@ -678,8 +678,9 @@ jobs:
             export CIRCLE_WORKFLOW_ID=${CIRCLE_WORKFLOW_ID:0:7}
             pwd && ls -la
             cd ../.circleci/files
-            echo $OldWorkflowID
-            aws cloudformation update-stack --use-previous-template --stack-name InitialStack --parameters ParameterKey="WorkflowID",ParameterValue="706557d" --tags project=udapeople
+            echo $OldWorkflowID 
+            aws cloudformation update-stack --use-previous-template --stack-name InitialStack --parameters ParameterKey="WorkflowID",ParameterValue="706557d"
+           
               # # --template-file cloudfront.yml \
               # --use-previous-template \
               # # --stack-name "cloudfront-$OldWorkflowID \
