@@ -679,14 +679,14 @@ jobs:
             pwd && ls -la
             cd ../.circleci/files
             echo $OldWorkflowID
-            aws cloudformation update-stack \
-              # --template-file cloudfront.yml \
-              --use-previous-template \
-              # --stack-name "cloudfront-$OldWorkflowID \
-              --stack-name InitialStack \
-              # --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameters ParameterKey="ID",ParameterValue=$CIRCLE_WORKFLOW_ID
-              --tags project=udapeople
+            aws cloudformation update-stack --use-previous-template --stack-name InitialStack --parameters ParameterKey="WorkflowID",ParameterValue="706557d" --tags project=udapeople
+              # # --template-file cloudfront.yml \
+              # --use-previous-template \
+              # # --stack-name "cloudfront-$OldWorkflowID \
+              # --stack-name InitialStack \
+              # # --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
+              # --parameters ParameterKey="WorkflowID",ParameterValue=$CIRCLE_WORKFLOW_ID
+              # --tags project=udapeople
         # aws cloudformation update-stack --use-previous-template --stack-name cloudfront --parameters ParameterKey=WorkflowID,ParameterValue=${CIRCLE_WORKFLOW_ID:0:7}
       - run:
           name: Remove old stacks and files
