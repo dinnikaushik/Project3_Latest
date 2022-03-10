@@ -243,10 +243,14 @@ jobs:
           name: Store front-end old S3 backet name if exist 
           command: |
             mkdir versions
-            export old=$(date '+%m%d%Y_%H_%M')
+            export old_stack=$(date '+%m%d%Y_%H_%M')
+            export old_s3=$('s3_'+date)
             export OldWorkflowID=$(aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE |jq  -c ".[]| min_by(.CreationTime)|.StackName" | cut -c 20-26)
-            echo $OldWorkflowID > versions/$old.txt
-            cat versions/$old.txt
+            export OldWorkflowID_s3=$(aws cloudformation list-stacks --stack-status-filter  DELETE_FAILED |jq  -c ".[]| min_by(.CreationTime)|.StackName" | cut -c 21-27)
+            echo $OldWorkflowID > versions/$old_stack.txt
+            echo $OldWorkflowID_s3 > versions/$old_s3.txt
+            cat versions/$old_stack.txt
+            cat versions/$old_s3.txt
       - persist_to_workspace:
           root: ./
           paths:
@@ -292,7 +296,8 @@ jobs:
             - .circleci/ansible/inventory3.txt
             - .circleci/ansible/backend_url.txt
             - frontend/.env
-            - versions/$old.txt
+            - versions/$old_stack.txt
+            - versions/$old_s3.txt
         
             
       # Here's where you will add some code to rollback on failure  
@@ -679,16 +684,18 @@ jobs:
             pwd && ls -la
             cd ../.circleci/files
             echo $OldWorkflowID 
-            # aws cloudformation update-stack --use-previous-template --stack-name InitialStack --parameters ParameterKey="WorkflowID",ParameterValue="706557d"
+            # aws cloudformation update-stack --use-previous-template --stack-name InitialStack --parameters ParameterKey="WorkflowID",ParameterValue=${CIRCLE_WORKFLOW_ID:0:7}"
             aws cloudformation deploy --template-file cloudfront.yml --stack-name cloudfront-$OldWorkflowID --parameter-overrides WorkflowID="cloudfront-${CIRCLE_WORKFLOW_ID:0:7}" --tags project=udapeople
               
         # aws cloudformation update-stack --use-previous-template --stack-name cloudfront --parameters ParameterKey=WorkflowID,ParameterValue=${CIRCLE_WORKFLOW_ID:0:7}
       - run:
-          name: Remove old stacks and files
+          name: Remove old stacks and S3 buckets
           command: |
+            aws s3 ls
             ls versions
             cd versions
-            OldWorkflowID=$(cat $(ls -t | tail -n 1))
+            OldWorkflowID=$(cat old_stack.txt | tail -n 1))
+            OldWorkflowID_s3=$(cat old_s3.txt | tail -n 1))
             echo "OldWorkflowID: "$OldWorkflowID
             echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
            
@@ -697,10 +704,11 @@ jobs:
             then
               echo "-----Delete process started---------"
               aws s3 rm s3://udapeople-s3-$OldWorkflowID --recursive
-              # aws s3 rb s3://udapeople-s3-$OldWorkflowID
+              aws s3 rm s3://udapeople-s3-$OldWorkflowID_s3 --recursive
+              aws s3 rb s3://udapeople-s3-$OldWorkflowID_s3
               aws cloudformation delete-stack --stack-name "udapeople-backend-$OldWorkflowID"
               aws cloudformation delete-stack --stack-name "udapeople-frontend-$OldWorkflowID"
-              aws cloudformation delete-stack --stack-name "cloudfront-$OldWorkflowID"
+              # aws cloudformation delete-stack --stack-name "cloudfront-$OldWorkflowID"
               echo "-----Delete process finished successfully ---------"
             else
               echo "-----Clean up process failed ---------"
@@ -733,28 +741,28 @@ jobs:
       #     keys: [old-workflow-ID]
       # - attach_workspace:
       #     at: ./
-      - run:
-          name: Remove old stacks and files
-          command: |
-            ls versions
-            cd versions
-            OldWorkflowID=$(cat $(ls -t | tail -n 1))
-            echo "OldWorkflowID: "$OldWorkflowID
-            echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
+      # - run:
+      #     name: Remove old stacks and files
+      #     command: |
+      #       ls versions
+      #       cd versions
+      #       OldWorkflowID=$(cat $(ls -t | tail -n 1))
+      #       echo "OldWorkflowID: "$OldWorkflowID
+      #       echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
            
-            if [[ "${CIRCLE_WORKFLOW_ID:0:7}"!="$OldWorkflowID" ]] 
+      #       if [[ "${CIRCLE_WORKFLOW_ID:0:7}"!="$OldWorkflowID" ]] 
             
-            then
-              echo "-----Delete process started---------"
-              aws s3 rm s3://udapeople-s3-$OldWorkflowID --recursive
-              # aws s3 rb s3://udapeople-s3-$OldWorkflowID
-              aws cloudformation delete-stack --stack-name "udapeople-backend-$OldWorkflowID"
-              aws cloudformation delete-stack --stack-name "udapeople-frontend-$OldWorkflowID"
-              echo "-----Delete process finished successfully ---------"
-            else
-              echo "-----Clean up process failed ---------"
-            fi
-            aws s3 ls
+      #       then
+      #         echo "-----Delete process started---------"
+      #         aws s3 rm s3://udapeople-s3-$OldWorkflowID --recursive
+      #         # aws s3 rb s3://udapeople-s3-$OldWorkflowID
+      #         aws cloudformation delete-stack --stack-name "udapeople-backend-$OldWorkflowID"
+      #         aws cloudformation delete-stack --stack-name "udapeople-frontend-$OldWorkflowID"
+      #         echo "-----Delete process finished successfully ---------"
+      #       else
+      #         echo "-----Clean up process failed ---------"
+      #       fi
+      #       aws s3 ls
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
           event: on_fail    
