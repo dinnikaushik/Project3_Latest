@@ -243,14 +243,10 @@ jobs:
           name: Store front-end old S3 backet name if exist 
           command: |
             mkdir versions
-            # export old_stack=$(date '+%m%d%Y_%H_%M')
-            # export old_s3=$(date '+%m%d%Y')
             export OldWorkflowID=$(aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE |jq  -c ".[]| min_by(.CreationTime)|.StackName" | cut -c 20-26)
-            export OldWorkflowID_s3=$(aws cloudformation list-stacks --stack-status-filter  DELETE_FAILED |jq  -c ".[]| min_by(.CreationTime)|.StackName" | cut -c 21-27)
             echo $OldWorkflowID > versions/old_stack.txt
-            echo $OldWorkflowID_s3 > versions/old_s3.txt
             echo old_stack = $(cat versions/old_stack.txt)
-            echo old_s3 =$(cat versions/old_s3.txt)
+            
       - persist_to_workspace:
           root: ./
           paths:
@@ -297,7 +293,7 @@ jobs:
             - .circleci/ansible/backend_url.txt
             - frontend/.env
             - versions/old_stack.txt
-            - versions/old_s3.txt
+           
         
             
       # Here's where you will add some code to rollback on failure  
@@ -678,7 +674,6 @@ jobs:
             ls versions
             cd versions
             cat old_stack.txt
-            cat old_s3.txt
             export OldWorkflowID=$(cat old_stack.txt | tail -n 1)
             echo "OldWorkflowID: "$OldWorkflowID
             echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
@@ -697,7 +692,6 @@ jobs:
             ls versions
             cd versions
             OldWorkflowID=$(cat old_stack.txt | tail -n 1)
-            OldWorkflowID_s3=$(cat old_s3.txt | tail -n 1)
             echo "OldWorkflowID: "$OldWorkflowID
             echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
            
@@ -706,11 +700,8 @@ jobs:
             then
               echo "-----Delete process started---------"
               aws s3 rm s3://udapeople-s3-$OldWorkflowID --recursive
-              aws s3 rm s3://udapeople-s3-$OldWorkflowID_s3 --recursive
-              aws s3 rb s3://udapeople-s3-$OldWorkflowID_s3
               aws cloudformation delete-stack --stack-name "udapeople-backend-$OldWorkflowID"
               aws cloudformation delete-stack --stack-name "udapeople-frontend-$OldWorkflowID"
-              # aws cloudformation delete-stack --stack-name "cloudfront-$OldWorkflowID"
               echo "-----Delete process finished successfully ---------"
             else
               echo "-----Clean up process failed ---------"
