@@ -243,14 +243,14 @@ jobs:
           name: Store front-end old S3 backet name if exist 
           command: |
             mkdir versions
-            export old_stack=$(date '+%m%d%Y_%H_%M')
-            export old_s3=$(date '+%m%d%Y')
+            # export old_stack=$(date '+%m%d%Y_%H_%M')
+            # export old_s3=$(date '+%m%d%Y')
             export OldWorkflowID=$(aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE |jq  -c ".[]| min_by(.CreationTime)|.StackName" | cut -c 20-26)
             export OldWorkflowID_s3=$(aws cloudformation list-stacks --stack-status-filter  DELETE_FAILED |jq  -c ".[]| min_by(.CreationTime)|.StackName" | cut -c 21-27)
-            echo $OldWorkflowID > versions/$old_stack.txt
-            echo $OldWorkflowID_s3 > versions/$old_s3.txt
-            echo old_stack = $(cat versions/$old_stack.txt)
-            echo old_s3 =$(cat versions/$old_s3.txt)
+            echo $OldWorkflowID > versions/old_stack.txt
+            echo $OldWorkflowID_s3 > versions/old_s3.txt
+            echo old_stack = $(cat versions/old_stack.txt)
+            echo old_s3 =$(cat versions/old_s3.txt)
       - persist_to_workspace:
           root: ./
           paths:
@@ -296,8 +296,8 @@ jobs:
             - .circleci/ansible/inventory3.txt
             - .circleci/ansible/backend_url.txt
             - frontend/.env
-            - versions/$old_stack.txt
-            - versions/$old_s3.txt
+            - versions/old_stack.txt
+            - versions/old_s3.txt
         
             
       # Here's where you will add some code to rollback on failure  
@@ -677,7 +677,9 @@ jobs:
           command: |
             ls versions
             cd versions
-            export OldWorkflowID=$(cat $(ls -t | tail -n 1))
+            cat old_stack.txt
+            cat old_s3.txt
+            export OldWorkflowID=$(cat old_stack.txt | tail -n 1)
             echo "OldWorkflowID: "$OldWorkflowID
             echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
             export CIRCLE_WORKFLOW_ID=${CIRCLE_WORKFLOW_ID:0:7}
@@ -685,7 +687,7 @@ jobs:
             cd ../.circleci/files
             echo $OldWorkflowID 
             # aws cloudformation update-stack --use-previous-template --stack-name InitialStack --parameters ParameterKey="WorkflowID",ParameterValue=${CIRCLE_WORKFLOW_ID:0:7}"
-            aws cloudformation deploy --template-file cloudfront.yml --stack-name cloudfront-$OldWorkflowID --parameter-overrides WorkflowID="cloudfront-${CIRCLE_WORKFLOW_ID:0:7}" --tags project=udapeople
+            aws cloudformation deploy --template-file cloudfront.yml --stack-name cloudfront-89f64e8 --parameter-overrides WorkflowID="cloudfront-${CIRCLE_WORKFLOW_ID:0:7}" --tags project=udapeople
               
         # aws cloudformation update-stack --use-previous-template --stack-name cloudfront --parameters ParameterKey=WorkflowID,ParameterValue=${CIRCLE_WORKFLOW_ID:0:7}
       - run:
@@ -715,9 +717,9 @@ jobs:
             fi
             aws s3 ls
       # Here's where you will add some code to rollback on failure  
-      - destroy-environment:
-          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-          event: on_fail
+      # - destroy-environment:
+      #     workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+      #     event: on_fail
 
   cleanup:
     docker:
@@ -763,9 +765,9 @@ jobs:
       #         echo "-----Clean up process failed ---------"
       #       fi
       #       aws s3 ls
-      - destroy-environment:
-          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-          event: on_fail    
+      # - destroy-environment:
+      #     workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+      #     event: on_fail    
 
 workflows:
   default:
@@ -801,5 +803,5 @@ workflows:
           requires: [deploy-backend, build-and-deploy-new-frontend]
       - cloudfront-update:
           requires: [smoke-test]
-      - cleanup:
-          requires: [cloudfront-update]
+      # - cleanup:
+      #     requires: [cloudfront-update]
