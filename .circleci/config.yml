@@ -382,10 +382,6 @@ jobs:
           at: ./
       - restore_cache:
           keys: [backend-build]
-       - run:
-          name: set default region 
-          command:  |
-            aws configure set default.region us-west-2     
       - run:
           name: Install AWS CLI dependencies
           working_directory: ./
