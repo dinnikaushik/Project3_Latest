@@ -219,6 +219,10 @@ jobs:
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
+      - run:
+          name: set default region 
+          command:  |
+            aws configure set default.region us-west-2      
       - run: 
           name: Ensure back-end infrastructure exists
           command: |
@@ -228,7 +232,10 @@ jobs:
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"\
               --tags project=udapeople  
               # exit 1
-
+      - run:
+          name: set default region 
+          command:  |
+            aws configure set default.region us-west-2
       - run:
           name: Ensure front-end infrastructure exist 
           command: |
@@ -310,7 +317,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["68:0f:db:17:bf:25:fe:73:5d:c0:88:c4:2a:73:50:dc"]
+          fingerprints: ["72:be:9e:fb:18:14:95:08:bb:4b:b7:76:e9:52:ac:11"]
           
       # attach workspace
       - attach_workspace:
@@ -351,7 +358,7 @@ jobs:
       - run:
           name: smoke test
           command: |
-            URL="http://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-west-1.amazonaws.com"
+            URL="http://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-west-2.amazonaws.com"
             # Test if website exists
             if curl -s ${URL} | grep "Welcome"
             then
@@ -375,6 +382,10 @@ jobs:
           at: ./
       - restore_cache:
           keys: [backend-build]
+       - run:
+          name: set default region 
+          command:  |
+            aws configure set default.region us-west-2     
       - run:
           name: Install AWS CLI dependencies
           working_directory: ./
@@ -466,7 +477,7 @@ jobs:
     # Checkout code from git
       - checkout
       - add_ssh_keys:
-          fingerprints: ["68:0f:db:17:bf:25:fe:73:5d:c0:88:c4:2a:73:50:dc"]
+          fingerprints: ["72:be:9e:fb:18:14:95:08:bb:4b:b7:76:e9:52:ac:11"]
       - attach_workspace:
           at: ./
       - run:
@@ -507,7 +518,7 @@ jobs:
       # Checkout code from git
       - checkout
       - add_ssh_keys:
-          fingerprints: ["68:0f:db:17:bf:25:fe:73:5d:c0:88:c4:2a:73:50:dc"]
+          fingerprints: ["72:be:9e:fb:18:14:95:08:bb:4b:b7:76:e9:52:ac:11"]
       
       - attach_workspace:
           at: ./
@@ -547,9 +558,13 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["68:0f:db:17:bf:25:fe:73:5d:c0:88:c4:2a:73:50:dc"]
+          fingerprints: ["72:be:9e:fb:18:14:95:08:bb:4b:b7:76:e9:52:ac:11"]
       - attach_workspace:
           at: ./
+      - run:
+          name: set default region 
+          command:  |
+            aws configure set default.region us-west-2      
       - run:
           name: Install dependencies
           command: |
@@ -596,6 +611,10 @@ jobs:
       - attach_workspace:
           at: ./
       - run:
+          name: set default region 
+          command:  |
+            aws configure set default.region us-west-2      
+      - run:
           name: Install dependencies
           command: |
             sudo apt update
@@ -628,7 +647,7 @@ jobs:
       - run:
           name: Frontend smoke test.
           command: |
-            URL="http://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-west-1.amazonaws.com/#/employees"            
+            URL="http://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-west-2.amazonaws.com/#/employees"            
             echo ${URL} 
             if curl -s ${URL} | grep "Welcome"
             then
@@ -668,6 +687,10 @@ jobs:
             # ./aws/install
             aws --version
       
+      - run:
+          name: set default region 
+          command:  |
+            aws configure set default.region us-west-2      
       - run:
           name: Update cloudfront distribution
           command: |
@@ -719,6 +742,10 @@ jobs:
       - checkout
       - attach_workspace:
           at: ./
+      - run:
+          name: set default region 
+          command:  |
+            aws configure set default.region us-west-2      
       - run:
           name: Install dependencies
           command: |
