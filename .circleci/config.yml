@@ -312,8 +312,8 @@ jobs:
     # parallelism: 10
     docker:
       # Docker image here that supports Ansible
-      # - image: python:3.8-alpine3.14
-      - image: cimg/base:2022.01
+      - image: python:3.8-alpine3.14
+      #- image: cimg/base:2022.01
     steps:
       - checkout
       - add_ssh_keys:
